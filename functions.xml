@@ -1,19 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ctl:package
- xmlns:spsFunctions="https://cite.opengeospatial.org/wms-1.3.0/src/ctl/functions.xml"
+ xmlns:spsFunctions="https://cite.opengeospatial.org/sps-1.0/src/ctl/functions.xml"
  xmlns:ctl="http://www.occamlab.com/ctl"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:wms="http://www.opengis.net/wms"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:ows="http://www.opengis.net/ows"
  xmlns:sps="http://www.opengis.net/sps"
+ xmlns:parsers="http://www.occamlab.com/te/parsers"
 >
-    <!--Global Variables-->
-    <xsl:variable name="schemaLocation" select="http://schemas.opengis.net" />
-    <xsl:variable name="spsSchemaLocation" select="concat($schemaLocation,'/sps/1.0.0')" />
-    <xsl:variable name="owsSchemaLocation" select="concat($schemaLocation,'/ows/1.1.0')" />
-    <xsl:variable name="sensorMLSchemaLocation" select="concat($schemaLocation,'/sensorML/1.0.0')" />
-    <xsl:variable name="tmlSchemaLocation" select="concat($schemaLocation,'/tml/1.0.0')" />
+
+    <!--Returns the appropriate schema path-->
+    <ctl:function name="spsFunctions:getSchemaLocation">
+        <ctl:param name="schemaName">The name of the schema file for which the full path will be returned</ctl:param>
+        <ctl:return>The full schema path</ctl:return>
+        <ctl:description>Based on the provided schema name, this function returns the full URL to the schema document</ctl:description>
+        <ctl:code>
+            <xsl:variable name="schemaLocation" select="string('http://schemas.opengis.net/')" />
+            <xsl:variable name="spsSchemaLocation" select="concat($schemaLocation,'sps/1.0.0/')" />
+            <xsl:variable name="owsSchemaLocation" select="concat($schemaLocation,'ows/1.1.0/')" />
+            <xsl:variable name="sensorMLSchemaLocation" select="concat($schemaLocation,'sensorML/1.0.0/')" />
+            <xsl:variable name="tmlSchemaLocation" select="concat($schemaLocation,'tml/1.0.0/')" />
+            <xsl:choose>
+                <xsl:when test="starts-with($schemaName,'sps')">
+                    <xsl:value-of select="concat($spsSchemaLocation,$schemaName)" />
+                </xsl:when>
+                <xsl:when test="starts-with($schemaName,'ows')">
+                    <xsl:value-of select="concat($owsSchemaLocation,$schemaName)" />
+                </xsl:when>
+                <xsl:when test="starts-with($schemaName,'sensorML')">
+                    <xsl:value-of select="concat($sensorMLSchemaLocation,$schemaName)" />
+                </xsl:when>
+                <xsl:when test="starts-with($schemaName,'tml')">
+                    <xsl:value-of select="concat($tmlSchemaLocation,$schemaName)" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$schemaLocation" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </ctl:code>
+    </ctl:function>
     
     <!--Issues an invalid request to the service-->
     <ctl:function name="spsFunctions:invalidRequest">
@@ -33,7 +60,9 @@
                 <parsers:XMLValidatingParser>
                     <parsers:schemas>
                         <parsers:schema type="url">
-                            <xsl:value-of select="$owsSchemaLocation" />/owsExceptionReport.xsd
+                            <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
+                            </ctl:call-function>
                         </parsers:schema>
                     </parsers:schemas>
                 </parsers:XMLValidatingParser>
@@ -63,14 +92,20 @@
                 <parsers:XMLValidatingParser>
                     <parsers:schemas>
                         <parsers:schema type="url">
-                            <xsl:choose>
-                                <xsl:when test="response/content/sps:DescribeTaskingRequestResponse">
-                                    <xsl:value-of select="$spsSchemaLocation" />/spsDescribeTaskingRequestResponse.xsd
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="$owsSchemaLocation" />/owsExceptionReport.xsd
-                                </xsl:otherwise>
-                            </xsl:choose>
+                            <!--<xsl:choose>
+                                <xsl:when test="response//sps:DescribeTaskingRequestResponse">-->
+                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                        <ctl:with-param name="schemaName" select="string('spsDescribeTaskingRequestResponse.xsd')" />
+                                    </ctl:call-function>
+                                <!--</xsl:when>
+                                <xsl:otherwise>-->
+                        </parsers:schema>
+                        <parsers:schema type="url">
+                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                        <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
+                                    </ctl:call-function>
+                                <!--</xsl:otherwise>
+                            </xsl:choose>-->
                         </parsers:schema>
                     </parsers:schemas>
                 </parsers:XMLValidatingParser>
@@ -106,14 +141,20 @@
                 <parsers:XMLValidatingParser>
                     <parsers:schemas>
                         <parsers:schema type="url">
-                            <xsl:choose>
-                                <xsl:when test="response/content/sps:DescribeTaskingRequestResponse">
-                                    <xsl:value-of select="$spsSchemaLocation" />/spsDescribeResultAccessRequestResponse.xsd
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="$owsSchemaLocation" />/owsExceptionReport.xsd
-                                </xsl:otherwise>
-                            </xsl:choose>
+                            <!--<xsl:choose>
+                                <xsl:when test="response//sps:DescribeTaskingRequestResponse">-->
+                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                        <ctl:with-param name="schemaName" select="string('spsDescribeResultAccessRequestResponse.xsd')" />
+                                    </ctl:call-function>
+                                <!--</xsl:when>
+                                <xsl:otherwise>-->
+                        </parsers:schema>
+                        <parsers:schema type="url">
+                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                        <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
+                                    </ctl:call-function>
+                                <!--</xsl:otherwise>
+                            </xsl:choose>-->
                         </parsers:schema>
                     </parsers:schemas>
                 </parsers:XMLValidatingParser>
@@ -130,7 +171,7 @@
             <parsers:XMLValidatingParser>
                 <parsers:schemas>
                     <parsers:schema type="url">
-                        <xsl:value-of select="$owsSchemaLocation" />/owsExceptionReport.xsd
+                        <!---->
                     </parsers:schema>
                 </parsers:schemas>
             </parsers:XMLValidatingParser>
@@ -146,14 +187,14 @@
         <ctl:description></ctl:description>
         <ctl:code>
             <xsl:variable name="exceptionElement" select="$exceptionReport/ows:ExceptionReport/ows:Exception" />
-            <xsl:variable name="exceptionCode" select="@exceptionCode" />
-            <xsl:variable name="locator" select="@locator" />
+            <xsl:variable name="exceptionCodeValue" select="$exceptionElement/@exceptionCode" />
+            <xsl:variable name="locatorValue" select="$exceptionElement/@locator" />
             <xsl:choose>
-                <xsl:when test="$locator='*'">
-                    <xsl:value-of select="$exceptionElement and ($exceptionCodeToCheck=$exceptionCode) and (string-length(normalize-space($locator))>0)" />
+                <xsl:when test="$locatorValue='*'">
+                    <xsl:value-of select="$exceptionElement and ($exceptionCodeToCheck=$exceptionCodeValue) and (string-length(normalize-space($locatorValue))>0)" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="$exceptionElement and ($exceptionCodeToCheck=$exceptionCode) and (lower-case($locatorToCheck)=lower-case($locator))" />
+                    <xsl:value-of select="$exceptionElement and ($exceptionCodeToCheck=$exceptionCodeValue) and (lower-case($locatorToCheck)=lower-case($locatorValue))" />
                 </xsl:otherwise>
             </xsl:choose>
         </ctl:code>
@@ -261,7 +302,7 @@
         <ctl:return>The response if it's valid</ctl:return>
         <ctl:description>Validates a returned document according to the appropriate schema</ctl:description>
         <ctl:code>
-            <xsl:variable name="rootElementName" select="node-name($responseDocument/*)" />
+            <xsl:variable name="rootElementName" select="local-name-from-QName(node-name($responseDocument/*))" />
             <xsl:choose>
                 <xsl:when test="$rootElementName='SensorML'">
                     <ctl:call-function name="spsFunctions:validateSensorML">
@@ -306,7 +347,7 @@
         <ctl:return>True/False depending on whether or not the URN is valid</ctl:return>
         <ctl:description>Determines if a URN is valid</ctl:description>
         <ctl:code>
-            <xsl:value-of select="string-length($urnString)>0 and matches($urnString,'[Uu][Rr][Nn]:([^\s.]+|\.(?!\s))+')" />
+            <xsl:value-of select="string-length($urnString)>0 and matches($urnString,'')" /><!--[Uu][Rr][Nn]:([^\s.]+|\.(?!\s))+-->
         </ctl:code>
     </ctl:function>
     
@@ -324,7 +365,7 @@
         <ctl:return>True if the time to check is valid; false otherwise</ctl:return>
         <ctl:description>Checks that the supplied timeToCheck value is a valid time and that it occurs on or after the compareTime</ctl:description>
         <ctl:code>
-            <xsl:value-of select="string-length(normalize-space($timeToCheck))>0 and dateTime($timeToCheck)>=dateTime($compareTime)" />
+            <xsl:value-of select="string-length(normalize-space($timeToCheck))>0 and $timeToCheck>=$compareTime" /><!--TODO: figure out how to compare date/time values-->
         </ctl:code>
     </ctl:function>
 </ctl:package>
