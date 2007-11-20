@@ -19,7 +19,7 @@
         <ctl:code>
             <xsl:variable name="schemaLocation" select="string('http://schemas.opengis.net/')" />
             <xsl:variable name="spsSchemaLocation" select="concat($schemaLocation,'sps/1.0.0/')" />
-            <xsl:variable name="owsSchemaLocation" select="concat($schemaLocation,'ows/1.1.0/')" />
+            <xsl:variable name="owsSchemaLocation" select="concat($schemaLocation,'ows/1.0.0/')" />
             <xsl:variable name="sensorMLSchemaLocation" select="concat($schemaLocation,'sensorML/1.0.0/')" />
             <xsl:variable name="tmlSchemaLocation" select="concat($schemaLocation,'tml/1.0.0/')" />
             <xsl:choose>
@@ -49,24 +49,27 @@
         <ctl:return>The response if it's a valid exception report</ctl:return>
         <ctl:description>Posts an invalid request to the url specified by methodURL</ctl:description>
         <ctl:code>
-            <ctl:request>
-                <ctl:url>
-                    <xsl:value-of select="$methodURL" />
-                </ctl:url>
-                <ctl:method>post</ctl:method>
-                <ctl:body>
-                    <xsl:value-of select="$postBody" />
-                </ctl:body>
-                <parsers:XMLValidatingParser>
-                    <parsers:schemas>
-                        <parsers:schema type="url">
-                            <ctl:call-function name="spsFunctions:getSchemaLocation">
-                                <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
-                            </ctl:call-function>
-                        </parsers:schema>
-                    </parsers:schemas>
-                </parsers:XMLValidatingParser>
-            </ctl:request>
+            <xsl:variable name="invalidRequestResponse">
+                <ctl:request>
+                    <ctl:url>
+                        <xsl:value-of select="$methodURL" />
+                    </ctl:url>
+                    <ctl:method>post</ctl:method>
+                    <ctl:body>
+                        <xsl:value-of select="$postBody" />
+                    </ctl:body>
+                    <!--<parsers:XMLValidatingParser>
+                        <parsers:schemas>
+                            <parsers:schema type="url">
+                                <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                    <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
+                                </ctl:call-function>
+                            </parsers:schema>
+                        </parsers:schemas>
+                    </parsers:XMLValidatingParser>-->
+                </ctl:request>
+            </xsl:variable>
+            <xsl:value-of select="$invalidRequestResponse" />
         </ctl:code>
     </ctl:function>
     
@@ -77,39 +80,42 @@
         <ctl:return>The response from the server</ctl:return>
         <ctl:description>Executes a DescribeTasking request</ctl:description>
         <ctl:code>
-            <ctl:request>
-                <ctl:url>
-                    <xsl:value-of select="$describeTaskingURL" />
-                </ctl:url>
-                <ctl:method>post</ctl:method>
-                <ctl:body>
-                    <DescribeTasking xmlns="http://www.opengis.net/sps" service="SPS" version="1.0.0">
-                        <xsl:for-each select="tokenize($sensorIDs,',')">
-                            <sensorID><xsl:value-of select="." /></sensorID>
-                        </xsl:for-each>
-                    </DescribeTasking>
-                </ctl:body>
-                <parsers:XMLValidatingParser>
-                    <parsers:schemas>
-                        <parsers:schema type="url">
-                            <!--<xsl:choose>
-                                <xsl:when test="response//sps:DescribeTaskingRequestResponse">-->
-                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
-                                        <ctl:with-param name="schemaName" select="string('spsDescribeTaskingRequestResponse.xsd')" />
-                                    </ctl:call-function>
-                                <!--</xsl:when>
-                                <xsl:otherwise>-->
-                        </parsers:schema>
-                        <parsers:schema type="url">
-                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
-                                        <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
-                                    </ctl:call-function>
-                                <!--</xsl:otherwise>
-                            </xsl:choose>-->
-                        </parsers:schema>
-                    </parsers:schemas>
-                </parsers:XMLValidatingParser>
-            </ctl:request>
+            <xsl:variable name="describeTaskingResponse">
+                <ctl:request>
+                    <ctl:url>
+                        <xsl:value-of select="$describeTaskingURL" />
+                    </ctl:url>
+                    <ctl:method>post</ctl:method>
+                    <ctl:body>
+                        <DescribeTasking xmlns="http://www.opengis.net/sps" service="SPS" version="1.0.0">
+                            <xsl:for-each select="tokenize($sensorIDs,',')">
+                                <sensorID><xsl:value-of select="." /></sensorID>
+                            </xsl:for-each>
+                        </DescribeTasking>
+                    </ctl:body>
+                    <parsers:XMLValidatingParser>
+                        <parsers:schemas>
+                            <parsers:schema type="url">
+                                <!--<xsl:choose>
+                                    <xsl:when test="response//sps:DescribeTaskingRequestResponse">-->
+                                        <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                            <ctl:with-param name="schemaName" select="string('spsDescribeTaskingRequestResponse.xsd')" />
+                                        </ctl:call-function>
+                                    <!--</xsl:when>
+                                    <xsl:otherwise>-->
+                            </parsers:schema>
+                            <parsers:schema type="url">
+                                        <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                            <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
+                                        </ctl:call-function>
+                                    <!--</xsl:otherwise>
+                                </xsl:choose>-->
+                            </parsers:schema>
+                        </parsers:schemas>
+                    </parsers:XMLValidatingParser>
+                </ctl:request>
+            </xsl:variable>
+            <xsl:value-of select="$describeTaskingResponse" />
         </ctl:code>
     </ctl:function>
     
@@ -121,44 +127,47 @@
         <ctl:return>The response from the server</ctl:return>
         <ctl:description>Executes a DescribeResultAccess request</ctl:description>
         <ctl:code>
-            <ctl:request>
-                <ctl:url>
-                    <xsl:value-of select="$describeResultAccessURL" />
-                </ctl:url>
-                <ctl:method>post</ctl:method>
-                <ctl:body>
-                    <DescribeResultAccess xmlns="http://www.opengis.net/sps" service="SPS" version="1.0.0">
-                        <xsl:choose>
-                            <xsl:when test="$type='sensorID'">
-                                <sensorID><xsl:value-of select="$sensorOrTaskID" /></sensorID>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <taskID><xsl:value-of select="$sensorOrTaskID" /></taskID>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </DescribeResultAccess>
-                </ctl:body>
-                <parsers:XMLValidatingParser>
-                    <parsers:schemas>
-                        <parsers:schema type="url">
-                            <!--<xsl:choose>
-                                <xsl:when test="response//sps:DescribeTaskingRequestResponse">-->
-                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
-                                        <ctl:with-param name="schemaName" select="string('spsDescribeResultAccessRequestResponse.xsd')" />
-                                    </ctl:call-function>
-                                <!--</xsl:when>
-                                <xsl:otherwise>-->
-                        </parsers:schema>
-                        <parsers:schema type="url">
-                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
-                                        <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
-                                    </ctl:call-function>
-                                <!--</xsl:otherwise>
-                            </xsl:choose>-->
-                        </parsers:schema>
-                    </parsers:schemas>
-                </parsers:XMLValidatingParser>
-            </ctl:request>
+            <xsl:variable name="describeResultAccessRequestResponse">
+                <ctl:request>
+                    <ctl:url>
+                        <xsl:value-of select="$describeResultAccessURL" />
+                    </ctl:url>
+                    <ctl:method>post</ctl:method>
+                    <ctl:body>
+                        <DescribeResultAccess xmlns="http://www.opengis.net/sps" service="SPS" version="1.0.0">
+                            <xsl:choose>
+                                <xsl:when test="$type='sensorID'">
+                                    <sensorID><xsl:value-of select="$sensorOrTaskID" /></sensorID>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <taskID><xsl:value-of select="$sensorOrTaskID" /></taskID>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </DescribeResultAccess>
+                    </ctl:body>
+                    <parsers:XMLValidatingParser>
+                        <parsers:schemas>
+                            <parsers:schema type="url">
+                                <!--<xsl:choose>
+                                    <xsl:when test="response//sps:DescribeTaskingRequestResponse">-->
+                                        <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                            <ctl:with-param name="schemaName" select="string('spsDescribeResultAccessRequestResponse.xsd')" />
+                                        </ctl:call-function>
+                                    <!--</xsl:when>
+                                    <xsl:otherwise>-->
+                            </parsers:schema>
+                            <parsers:schema type="url">
+                                        <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                            <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
+                                        </ctl:call-function>
+                                    <!--</xsl:otherwise>
+                                </xsl:choose>-->
+                            </parsers:schema>
+                        </parsers:schemas>
+                    </parsers:XMLValidatingParser>
+                </ctl:request>
+            </xsl:variable>
+            <xsl:value-of select="$describeResultAccessRequestResponse" />
         </ctl:code>
     </ctl:function>
     
@@ -186,11 +195,12 @@
         <ctl:return>True/false depending on whether or not the exception report is valid</ctl:return>
         <ctl:description></ctl:description>
         <ctl:code>
-            <xsl:variable name="exceptionElement" select="$exceptionReport/ows:ExceptionReport/ows:Exception" />
+            <xsl:variable name="exceptionElement" select="$exceptionReport//ows:ExceptionReport/ows:Exception" />
             <xsl:variable name="exceptionCodeValue" select="$exceptionElement/@exceptionCode" />
             <xsl:variable name="locatorValue" select="$exceptionElement/@locator" />
+            <!--<ctl:message>Checking that <xsl:value-of select="$exceptionCodeValue" /> matches <xsl:value-of select="$exceptionCodeToCheck" /> and <xsl:value-of select="$locatorValue" /> matches <xsl:value-of select="$locatorToCheck" />.</ctl:message>-->
             <xsl:choose>
-                <xsl:when test="$locatorValue='*'">
+                <xsl:when test="$locatorToCheck='*'">
                     <xsl:value-of select="$exceptionElement and ($exceptionCodeToCheck=$exceptionCodeValue) and (string-length(normalize-space($locatorValue))>0)" />
                 </xsl:when>
                 <xsl:otherwise>
@@ -347,7 +357,7 @@
         <ctl:return>True/False depending on whether or not the URN is valid</ctl:return>
         <ctl:description>Determines if a URN is valid</ctl:description>
         <ctl:code>
-            <xsl:value-of select="string-length($urnString)>0 and matches($urnString,'')" /><!--[Uu][Rr][Nn]:([^\s.]+|\.(?!\s))+-->
+            <xsl:value-of select="(string-length($urnString)>0) and (matches($urnString,'^urn:ogc:def:?:\w+:?:\w+:?:\w+:?:\w+','i')) and (count(tokenize($urnString,':'))=6)" /><!--[Uu][Rr][Nn]:([^\s.]+|\.(?!\s))+-->
         </ctl:code>
     </ctl:function>
     

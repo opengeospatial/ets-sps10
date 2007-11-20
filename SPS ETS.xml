@@ -212,23 +212,11 @@
                     3.)  If the response validates, then check that the exceptionCode value is "InvalidRequest"
                 -->
         <ctl:message>Issuing an invalid request to:  <xsl:value-of select="$serviceURL" /></ctl:message>
-        <xsl:variable name="blah">
-            <ctl:request>
-                <ctl:url>
-                    <xsl:value-of select="$serviceURL" />
-                </ctl:url>
-                <ctl:method>get</ctl:method>
-                <ctl:param name="request">GetCapabilities</ctl:param>
-                <ctl:param name="service">SPS</ctl:param>
-            </ctl:request>
-        </xsl:variable>
-        <ctl:message><xsl:value-of select="$blah/*" /></ctl:message>
         <xsl:variable name="invalidRequestResponse">
             <ctl:call-function name="spsFunctions:invalidRequest">
                 <ctl:with-param name="methodURL" select="$serviceURL" />
                 <ctl:with-param name="postBody">
-                    <Test>
-                    </Test>
+                    Test
                 </ctl:with-param>
             </ctl:call-function>
         </xsl:variable>
@@ -246,7 +234,7 @@
                     </ctl:call-function>
                 </xsl:variable>
                 <xsl:if test="not(isCorrect)">
-                    <ctl:message>The response to an invalid request was expected to be an exception report with an exceptionCode of "InvalidRequest" and a locator value containing the validation issue.  The returned exception report was:  "<xsl:value-of select="$invalidRequestResponse" />"</ctl:message>
+                    <ctl:message>The response to an invalid request was expected to be an exception report with an exceptionCode of "InvalidRequest" and a locator value containing the validation issue.  The returned exception report was:  "<xsl:value-of select="$invalidRequestResponse/*" />"</ctl:message>
                     <ctl:fail />
                 </xsl:if>
             </xsl:otherwise>
@@ -336,27 +324,10 @@
             <!---->
             <xsl:if test="$submitElement">
                 <xsl:variable name="submitURL" select="$submitElement/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
-                <ctl:call-test name="sps:core-SPS.Submit-RequestInvalidNotificationTarget.1">
+                <ctl:call-test name="sps:core-SPS.Submit-RequestMain.1">
                     <ctl:with-param name="submitURL" select="$submitURL" />
                 </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidSensorID.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidParameters.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersMissingRequiredParameters.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersExpectedResponse.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestValidTimeFrame.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-ResponseMain.1">
-                    <ctl:with-param name="submitURL" select="$submitURL" />
-                </ctl:call-test>
+                
                 <!--
                                 <ctl:call-test name="sps:core-SPS.Submit-ResponseValidTaskID.1">
                                   <ctl:with-param name="submitURL" select="$submitURL" />
@@ -449,6 +420,7 @@
                     3.)  HTTP GET request missing the request parameter
                 -->
         <!--GetCapabilities request with no service and no request parameter-->
+        <ctl:message>Issuing a GetCapabilities request with no service parameter and no request parameter provided.</ctl:message>
         <xsl:variable name="requestNoServiceNoRequest">
             <ctl:request>
                 <ctl:url>
@@ -456,7 +428,7 @@
                 </ctl:url>
                 <ctl:method>get</ctl:method>
                 <!--Parser to get response-->
-                <parsers:XMLValidatingParser>
+                <!--<parsers:XMLValidatingParser>
                     <parsers:schemas>
                         <parsers:schema type="url">
                             <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -464,12 +436,14 @@
                             </ctl:call-function>
                         </parsers:schema>
                     </parsers:schemas>
-                </parsers:XMLValidatingParser>
+                </parsers:XMLValidatingParser>-->
                 <!--<ctl:call-test name="sps:general-SPS.General-ValidResponse.1">
                                     <ctl:with-param name="responseDocument" select="$response//content/*" />
                                     </ctl:call-test>-->
             </ctl:request>
         </xsl:variable>
+        <ctl:message>The server returned the following response:  <xsl:value-of select="$requestNoServiceNoRequest/*" /></ctl:message>
+        <ctl:message>Issuing a GetCapabilities request with no service parameter provided.</ctl:message>
         <!--GetCapabilities request with no service parameter-->
         <xsl:variable name="requestNoService">
             <ctl:request>
@@ -479,7 +453,7 @@
                 <ctl:method>get</ctl:method>
                 <ctl:param name="request">GetCapabilities</ctl:param>
                 <!--Parser to get response-->
-                <parsers:XMLValidatingParser>
+                <!--<parsers:XMLValidatingParser>
                     <parsers:schemas>
                         <parsers:schema type="url">
                             <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -487,12 +461,14 @@
                             </ctl:call-function>
                         </parsers:schema>
                     </parsers:schemas>
-                </parsers:XMLValidatingParser>
+                </parsers:XMLValidatingParser>-->
                 <!--<ctl:call-test name="sps:general-SPS.General-ValidResponse.1">
                                     <ctl:with-param name="responseDocument" select="$response//content/*" />
                                     </ctl:call-test>-->
             </ctl:request>
         </xsl:variable>
+        <ctl:message>The server returned the following response:  <xsl:value-of select="$requestNoService/*" /></ctl:message>
+        <ctl:message>Issuing a GetCapabilities request with no request parameter provided.</ctl:message>
         <!--GetCapabilities request with no request parameter-->
         <xsl:variable name="requestNoRequest">
             <ctl:request>
@@ -502,7 +478,7 @@
                 <ctl:method>get</ctl:method>
                 <ctl:param name="service">SPS</ctl:param>
                 <!--Parser to get response-->
-                <parsers:XMLValidatingParser>
+                <!--<parsers:XMLValidatingParser>
                     <parsers:schemas>
                         <parsers:schema type="url">
                             <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -510,55 +486,62 @@
                             </ctl:call-function>
                         </parsers:schema>
                     </parsers:schemas>
-                </parsers:XMLValidatingParser>
+                </parsers:XMLValidatingParser>-->
                 <!--<ctl:call-test name="sps:general-SPS.General-ValidResponse.1">
                                     <ctl:with-param name="responseDocument" select="$response//content/*" />
                                     </ctl:call-test>-->
             </ctl:request>
         </xsl:variable>
         <!--Check the responses to each of the above requests to ensure that they are valid-->
+        <ctl:message>The server returned the following response:  <xsl:value-of select="$requestNoRequest/*" /></ctl:message>
         <xsl:choose>
-            <xsl:when test="not($requestNoServiceNoRequest/*) or not($requestNoService) or not($requestNoRequest)">
+            <xsl:when test="not($requestNoServiceNoRequest/*) or not($requestNoService/*) or not($requestNoRequest/*)">
                 <ctl:message>The server did not return a response or the response was not a valid exception.</ctl:message>
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
                 <xsl:if test="$requestNoServiceNoRequest/*">
+                    <ctl:message>Checking the validity of the response to a GetCapabilities request with no service and no request parameters.</ctl:message>
                     <xsl:variable name="isCorrect">
                         <ctl:call-function name="spsFunctions:checkExceptionReport">
-                            <ctl:with-param name="exceptionReport" select="$requestNoServiceNoRequest" />
-                            <ctl:with-param name="exceptionCodeToCheck" select="MissingParameterValue" />
-                            <ctl:with-param name="locatorToCheck" select="REQUEST,SERVICE" /><!--TODO:  Figure out what the locator should be-->
+                            <ctl:with-param name="exceptionReport" select="$requestNoServiceNoRequest/*" />
+                            <ctl:with-param name="exceptionCodeToCheck" select="string('MissingParameterValue')" />
+                            <ctl:with-param name="locatorToCheck" select="string('REQUEST,SERVICE')" />
                         </ctl:call-function>
                     </xsl:variable>
-                    <xsl:if test="not($isCorrect)">
-                        <ctl:message>The server did not return the expected exception report response to a GetCapabilities request with no request and no service parameters specified.</ctl:message>
+                    <ctl:message>The validity check returned:  <xsl:value-of select="$isCorrect" /></ctl:message>
+                    <xsl:if test="not(boolean($isCorrect))">
+                        <ctl:message>The server did not return the expected exception report response to a GetCapabilities request with no request and no service parameters specified.  "<xsl:value-of select="$requestNoServiceNoRequest" />" was returned instead.</ctl:message>
                         <ctl:fail />
                     </xsl:if>
                 </xsl:if>
                 <xsl:if test="$requestNoService/*">
+                    <ctl:message>Checking the validity of the response to a GetCapabilities request with no service parameter.</ctl:message>
                     <xsl:variable name="isCorrect">
                         <ctl:call-function name="spsFunctions:checkExceptionReport">
-                            <ctl:with-param name="exceptionReport" select="$requestNoService" />
-                            <ctl:with-param name="exceptionCodeToCheck" select="MissingParameterValue" />
-                            <ctl:with-param name="locatorToCheck" select="Service" />
+                            <ctl:with-param name="exceptionReport" select="$requestNoService/*" />
+                            <ctl:with-param name="exceptionCodeToCheck" select="string('MissingParameterValue')" />
+                            <ctl:with-param name="locatorToCheck" select="string('Service')" />
                         </ctl:call-function>
                     </xsl:variable>
-                    <xsl:if test="not($isCorrect)">
-                        <ctl:message>The server did not return the expected exception report response to a GetCapabilities request with no service parameter specified.</ctl:message>
+                    <ctl:message>The validity check returned:  <xsl:value-of select="$isCorrect" /></ctl:message>
+                    <xsl:if test="not(boolean($isCorrect))">
+                        <ctl:message>The server did not return the expected exception report response to a GetCapabilities request with no service parameter specified.  "<xsl:value-of select="$requestNoService" />" was returned instead.</ctl:message>
                         <ctl:fail />
                     </xsl:if>
                 </xsl:if>
                 <xsl:if test="$requestNoRequest/*">
+                    <ctl:message>Checking the validity of the response to a GetCapabilities request with no request parameter.</ctl:message>
                     <xsl:variable name="isCorrect">
                         <ctl:call-function name="spsFunctions:checkExceptionReport">
-                            <ctl:with-param name="exceptionReport" select="$requestNoServiceNoRequest" />
-                            <ctl:with-param name="exceptionCodeToCheck" select="MissingParameterValue" />
-                            <ctl:with-param name="locatorToCheck" select="Request" />
+                            <ctl:with-param name="exceptionReport" select="$requestNoRequest/*" />
+                            <ctl:with-param name="exceptionCodeToCheck" select="string('MissingParameterValue')" />
+                            <ctl:with-param name="locatorToCheck" select="string('Request')" />
                         </ctl:call-function>
                     </xsl:variable>
-                    <xsl:if test="not($isCorrect)">
-                        <ctl:message>The server did not return the expected exception report response to a GetCapabilities request with no request parameter specified.</ctl:message>
+                    <ctl:message>The validity check returned:  <xsl:value-of select="$isCorrect" /></ctl:message>
+                    <xsl:if test="not(boolean($isCorrect))">
+                        <ctl:message>The server did not return the expected exception report response to a GetCapabilities request with no request parameter specified.  "<xsl:value-of select="$requestNoRequest" />" was returned instead.</ctl:message>
                         <ctl:fail />
                     </xsl:if>
                 </xsl:if>
@@ -586,7 +569,7 @@
                 <ctl:param name="request">GetCapabilities</ctl:param>
                 <ctl:param name="service"><xsl:value-of select="$invalidServiceParameterValue" /></ctl:param>
                 <!--Parser to get response-->
-                <parsers:XMLValidatingParser>
+                <!--<parsers:XMLValidatingParser>
                     <parsers:schemas>
                         <parsers:schema type="url">
                             <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -594,7 +577,7 @@
                             </ctl:call-function>
                         </parsers:schema>
                     </parsers:schemas>
-                </parsers:XMLValidatingParser>
+                </parsers:XMLValidatingParser>-->
             </ctl:request>
         </xsl:variable>
         <xsl:choose>
@@ -603,14 +586,16 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
+                <ctl:message>Checking the validity of the response "<xsl:value-of select="$requestInvalidServiceKeyValue" />" to a GetCapabilities request with an invalid service value of "<xsl:value-of select="$invalidServiceParameterValue" />".</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
                         <ctl:with-param name="exceptionReport" select="$requestInvalidServiceKeyValue" />
-                        <ctl:with-param name="exceptionCodeToCheck" select="InvalidParameterValue" />
-                        <ctl:with-param name="locatorToCheck" select="Service" />
+                        <ctl:with-param name="exceptionCodeToCheck" select="string('InvalidParameterValue')" />
+                        <ctl:with-param name="locatorToCheck" select="string('Service')" />
                     </ctl:call-function>
                 </xsl:variable>
-                <xsl:if test="not(isCorrect)">
+                <ctl:message>The validity check returned:  <xsl:value-of select="$isCorrect" /></ctl:message>
+                <xsl:if test="not(boolean($isCorrect))">
                     <ctl:message>The response to a GetCapabilities request with an invalid service parameter (<xsl:value-of select="$invalidServiceParameterValue" />) does not match the expected response.</ctl:message>
                     <ctl:fail />
                 </xsl:if>
@@ -638,7 +623,7 @@
                 <ctl:param name="request"><xsl:value-of select="$invalidRequestParameterValue" /></ctl:param>
                 <ctl:param name="service">SPS</ctl:param>
                 <!--Parser to get response-->
-                <parsers:XMLValidatingParser>
+                <!--<parsers:XMLValidatingParser>
                     <parsers:schemas>
                         <parsers:schema type="url">
                             <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -646,7 +631,7 @@
                             </ctl:call-function>
                         </parsers:schema>
                     </parsers:schemas>
-                </parsers:XMLValidatingParser>
+                </parsers:XMLValidatingParser>-->
             </ctl:request>
         </xsl:variable>
         <xsl:choose>
@@ -658,11 +643,11 @@
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
                         <ctl:with-param name="exceptionReport" select="$requestInvalidRequestKeyValue" />
-                        <ctl:with-param name="exceptionCodeToCheck" select="InvalidParameterValue" />
-                        <ctl:with-param name="locatorToCheck" select="Request" />
+                        <ctl:with-param name="exceptionCodeToCheck" select="string('InvalidParameterValue')" />
+                        <ctl:with-param name="locatorToCheck" select="string('Request')" />
                     </ctl:call-function>
                 </xsl:variable>
-                <xsl:if test="not(isCorrect)">
+                <xsl:if test="not(boolean($isCorrect))">
                     <ctl:message>The response to a GetCapabilities request with an invalid request parameter (<xsl:value-of select="$invalidRequestParameterValue" />) does not match the expected response.</ctl:message>
                     <ctl:fail />
                 </xsl:if>
@@ -682,6 +667,7 @@
                             2.) Validate response against the GetCapabilities schema.  Call sps:general-SPS.General-ValidResponse.1
                             3.) Loop through the operations listed in the OperationsMetadata section of the GetCapabilities response and store the URL for each operation (if it exists) for use in later tests.  Fail if one of the mandatory operations is missing.
                         -->
+              <ctl:message>Issuing a valid GetCapabilities request to <xsl:value-of select="$serviceURL" /></ctl:message>
               <xsl:variable name="getCapabilitiesResponse">
                 <ctl:request>
                     <ctl:url>
@@ -691,7 +677,7 @@
                     <ctl:param name="request">GetCapabilities</ctl:param>
                     <ctl:param name="service">SPS</ctl:param>
                     <!--Parser to get response-->
-                    <parsers:XMLValidatingParser>
+                    <!--<parsers:XMLValidatingParser>
                         <parsers:schemas>
                             <parsers:schema type="url">
                                 <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -699,9 +685,10 @@
                             </ctl:call-function>
                             </parsers:schema>
                         </parsers:schemas>
-                    </parsers:XMLValidatingParser>
+                    </parsers:XMLValidatingParser>-->
                 </ctl:request>
               </xsl:variable>
+              <ctl:message>The server responded to a valid GetCapabilities request with the following message:  <xsl:value-of select="$getCapabilitiesResponse/*" /></ctl:message>
               <xsl:choose>
                 <xsl:when test="not($getCapabilitiesResponse/*)">
                     <ctl:message>The server did not return a response to a valid GetCapabilities request, or the response was not a valid SPS Capabilities document.</ctl:message>
@@ -744,25 +731,25 @@
                 <xsl:variable name="submitElement" select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='Submit']" />
                 <xsl:variable name="describeResultAccessElement" select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='DescribeResultAccess']" />
                 <!--Check for a GetCapabilities operation-->
-                    <xsl:if test="not($getCapabilitiesElement)">
-                        <ctl:message>The GetCapabilities operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
-                        <ctl:fail />
-                    </xsl:if>
+                <xsl:if test="not($getCapabilitiesElement/*)">
+                    <ctl:message>The GetCapabilities operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
+                    <ctl:fail />
+                </xsl:if>
                 <!--Check for a DescribeTasking operation--> 
-                    <xsl:if test="not($describeTaskingElement)">
-                        <ctl:message>The DescribeTasking operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
-                        <ctl:fail />
-                    </xsl:if>
+                <xsl:if test="not($describeTaskingElement/*)">
+                    <ctl:message>The DescribeTasking operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
+                    <ctl:fail />
+                </xsl:if>
                 <!--Check for a Submit operation-->
-                    <xsl:if test="not($submitElement)">
-                        <ctl:message>The Submit operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
-                        <ctl:fail />
-                    </xsl:if>
+                <xsl:if test="not($submitElement/*)">
+                    <ctl:message>The Submit operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
+                    <ctl:fail />
+                </xsl:if>
                 <!--Check for a DescribeResultAccess operation--> 
-                    <xsl:if test="not($describeResultAccessElement)">
-                        <ctl:message>The DescribeResultAccess operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
-                        <ctl:fail />
-                    </xsl:if>
+                <xsl:if test="not($describeResultAccessElement/*)">
+                    <ctl:message>The DescribeResultAccess operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
+                    <ctl:fail />
+                </xsl:if>
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.GetCapabilities-ResponseOperationMetadataOptionalOperations.1">
@@ -775,6 +762,10 @@
         <!--
                     1.)  Using the GetCapabilities response from above, check to see if the additional methods listed in the OperationsMetadata section are valid SPS method names.
                 -->
+        <xsl:for-each select="$getCapabilitiesResponse//ows:OperationsMetadata//ows:Operation">
+            <xsl:variable name="operationName" select="@name" />
+            <!--TODO:  Complete this test.-->
+        </xsl:for-each>
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.GetCapabilities-ResponseContentsSensorOfferings.1">
@@ -788,10 +779,10 @@
                     1.)  Using the GetCapabilities response from above, loop through the SensorOffering sub-elements to ensure that each sub-element contains a value.
                 -->
         <xsl:for-each select="$getCapabilitiesResponse//sps:Contents/sps:SensorOfferingList/sps:SensorOffering">
-            <xsl:variable name="areaOfService" select="/sps:AreaOfService" />
-            <xsl:variable name="phenomenon" select="normalize-space(/sps:Phenomenon)" />
-            <xsl:variable name="sensorDefinition" select="normalize-space(/sps:SensorDefinition)" />
-            <xsl:variable name="sensorID" select="normalize-space(/sps:SensorID)" />
+            <xsl:variable name="areaOfService" select="sps:AreaOfService" />
+            <xsl:variable name="phenomenon" select="normalize-space(sps:Phenomenon)" />
+            <xsl:variable name="sensorDefinition" select="normalize-space(sps:SensorDefinition)" />
+            <xsl:variable name="sensorID" select="normalize-space(sps:SensorID)" />
             <!--Check AreaOfService (for a child element or more?)-->
             <xsl:if test="not($areaOfService/*)">
                 <!--TODO: Check AreaOfService-->
@@ -831,14 +822,16 @@
                     5.)  If the response validates against its associated schema then pass, else fail.
                     6.)  Check if the sensorID in the SensorML or TML document matches the requested SensorID?
                 -->
-        <xsl:for-each select="$getCapabilitiesResponse/sps:Contents/sps:SensorOfferingList/sps:SensorOffering">
+        <xsl:for-each select="$getCapabilitiesResponse//sps:Contents/sps:SensorOfferingList/sps:SensorOffering">
             <!--Store the associated SensorID element value for later use-->
-            <xsl:variable name="sensorID" select="/sps:SensorID" />
+            <xsl:variable name="sensorID" select="sps:SensorID" />
+            <xsl:variable name="sensorDefinition" select="normalize-space(sps:SensorDefinition)" />
             <!--Create a request based on the value in the SensorDefiniton element and store the response in a variable-->
+            <ctl:message>Issuing a request for the sensor definition of "<xsl:value-of select="$sensorID" />" to the following URL:  <xsl:value-of select="$sensorDefinition" /></ctl:message>
             <xsl:variable name="sensorDefinitionResponse">
                 <ctl:request>
                     <ctl:url>
-                        <xsl:value-of select="normalize-space(/sps:SensorDefinition)" />
+                        <xsl:value-of select="$sensorDefinition" />
                     </ctl:url>
                     <ctl:method>get</ctl:method>
                     <!--Parser to get response-->
@@ -864,6 +857,7 @@
                     </parsers:XMLValidatingParser>
                 </ctl:request>
             </xsl:variable>
+            <ctl:message>The server returned the following response:  <xsl:value-of select="$sensorDefinitionResponse/*" /></ctl:message>
             <xsl:choose>
                 <xsl:when test="not($sensorDefinitionResponse/*)">
                     <ctl:message>The advertised value in the SensorDefinition element for <xsl:value-of select="$sensorID" /> did not return a response or did not link to a valid SensorML or TML document.</ctl:message>
@@ -872,8 +866,8 @@
                 <xsl:otherwise>
                     <!--TODO:  Verify that the ID of the sensor matches the requested sensorID-->
                     <xsl:choose>
-                        <xsl:when test="$sensorDefinitionResponse/sml:SensorML">
-                            <xsl:variable name="responseSensorID" select="$sensorDefinitionResponse//sml:Term[contains(@definition,':sensorID')]/sml:value" />
+                        <xsl:when test="$sensorDefinitionResponse//sml:SensorML">
+                            <xsl:variable name="responseSensorID" select="$sensorDefinitionResponse//sml:Term[contains(@definition,':uniqueID')]/sml:value" />
                             <xsl:if test="not($responseSensorID)">
                                 <ctl:message>There was no sensorID specified in the returned SensorML document.</ctl:message>
                                 <ctl:fail />
@@ -883,8 +877,8 @@
                                 <ctl:fail />
                             </xsl:if>
                         </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:variable name="responseSensorID" select="$sensorDefinitionResponse//tml:tml/@tml:uid" />
+                        <xsl:when test="$sensorDefinitionResponse//tml:tml">
+                            <xsl:variable name="responseSensorID" select="$sensorDefinitionResponse//tml:tml/@uid" />
                             <xsl:if test="not($responseSensorID)">
                                 <ctl:message>There was no sensorID specified in the returned TML document.</ctl:message>
                                 <ctl:fail />
@@ -893,6 +887,10 @@
                                 <ctl:message>The sensorID in the returned TML document (<xsl:value-of select="$responseSensorID" />) does not match the sensorID specified in the SensorOffering (<xsl:value-of select="$sensorID" />).</ctl:message>
                                 <ctl:fail />
                             </xsl:if>   
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <ctl:message>The returned response did not validate according to the SensorML or TML schema.</ctl:message>
+                            <ctl:fail />
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:otherwise>
@@ -957,7 +955,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="$describeTaskingResponse/ows:ExceptionReport/ows:Exception">
+                <xsl:for-each select="$describeTaskingResponse//ows:ExceptionReport/ows:Exception">
                     <xsl:variable name="locatorValue" select="@locator" />
                     <xsl:if test="not(@exceptionCode='UnknownSensorID')">
                         <ctl:message>An exceptionCode of UnknownSensorID was expected in the response.  "<xsl:value-of select="@exceptionCode" />" was provided instead.</ctl:message>
@@ -1006,7 +1004,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="$describeTaskingResponse/ows:ExceptionReport/ows:Exception">
+                <xsl:for-each select="$describeTaskingResponse//ows:ExceptionReport/ows:Exception">
                     <xsl:variable name="locatorValue" select="@locator" />
                     <xsl:if test="not(@exceptionCode='InvalidParameterValue')">
                         <ctl:message>An exceptionCode of InvalidParameterValue was expected in the response</ctl:message>
@@ -1029,7 +1027,7 @@
       <ctl:link title="Verify a DescribeTasking response."></ctl:link>
       <ctl:code>
         <!--Loop through the SensorID values in the Capabilities document-->
-        <xsl:for-each select="$getCapabilitiesResponse/sps:Contents/sps:SensorOfferingList/sps:SensorOffering/sps:SensorID">
+        <xsl:for-each select="$getCapabilitiesResponse//sps:Contents/sps:SensorOfferingList/sps:SensorOffering/sps:SensorID">
             <!--Call DescribeTasking for each SensorID-->
             <xsl:variable name="describeTaskingResponse">
                 <ctl:call-function name="spsFunctions:describeTaskingRequest">
@@ -1198,7 +1196,7 @@
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="not($describeTaskingResponse/*)">
-                <ctl:message></ctl:message>
+                <ctl:message>Unable to construct a Submit request form containing taskable parameters, since the server did not return a valid response to the DescribeTasking request for "<xsl:value-of select="$selectedSensorID" />".</ctl:message>
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
@@ -1233,7 +1231,7 @@
                                     <td>Max</td>
                                     <td>Value</td>
                                 </th>
-                                <!--<xsl:for-each select="$describeTaskingResponse/sps:taskingDescriptor/sps:InputDescriptor">
+                                <xsl:for-each select="$describeTaskingResponse/sps:taskingDescriptor/sps:InputDescriptor">
                                     <xsl:variable name="parameterID" select="@parameterID" />
                                     <xsl:variable name="definitionNode" select="/sps:definition/sps:commonData/node()" />
                                     <xsl:variable name="constraintNode" select="$definitionNode/swe:constraint" />
@@ -1248,7 +1246,7 @@
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Max')" /></xsl:attribute><xsl:value-of select="$constraintNode/swe:AllowedValues/swe:max" /></td>
                                         <td><input type="text"><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute></input></td>
                                     </tr>
-                                </xsl:for-each>-->
+                                </xsl:for-each>
                              </table>
                           </blockquote>
                           <input type="submit" value="Submit"/>
@@ -1256,96 +1254,152 @@
                     </ctl:form>
                 </xsl:variable>
                 <!--TODO:  Add in parameter checking somehow?-->
+                <xsl:variable name="submitRequest">
+                    <Submit xmlns="http://www.opengis.net/sps" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe" service="SPS" version="1.0.0">
+                        <notificationTarget>
+                            <notificationID><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsUserID']" /></notificationID>
+                            <notificationURL><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsURL']" /></notificationURL>
+                        </notificationTarget>
+                        <sensorParam>
+                            <sensorID><xsl:value-of select="$selectedSensorID" /></sensorID>
+                            <parameters>
+                                <xsl:for-each select="$enterTaskingOptionsForm//table/tr[contains(@id,'_Row')]">
+                                    <xsl:if test="(td[contains(@id,'_Use')]='required') or (string-length(normalize-space(td[contains(@id,'_Value')]))>0)">
+                                        <InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="td[contains(@id,'_ID')]" /></xsl:attribute>
+                                            <value>
+                                                <xsl:variable name="elementName" select="td[contains(@id,'_Type')]/text()" />
+                                                <xsl:variable name="elementValue" select="td[contains(@id,'_Value')]/text()" />
+                                                <xsl:element name="{$elementName}"><xsl:value-of select="$elementValue" /></xsl:element>
+                                            </value>
+                                        </InputParameter>
+                                    </xsl:if>
+                                </xsl:for-each>
+                            </parameters>
+                        </sensorParam>
+                        <timeFrame>
+                            <gml:TimeInstant>
+                                <gml:timePosition>
+                                    <ctl:call-function name="spsFunctions:getCurrentDateTime" />
+                                </gml:timePosition>
+                            </gml:TimeInstant>
+                        </timeFrame>
+                    </Submit>
+                </xsl:variable>
+                <ctl:message>Submit request constructed:  <xsl:value-of select="$submitRequest" /></ctl:message>
                 <!--Build a Submit request with the provided input from the previously displayed form-->
-                <ctl:request>
-                    <ctl:url>
-                        <xsl:value-of select="$submitURL" />
-                    </ctl:url>
-                    <ctl:method>post</ctl:method>
-                    <ctl:body>
-                        <!--<Submit xmlns="http://www.opengis.net/sps" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe" service="SPS" version="1.0.0">
-                            <notificationTarget>
-                                <notificationID><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsUserID']" /></notificationID>
-                                <notificationURL><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsURL']" /></notificationURL>
-                            </notificationTarget>
-                            <sensorParam>
-                                <sensorID><xsl:value-of select="$selectedSensorID" /></sensorID>
-                                <parameters>
-                                    <xsl:for-each select="$enterTaskingOptionsForm/table//tr[contains(@id,'_Row')]">
-                                        <xsl:if test="(td[contains(@id,'_Use')]='required') or (string-length(normalize-space(td[contains(@id,'_Value']))>0)">
-                                            <InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="td[contains(@id,'_ID']" /></xsl:attribute>
-                                                <value>
-                                                    <xsl:value-of select="concat('<',td[contains(@id,'_Type')],'>')" /><xsl:value-of select="td[contains(@id,'_Value')]" /><xsl:value-of select="concat('</',td[contains(@id,'_Type')],'>')" />
-                                                </value>
-                                            </InputParameter>
-                                        </xsl:if>
-                                    </xsl:for-each>
-                                </parameters>
-                            </sensorParam>
-                            <timeFrame>
-                                <gml:TimeInstant>
-                                    <gml:timePosition>
-                                        <ctl:call-function name="getCurrentTime" />
-                                    </gml:timePosition>
-                                </gml:TimeInstant>
-                            </timeFrame>
-                        </Submit>-->
-                    </ctl:body>
-                    <parsers:XMLValidatingParser>
-                        <parsers:schemas>
-                            <parsers:schema type="url">
-                                <!--<xsl:choose>
-                                                                     <xsl:when test="">
-                                                                     </xsl:when>
-                                                                     <xsl:otherwise>
-                                                                     </xsl:otherwise>
-                                                                     </xsl:choose>-->
-                            </parsers:schema>
-                        </parsers:schemas>
-                    </parsers:XMLValidatingParser>
-                </ctl:request>
+                <xsl:variable name="submitResponse">
+                    <ctl:request>
+                        <ctl:url>
+                            <xsl:value-of select="$submitURL" />
+                        </ctl:url>
+                        <ctl:method>post</ctl:method>
+                        <ctl:body>
+                            <xsl:value-of select="$submitRequest" />
+                        </ctl:body>
+                        <parsers:XMLValidatingParser>
+                            <parsers:schemas>
+                                <parsers:schema type="url">
+                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                        <ctl:with-param name="schemaName" select="string('spsSubmitRequestResponse.xsd')" />
+                                    </ctl:call-function>
+                                </parsers:schema>
+                                <parsers:schema type="url">
+                                    <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                        <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
+                                    </ctl:call-function>
+                                </parsers:schema>
+                            </parsers:schemas>
+                        </parsers:XMLValidatingParser>
+                    </ctl:request>
+                </xsl:variable>
+                <!--Get the approximate time the request was submitted.  This will be used for later tests-->
+                <xsl:variable name="submitTime">
+                    <ctl:call-function name="spsFunctions:getCurrentDateTime" />
+                </xsl:variable>
+                <ctl:message>Submit request submitted at:  <xsl:value-of select="$submitTime" /></ctl:message>
+                <!--Call the other request tests using the Submit request that was constructed previously-->
+                <ctl:call-test name="sps:core-SPS.Submit-RequestInvalidNotificationTarget.1">
+                    <ctl:with-param name="submitURL" select="$submitURL" />
+                    <ctl:with-param name="submitRequest" select="$submitRequest" />
+                </ctl:call-test>
+                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidSensorID.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequest" />
+                </ctl:call-test>
+                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidParameters.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequest" />
+                </ctl:call-test>
+                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersMissingRequiredParameters.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequest" />
+                </ctl:call-test>
+                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersExpectedResponse.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequest" />
+                  <ctl:with-param name="submitResponse" select="$submitResponse" />
+                </ctl:call-test>
+                <ctl:call-test name="sps:core-SPS.Submit-RequestValidTimeFrame.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequest" />
+                </ctl:call-test>
+                <!--Call the response tests using the Submit response from the user input-->
+                <ctl:call-test name="sps:core-SPS.Submit-ResponseMain.1">
+                    <ctl:with-param name="submitURL" select="$submitURL" />
+                    <ctl:with-param name="submitRequest" select="$submitRequest" />
+                    <ctl:with-param name="submitResponse" select="$submitResponse" />
+                    <ctl:with-param name="submitTime" select="$submitTime" />
+                </ctl:call-test>
             </xsl:otherwise>
         </xsl:choose>
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.Submit-RequestInvalidNotificationTarget.1">
       <ctl:param name="submitURL" />
+      <ctl:param name="submitRequest" />
       <ctl:assertion>Invalid data in the notificationTarget element of a Submit request produces a valid exception message.</ctl:assertion>
       <ctl:comment>Pass if a returned exception message is a valid exception report and has an exceptionCode value that is valid for the Submit operation; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the server handles invalid notification target information correctly.  This includes notificationID being null and notificationURL being unresolvable to a valid WNS.">ATS_URL#SPS.Submit-RequestInvalidNotificationTarget</ctl:link>
       <ctl:code>
-        <!--PUT TEST CODE HERE-->
+        <!--Replace the notificationID in a valid request with an invalid notificationID-->
+        <!--Replace the notificationURL in a valid request with an invalid notificationURL-->
+        <!--Replace the notificationID and notificationURL in a valid request with invalid values-->
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.Submit-RequestSensorParamInvalidSensorID.1">
       <ctl:param name="submitURL" />
+      <ctl:param name="submitRequest" />
       <ctl:assertion>The server returns a valid exception message with a value of UnknownSensorID for the exceptionCode and the unknown sensorID for the locator. </ctl:assertion>
       <ctl:comment>Pass if a returned exception message is a valid exception report and has an exceptionCode value of UnknownSensorID and a locator value listing the unknown sensorID; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the server returns a valid exception message when an invalid sensorID is provided in the request.">ATS_URL#SPS.Submit-RequestSensorParamInvalidSensorID</ctl:link>
       <ctl:code>
-        <!--PUT TEST CODE HERE-->
+        <!--Replace the sensorID in a valid request with an invalid value-->
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.Submit-RequestSensorParamInvalidParameters.1">
       <ctl:param name="submitURL" />
+      <ctl:param name="submitRequest" />
       <ctl:assertion>The server returns a valid Submit response with a status element value of rejected when invalid parameter values are supplied in the request. </ctl:assertion>
       <ctl:comment>Pass if a returned Submit response is valid and the status element has a value of rejected; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the server returns a Submit response of rejected when invalid parameter values are supplied in the request.">ATS_URL#SPS.Submit-RequestSensorParamInvalidParameters</ctl:link>
       <ctl:code>
-        <!--PUT TEST CODE HERE-->
+        <!--Replace the parameterID value(s) in a valid Submit request with invalid values-->
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.Submit-RequestSensorParamParametersMissingRequiredParameters.1">
       <ctl:param name="submitURL" />
+      <ctl:param name="submitRequest" />
       <ctl:assertion>The server returns a valid Submit response with a status element value of incomplete request when required parameters are missing from the request.</ctl:assertion>
       <ctl:comment>Pass if a returned Submit response is valid and the status element has a value of incomplete request; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the server returns a Submit response of incomplete request when required parameters are missing from the request.">ATS_URL#SPS.Submit-RequestSensorParamParametersMissingRequiredParameters</ctl:link>
       <ctl:code>
-        <!--PUT TEST CODE HERE-->
+        <!--Eliminate one or more required parameters from a valid Submit request-->
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.Submit-RequestSensorParamParametersExpectedResponse.1">
       <ctl:param name="submitURL" />
+      <ctl:param name="submitRequest" />
+      <ctl:param name="submitResponse" />
       <ctl:assertion>The server returns a valid Submit response with expected values given the parameter values supplied in the request.</ctl:assertion>
       <ctl:comment>Pass if a returned Submit response is valid and the values for the parameters are expected based on the request; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the server returns an expected Submit response given the parameter values in the request.  Test various parameter combinations.">ATS_URL#SPS.Submit-RequestSensorParamParametersExpectedResponse</ctl:link>
@@ -1355,47 +1409,23 @@
     </ctl:test>
     <ctl:test name="sps:core-SPS.Submit-RequestValidTimeFrame.1">
       <ctl:param name="submitURL" />
+      <ctl:param name="submitRequest" />
       <ctl:assertion>The server returns a valid Submit response with a status element value of rejected when an invalid time value (before the current time, etc.) is supplied in the timeFrame parameter.</ctl:assertion>
       <ctl:comment>Pass if a returned Submit response is valid and the status element has a value of "rejected"; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the server returns a Submit response of rejected when an invalid time value is supplied in the timeFrame parameter.">ATS_URL#SPS.Submit-RequestValidTimeFrame</ctl:link>
       <ctl:code>
-        <!--PUT TEST CODE HERE-->
+        <!--Modify the timeFrame value to occur in the past-->
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.Submit-ResponseMain.1">
       <ctl:param name="submitURL" />
+      <ctl:param name="submitRequest" />
+      <ctl:param name="submitResponse" />
+      <ctl:param name="submitTime" />
       <ctl:assertion>The response to a valid Submit request contains valid values for its sub-elements</ctl:assertion>
       <ctl:comment>Pass if the response is a valid SubmitRequestResponse document and the values of the sub-elements are valid</ctl:comment>
       <ctl:link title="">ATS_URL#SPS.Submit-ResponseMain</ctl:link>
       <ctl:code>
-        <!--
-                    1.)   Valid Submit request
-                    2.)  Validate response against the SubmitRequestResponse schema.
-                    3.)  Check the value in the taskID parameter.
-                -->
-        <xsl:variable name="submitResponse">
-            <ctl:request>
-                <ctl:url>
-                    <xsl:value-of select="submitURL" />
-                </ctl:url>
-                <ctl:method>post</ctl:method>
-                <ctl:body>
-                </ctl:body>
-                    <!--Parser to get response-->
-                    <parsers:XMLValidatingParser>
-                        <parsers:schemas>
-                                    <parsers:schema type="url">
-                                        <ctl:call-function name="spsFunctions:getSchemaLocation">
-                                            <ctl:with-param name="schemaName" select="string('spsSumbitRequestResponse.xsd')" />
-                                        </ctl:call-function>
-                                    </parsers:schema>
-                        </parsers:schemas>
-                    </parsers:XMLValidatingParser>
-            </ctl:request>
-        </xsl:variable>
-        <xsl:variable name="submitTime">
-            <ctl:call-function name="spsFunctions:getCurrentDateTime" />
-        </xsl:variable>
         <xsl:choose>
             <xsl:when test="not($submitResponse/*)">
                 <ctl:message>The server did not return a response for the Submit request, or the response was not valid according to the SubmitRequestResponse schema</ctl:message>
@@ -1670,7 +1700,7 @@
             <ctl:message>The ServiceURL value in a DescribeResultAccess response for sensorID <xsl:value-of select="$requestedSensorID" /> is null.</ctl:message>
             <ctl:fail />
         </xsl:if>
-        <xsl:if test="matches($serviceURL,'')"><!--(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))-->
+        <xsl:if test="matches($serviceURL,'(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&amp;~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&amp;~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))','i')"><!--(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))-->
             <ctl:message>The ServiceURL value in a DescribeResultAccess response for sensorID <xsl:value-of select="$requestedSensorID" /> is not a valid URL</ctl:message>
             <ctl:fail />
         </xsl:if>
