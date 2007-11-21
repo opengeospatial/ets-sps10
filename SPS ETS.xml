@@ -17,7 +17,7 @@
     xmlns:parsers="http://www.occamlab.com/te/parsers" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:spsFunctions="https://cite.opengeospatial.org/sps-1.0/src/ctl/functions.xml"
-    xmlns:swe="http://www.opengis.net/swe"
+    xmlns:swe="http://www.opengis.net/swe/1.0"
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
     xmlns:spsTesting="https://cite.opengeospatial.org/spsTesting"
 >
