@@ -2139,8 +2139,9 @@
       <ctl:comment>Pass if the response is a valid Submit response and the taskID parameter of the response contains a value; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the taskID parameter of a Submit response contains a value.">ATS_URL#SPS.Submit-ResponseValidTaskID</ctl:link>
       <ctl:code>
-        <xsl:if test="$submitResponse/sps:taskID">
-            <xsl:if test="string-length(normalize-space())=0">
+        <xsl:variable name="taskID" select="$submitResponse/sps:taskID" />
+        <xsl:if test="$taskID">
+            <xsl:if test="string-length(normalize-space($taskID))=0">
                 <ctl:message>The taskID in the response for the Submit request was null.</ctl:message>
                 <ctl:fail />
             </xsl:if>
@@ -2162,7 +2163,7 @@
                     <ctl:with-param name="compareTime" select="$submitTime" />
                 </ctl:call-function>
             </xsl:variable>
-            <xsl:if test="not($isTimeValid)">
+            <xsl:if test="not(xsd:boolean($isTimeValid))">
                 <ctl:message>The value in the estimatedToC element (<xsl:value-of select="$estimatedToC" />) is null or does not occur after the time the Submit request was submitted (<xsl:value-of select="$submitTime" />)</ctl:message>
                 <ctl:fail />
             </xsl:if>
@@ -2198,7 +2199,7 @@
                     <ctl:with-param name="compareTime" select="$submitTime" />
                 </ctl:call-function>
             </xsl:variable>
-            <xsl:if test="not($isTimeValid)">
+            <xsl:if test="not(xsd:boolean($isTimeValid))">
                 <ctl:message>The value in the LatestResponseTime element (<xsl:value-of select="$latestResponseTime" />) is null or does not occur after the time the Submit request was submitted (<xsl:value-of select="$submitTime" />)</ctl:message>
                 <ctl:fail />
             </xsl:if>
