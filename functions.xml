@@ -143,20 +143,14 @@
                     <parsers:XMLValidatingParser ignoreErrors="true" ignoreWarnings="true">
                         <parsers:schemas>
                             <parsers:schema type="url">
-                                <!--<xsl:choose>
-                                    <xsl:when test="response//sps:DescribeTaskingRequestResponse">-->
-                                        <ctl:call-function name="spsFunctions:getSchemaLocation">
-                                            <ctl:with-param name="schemaName" select="string('spsDescribeResultAccessRequestResponse.xsd')" />
-                                        </ctl:call-function>
-                                    <!--</xsl:when>
-                                    <xsl:otherwise>-->
+                                <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                    <ctl:with-param name="schemaName" select="string('spsDescribeResultAccessRequestResponse.xsd')" />
+                                </ctl:call-function>
                             </parsers:schema>
                             <parsers:schema type="url">
-                                        <ctl:call-function name="spsFunctions:getSchemaLocation">
-                                            <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
-                                        </ctl:call-function>
-                                    <!--</xsl:otherwise>
-                                </xsl:choose>-->
+                                <ctl:call-function name="spsFunctions:getSchemaLocation">
+                                    <ctl:with-param name="schemaName" select="string('owsExceptionReport.xsd')" />
+                                </ctl:call-function>
                             </parsers:schema>
                         </parsers:schemas>
                     </parsers:XMLValidatingParser>
