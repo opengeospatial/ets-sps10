@@ -185,16 +185,14 @@
         <ctl:param name="operationName"></ctl:param>
         <ctl:param name="validExceptionCodes"></ctl:param>
         <ctl:param name="exceptionReport"></ctl:param>
-        <ctl:return>True/false depending on whether or not the exceptionCode contained in the ExceptionReport is valid</ctl:return>
+        <ctl:return>True/false depending on whether or not the provided exceptionCode is a valid exceptionCode for the provided operationName</ctl:return>
         <ctl:description></ctl:description>
         <ctl:code>
+            <xsl:variable name="exceptionReportElement" select="$exceptionReport//ows:ExceptionReport" />
             <xsl:variable name="exceptionCodes" select="$validExceptionCodes//spsTesting:exceptionCode" />
-            <xsl:variable name="exceptionCode" select="$exceptionReport//ows:Exception/@exceptionCode" />
+            <xsl:variable name="exceptionCode" select="$exceptionReportElement/ows:Exception/@exceptionCode" />
             <xsl:variable name="validException" select="exists(index-of($exceptionCodes,$exceptionCode))" />
-            <xsl:if test="not($validException)">
-                <ctl:message>The provided exceptionCode "<xsl:value-of select="$exceptionCode" />" is not a valid exceptionCode for the <xsl:value-of select="$operationName" /> operation.</ctl:message>
-                <ctl:fail />
-            </xsl:if>
+            <xsl:value-of select="$validException" />
         </ctl:code>
     </ctl:function>
     
@@ -394,7 +392,17 @@
         <ctl:return>True/False depending on whether or not the URN is valid</ctl:return>
         <ctl:description>Determines if a URN is valid</ctl:description>
         <ctl:code>
-            <xsl:value-of select="(string-length($urnString)>0) and (matches($urnString,'^urn:ogc:def:?:\w+:?:\w+:?:\w+:?:\w+','i')) and (count(tokenize($urnString,':'))=6)" /><!--[Uu][Rr][Nn]:([^\s.]+|\.(?!\s))+-->
+            <xsl:value-of select="(string-length($urnString)>0) and (matches($urnString,'^urn:ogc:?:\w+:?:\w+:?:\w+:?:\w+:?:\w+','i')) and (count(tokenize($urnString,':'))=6)" /><!--[Uu][Rr][Nn]:([^\s.]+|\.(?!\s))+-->
+        </ctl:code>
+    </ctl:function>
+    
+    <!--Check for a valid URL-->
+    <ctl:function name="spsFunctions:validateURL">
+        <ctl:param name="urlString">The URL to validate</ctl:param>
+        <ctl:return>True/False depending on whether or not the URL is valid</ctl:return>
+        <ctl:description>Determines if a URL is valid</ctl:description>
+        <ctl:code>
+            <xsl:value-of select="(string-length(normalize-space($urlString))>0) and (matches($urlString,'(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&amp;~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&amp;~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))','i'))" /><!--[Uu][Rr][Nn]:([^\s.]+|\.(?!\s))+-->
         </ctl:code>
     </ctl:function>
     
@@ -412,7 +420,23 @@
         <ctl:return>True if the time to check is valid; false otherwise</ctl:return>
         <ctl:description>Checks that the supplied timeToCheck value is a valid time and that it occurs on or after the compareTime</ctl:description>
         <ctl:code>
-            <xsl:value-of select="string-length(normalize-space($timeToCheck))>0 and xs:dateTime($timeToCheck)>=xs:dateTime($compareTime) and matches($timeToCheck,'(\d\d\d\d)(?:-?(\d\d)(?:-?(\d\d)(?:[T ](\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(?:Z|(?:([-+])(\d\d)(?::?(\d\d))?)?)?)?)?)?')" /><!--TODO: figure out how to compare date/time values-->
+            <xsl:value-of select="string-length(normalize-space($timeToCheck))>0 and xs:dateTime($timeToCheck)>=xs:dateTime($compareTime) and matches($timeToCheck,'')" /><!--TODO: figure out how to compare date/time values   (\d\d\d\d)(?:-?(\d\d)(?:-?(\d\d)(?:[T ](\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(?:Z|(?:([-+])(\d\d)(?::?(\d\d))?)?)?)?)?)?  or   (\d{4})(?:-?(\d{2})(?:-?(\d{2})(?:[T ](\d{2})(?::?(\d{2})(?::?(\d{2})(?:\.(\d+))?)?)?(?:Z|(?:([-+])(\d{2})(?::?(\d{2}))?)?)?)?)?)?  -->
+        </ctl:code>
+    </ctl:function>
+    
+    <ctl:function name="spsFunctions:printXML">
+        <ctl:param name="xmlToPrint"></ctl:param>
+        <ctl:return></ctl:return>
+        <ctl:description></ctl:description>
+        <ctl:code>
+            <ctl:message>Printing XML...</ctl:message>
+                <xsl:for-each select="$xmlToPrint//*">
+                    <ctl:message>Element:  <xsl:value-of select="local-name-from-QName(node-name(.))" /></ctl:message>
+                    <xsl:for-each select="@*">
+                        <ctl:message>Attribute:  <xsl:value-of select="." /></ctl:message>
+                    </xsl:for-each>
+                    <ctl:message>Value:  <xsl:value-of select="./text()" /></ctl:message>
+                </xsl:for-each>
         </ctl:code>
     </ctl:function>
 </ctl:package>
