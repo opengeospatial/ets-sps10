@@ -424,19 +424,4 @@
         </ctl:code>
     </ctl:function>
     
-    <ctl:function name="spsFunctions:printXML">
-        <ctl:param name="xmlToPrint"></ctl:param>
-        <ctl:return></ctl:return>
-        <ctl:description></ctl:description>
-        <ctl:code>
-            <ctl:message>Printing XML...</ctl:message>
-                <xsl:for-each select="$xmlToPrint//*">
-                    <ctl:message>Element:  <xsl:value-of select="local-name-from-QName(node-name(.))" /></ctl:message>
-                    <xsl:for-each select="@*">
-                        <ctl:message>Attribute:  <xsl:value-of select="." /></ctl:message>
-                    </xsl:for-each>
-                    <ctl:message>Value:  <xsl:value-of select="./text()" /></ctl:message>
-                </xsl:for-each>
-        </ctl:code>
-    </ctl:function>
 </ctl:package>
