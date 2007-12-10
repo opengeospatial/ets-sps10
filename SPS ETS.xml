@@ -18,7 +18,6 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:spsFunctions="https://cite.opengeospatial.org/sps-1.0/src/ctl/functions.xml"
     xmlns:swe="http://www.opengis.net/swe/1.0"
-    xmlns:xml="http://www.w3.org/XML/1998/namespace"
     xmlns:spsTesting="https://cite.opengeospatial.org/spsTesting"
     xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
 >
@@ -1442,15 +1441,11 @@
                     3.)  Loop through each parameterID value and ensure that it is not null
                     4.)  Compare the distinct parameterID values with the initial parameterID values to ensure that they match
                 -->
-        <!--Get the parameterID values from the response-->
-        <xsl:variable name="parameterIDs">
-            <xsl:value-of select="$describeTaskingResponse//sps:InputDescriptor/@parameterID" />
-        </xsl:variable>
-        <ctl:message><xsl:value-of select="count($parameterIDs)" /> parameter(s) discovered.</ctl:message>
+        <ctl:message><xsl:value-of select="count($describeTaskingResponse//sps:InputDescriptor/@parameterID)" /> parameter(s) discovered.  Checking parameters...</ctl:message>
         <!--Determine the distinct parameterID values-->
-        <xsl:variable name="distinctParameterIDs" select="distinct-values($parameterIDs)" />
+        <xsl:variable name="distinctParameterIDs" select="distinct-values($describeTaskingResponse//sps:InputDescriptor/@parameterID)" />
         <!--Loop through the parameterID values in the response to ensure that each is not null-->
-        <xsl:for-each select="$parameterIDs">
+        <xsl:for-each select="$describeTaskingResponse//sps:InputDescriptor/@parameterID">
             <ctl:message>Checking parameterID:  <xsl:value-of select="." /></ctl:message>
             <xsl:if test="string-length(normalize-space())=0">
                 <ctl:message>FAILURE:  A parameterID for <xsl:value-of select="$requestedSensorID" /> is null.</ctl:message>
@@ -1458,7 +1453,7 @@
             </xsl:if>
         </xsl:for-each>
         <!--Compare the parameterID values with the distinctParameterID values to ensure that all parameterID values are distinct-->
-        <xsl:if test="not($parameterIDs=$distinctParameterIDs)">
+        <xsl:if test="not($describeTaskingResponse//sps:InputDescriptor/@parameterID=$distinctParameterIDs)">
             <ctl:message>FAILURE:  One or more parameterID values for <xsl:value-of select="$requestedSensorID" /> are not unique</ctl:message>
             <ctl:fail />
         </xsl:if>
@@ -1689,7 +1684,10 @@
                              </table>
                           </blockquote>
                           <blockquote>
-                            <h2>Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.</h2>
+                            <h2>
+                                Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.
+                                The supplied value can either be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or an ISO 8601 duration (i.e. PT5M).
+                            </h2>
                              <table border="1" padding="4" bgcolor="#00ffff">
                                 <tr>
                                     <td>timeFrame:</td>
@@ -1703,6 +1701,7 @@
                 </xsl:variable>
                 <!--TODO:  Add in parameter checking somehow?-->
                 <!--Create a valid Submit request based on user input from the previously displayed form-->
+                <!--xsi:schemaLocation="http://www.opengis.net/sps/1.0 http://schemas.opengis.net/sps/1.0.0/spsAll.xsd" xmlns="http://www.opengis.net/sps/1.0" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SPS" version="1.0.0">-->
                 <xsl:variable name="submitRequest">
                     <sps:Submit xmlns:sps="http://www.opengis.net/sps/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" service="SPS" version="1.0.0">
                         <sps:notificationTarget>
@@ -1755,8 +1754,7 @@
                                                                 </xsl:when>
                                                                 <xsl:when test="$positionChildName='location'">
                                                                     <swe:location>
-                                                                        <swe:Vector>
-                                                                            <!--Loop through the coordinates in the InputDescriptor-->
+                                                                        <swe:Vector>           
                                                                             <xsl:variable name="coordinates" select="$positionChild/*[1]/*" />
                                                                             <ctl:message><xsl:value-of select="count($coordinates)" /></ctl:message>
                                                                             <xsl:for-each select="$coordinates">
@@ -1767,30 +1765,32 @@
                                                                                 <xsl:variable name="coordinateChild" select="*[1]" />
                                                                                 <xsl:variable name="coordinateChildName" select="local-name-from-QName(node-name($coordinateChild))" />
                                                                                 <ctl:message>Coordinate child name:  <xsl:value-of select="$coordinateChildName" /></ctl:message>
-                                                                                <xsl:element name="{$coordinateChildName}" namespace="http://www.opengis.net/swe/1.0">
-                                                                                    <xsl:for-each select="$coordinateChild/@*">
-                                                                                        <xsl:variable name="attributeName" select="name()" />
-                                                                                        <ctl:message><xsl:value-of select="$attributeName" />:  <xsl:value-of select="." /></ctl:message>                                                                                        
-                                                                                        <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>
-                                                                                    </xsl:for-each>
-                                                                                    <xsl:for-each select="$coordinateChild/*">
-                                                                                        <xsl:variable name="childName" select="local-name-from-QName(node-name(.))" />
-                                                                                        <xsl:if test="not($childName='constraint')">
-                                                                                            <xsl:element name="{$childName}" namespace="http://www.opengis.net/swe/1.0">
-                                                                                                <xsl:for-each select="@*">
-                                                                                                    <xsl:variable name="attributeName" select="name()" />
-                                                                                                    <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>
-                                                                                                </xsl:for-each>
-                                                                                                <xsl:value-of select="." />
-                                                                                            </xsl:element>
-                                                                                        </xsl:if>
-                                                                                    </xsl:for-each>
-                                                                                    <xsl:variable name="updatedInputID" select="concat($parameterID,'_',translate($coordinateName,' ','_'),'_Value')" />
-                                                                                    <ctl:message>Updated input ID:  <xsl:value-of select="$updatedInputID" /></ctl:message>
-                                                                                    <xsl:variable name="updatedInputIDValue" select="$enterTaskingOptionsForm/values/value[@key=$updatedInputID]" />
-                                                                                    <ctl:message><xsl:value-of select="$updatedInputIDValue" /></ctl:message>
-                                                                                    <swe:value><xsl:value-of select="$updatedInputIDValue" /></swe:value>
-                                                                                </xsl:element>
+                                                                                <swe:coordinate><xsl:attribute name="name"><xsl:value-of select="$coordinateName" /></xsl:attribute>
+                                                                                    <xsl:element name="{$coordinateChildName}" namespace="http://www.opengis.net/swe/1.0">
+                                                                                        <xsl:for-each select="$coordinateChild/@*">
+                                                                                            <xsl:variable name="attributeName" select="name()" />
+                                                                                            <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>
+                                                                                            <ctl:message><xsl:value-of select="$attributeName" />:  <xsl:value-of select="." /></ctl:message>                                                                                        
+                                                                                        </xsl:for-each>
+                                                                                        <xsl:for-each select="$coordinateChild/*">
+                                                                                            <xsl:variable name="childName" select="local-name-from-QName(node-name(.))" />
+                                                                                            <xsl:if test="not($childName='constraint')">
+                                                                                                <xsl:element name="{$childName}" namespace="http://www.opengis.net/swe/1.0">
+                                                                                                    <xsl:for-each select="@*">
+                                                                                                        <xsl:variable name="attributeName" select="name()" />
+                                                                                                        <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>
+                                                                                                    </xsl:for-each>
+                                                                                                    <xsl:value-of select="." />
+                                                                                                </xsl:element>
+                                                                                            </xsl:if>
+                                                                                        </xsl:for-each>
+                                                                                        <xsl:variable name="updatedInputID" select="concat($parameterID,'_',translate($coordinateName,' ','_'),'_Value')" />
+                                                                                        <ctl:message>Updated input ID:  <xsl:value-of select="$updatedInputID" /></ctl:message>
+                                                                                        <xsl:variable name="updatedInputIDValue" select="$enterTaskingOptionsForm/values/value[@key=$updatedInputID]" />
+                                                                                        <ctl:message><xsl:value-of select="$updatedInputIDValue" /></ctl:message>
+                                                                                        <swe:value><xsl:value-of select="$updatedInputIDValue" /></swe:value>
+                                                                                    </xsl:element>
+                                                                                </swe:coordinate>
                                                                             </xsl:for-each>
                                                                         </swe:Vector>
                                                                     </swe:location>
@@ -1836,192 +1836,70 @@
                         </sps:timeFrame>
                     </sps:Submit>
                 </xsl:variable>
-                <!--<ctl:form name="submitRequestForm">
-                    <xml id="submitRequest"><xsl:copy-of select="$submitRequest"/></xml>
-                    <h2>The Submit request that will be sent to the server is:</h2>
-                    <p>
-                        <span datasrc="#submitRequest" datafld="Submit">   
-                        </span>
-                    </p>
-                    <input type="submit" value="Continue"/>
-                </ctl:form>-->
-                <xsl:for-each select="$submitRequest/*">
-                    
-                    
-                </xsl:for-each>
                 <ctl:message>Valid Submit request constructed:  <xsl:copy-of select="$submitRequest" /></ctl:message>
                 <!--Construct a Submit request with an invalid notificationTarget element-->
                 <xsl:variable name="submitRequestInvalidNotificationTarget">
-                    <Submit xmlns="http://www.opengis.net/sps" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe" service="SPS" version="1.0.0">
-                        <notificationTarget>
-                            <notificationID></notificationID>
-                            <notificationURL></notificationURL>
-                        </notificationTarget>
-                        <sensorParam>
-                            <sensorID><xsl:value-of select="$selectedSensorID" /></sensorID>
-                            <parameters>
-                                <xsl:for-each select="$enterTaskingOptionsForm//table/tr[contains(@id,'_Row')]">
-                                    <xsl:if test="(td[contains(@id,'_Use')]='required') or (string-length(normalize-space(td[contains(@id,'_Value')]))>0)">
-                                        <InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="td[contains(@id,'_ID')]" /></xsl:attribute>
-                                            <value>
-                                                <xsl:variable name="elementName" select="td[contains(@id,'_Type')]/text()" />
-                                                <xsl:variable name="elementValue" select="td[contains(@id,'_Value')]/text()" />
-                                                <!--//values/value[contains(@key='_Value')]-->
-                                                <xsl:element name="{$elementName}"><xsl:value-of select="$elementValue" /></xsl:element>
-                                            </value>
-                                        </InputParameter>
-                                    </xsl:if>
-                                </xsl:for-each>
-                            </parameters>
-                        </sensorParam>
-                        <timeFrame>
-                            <gml:TimeInstant>
-                                <gml:timePosition>
-                                    <!--<ctl:call-function name="spsFunctions:getCurrentDateTime" />-->
-                                    <xsl:value-of select="current-dateTime()" />
-                                </gml:timePosition>
-                            </gml:TimeInstant>
-                        </timeFrame>
-                    </Submit>                
+                    <ctl:call-function name="spsFunctions:buildSubmitRequest">
+                        <ctl:with-param name="sensorID" select="$selectedSensorID" />
+                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
+                        <ctl:with-param name="enterTaskingOptionsForm" select="$enterTaskingOptionsForm" />
+                        <ctl:with-param name="invalidNotificationTarget" select="true()" />
+                        <ctl:with-param name="invalidParameters" select="false()" />
+                        <ctl:with-param name="missingRequiredParameters" select="false()" />
+                        <ctl:with-param name="invalidTimeFrame" select="false()" />
+                    </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with an invalid notificationTarget element:  <xsl:copy-of select="$submitRequestInvalidNotificationTarget/*" /></ctl:message>
                 <!--Construct a Submit request with an invalid sensorID element-->
                 <xsl:variable name="submitRequestInvalidSensorID">
-                    <Submit xmlns="http://www.opengis.net/sps" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe" service="SPS" version="1.0.0">
-                        <notificationTarget>
-                            <notificationID><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsUserID']" /></notificationID>
-                            <notificationURL><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsURL']" /></notificationURL>
-                        </notificationTarget>
-                        <sensorParam>
-                            <sensorID></sensorID>
-                            <parameters>
-                                <xsl:for-each select="$enterTaskingOptionsForm//table/tr[contains(@id,'_Row')]">
-                                    <xsl:if test="(td[contains(@id,'_Use')]='required') or (string-length(normalize-space(td[contains(@id,'_Value')]))>0)">
-                                        <InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="td[contains(@id,'_ID')]" /></xsl:attribute>
-                                            <value>
-                                                <xsl:variable name="elementName" select="td[contains(@id,'_Type')]/text()" />
-                                                <xsl:variable name="elementValue" select="td[contains(@id,'_Value')]/text()" />
-                                                <!--//values/value[contains(@key='_Value')]-->
-                                                <xsl:element name="{$elementName}"><xsl:value-of select="$elementValue" /></xsl:element>
-                                            </value>
-                                        </InputParameter>
-                                    </xsl:if>
-                                </xsl:for-each>
-                            </parameters>
-                        </sensorParam>
-                        <timeFrame>
-                            <gml:TimeInstant>
-                                <gml:timePosition>
-                                    <!--<ctl:call-function name="spsFunctions:getCurrentDateTime" />-->
-                                    <xsl:value-of select="current-dateTime()" />
-                                </gml:timePosition>
-                            </gml:TimeInstant>
-                        </timeFrame>
-                    </Submit>
+                    <ctl:call-function name="spsFunctions:buildSubmitRequest">
+                        <ctl:with-param name="sensorID" select="string('')" />
+                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
+                        <ctl:with-param name="enterTaskingOptionsForm" select="$enterTaskingOptionsForm" />
+                        <ctl:with-param name="invalidNotificationTarget" select="false()" />
+                        <ctl:with-param name="invalidParameters" select="false()" />
+                        <ctl:with-param name="missingRequiredParameters" select="false()" />
+                        <ctl:with-param name="invalidTimeFrame" select="false()" />
+                    </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with an invalid sensorID element:  <xsl:copy-of select="$submitRequestInvalidSensorID/*" /></ctl:message>
                 <!--Construct a Submit request with an invalid parameter elements-->
                 <xsl:variable name="submitRequestInvalidParameters">
-                    <Submit xmlns="http://www.opengis.net/sps" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe" service="SPS" version="1.0.0">
-                        <notificationTarget>
-                            <notificationID><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsUserID']" /></notificationID>
-                            <notificationURL><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsURL']" /></notificationURL>
-                        </notificationTarget>
-                        <sensorParam>
-                            <sensorID><xsl:value-of select="$selectedSensorID" /></sensorID>
-                            <parameters>
-                                <xsl:for-each select="$enterTaskingOptionsForm//table/tr[contains(@id,'_Row')]">
-                                    <xsl:if test="(td[contains(@id,'_Use')]='required') or (string-length(normalize-space(td[contains(@id,'_Value')]))>0)">
-                                        <InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="td[contains(@id,'_ID')]" /></xsl:attribute>
-                                            <value>
-                                                <xsl:variable name="elementName" select="td[contains(@id,'_Type')]/text()" />
-                                                <xsl:variable name="elementValue" select="td[contains(@id,'_Value')]/text()" />
-                                                <!--//values/value[contains(@key='_Value')]-->
-                                                <xsl:element name="{$elementName}"><xsl:value-of select="$elementValue" /></xsl:element>
-                                            </value>
-                                        </InputParameter>
-                                    </xsl:if>
-                                </xsl:for-each>
-                            </parameters>
-                        </sensorParam>
-                        <timeFrame>
-                            <gml:TimeInstant>
-                                <gml:timePosition>
-                                    <!--<ctl:call-function name="spsFunctions:getCurrentDateTime" />-->
-                                    <xsl:value-of select="current-dateTime()" />
-                                </gml:timePosition>
-                            </gml:TimeInstant>
-                        </timeFrame>
-                    </Submit>
+                    <ctl:call-function name="spsFunctions:buildSubmitRequest">
+                        <ctl:with-param name="sensorID" select="$selectedSensorID" />
+                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
+                        <ctl:with-param name="enterTaskingOptionsForm" select="$enterTaskingOptionsForm" />
+                        <ctl:with-param name="invalidNotificationTarget" select="false()" />
+                        <ctl:with-param name="invalidParameters" select="true()" />
+                        <ctl:with-param name="missingRequiredParameters" select="false()" />
+                        <ctl:with-param name="invalidTimeFrame" select="false()" />
+                    </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with invalid parameters:  <xsl:copy-of select="$submitRequestInvalidParameters/*" /></ctl:message>
                 <!--Construct a Submit request with a missing required parameter elements-->
                 <xsl:variable name="submitRequestMissingRequiredParameters">
-                    <Submit xmlns="http://www.opengis.net/sps" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe" service="SPS" version="1.0.0">
-                        <notificationTarget>
-                            <notificationID><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsUserID']" /></notificationID>
-                            <notificationURL><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsURL']" /></notificationURL>
-                        </notificationTarget>
-                        <sensorParam>
-                            <sensorID><xsl:value-of select="$selectedSensorID" /></sensorID>
-                            <parameters>
-                                <xsl:for-each select="$enterTaskingOptionsForm//table/tr[contains(@id,'_Row')]">
-                                    <xsl:if test="td[contains(@id,'_Use')]='optional'">
-                                        <InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="td[contains(@id,'_ID')]" /></xsl:attribute>
-                                            <value>
-                                                <xsl:variable name="elementName" select="td[contains(@id,'_Type')]/text()" />
-                                                <xsl:variable name="elementValue" select="td[contains(@id,'_Value')]/text()" />
-                                                <!--//values/value[contains(@key='_Value')]-->
-                                                <xsl:element name="{$elementName}"><xsl:value-of select="$elementValue" /></xsl:element>
-                                            </value>
-                                        </InputParameter>
-                                    </xsl:if>
-                                </xsl:for-each>
-                            </parameters>
-                        </sensorParam>
-                        <timeFrame>
-                            <gml:TimeInstant>
-                                <gml:timePosition>
-                                    <!--<ctl:call-function name="spsFunctions:getCurrentDateTime" />-->
-                                    <xsl:value-of select="current-dateTime()" />
-                                </gml:timePosition>
-                            </gml:TimeInstant>
-                        </timeFrame>
-                    </Submit>
+                    <ctl:call-function name="spsFunctions:buildSubmitRequest">
+                        <ctl:with-param name="sensorID" select="$selectedSensorID" />
+                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
+                        <ctl:with-param name="enterTaskingOptionsForm" select="$enterTaskingOptionsForm" />
+                        <ctl:with-param name="invalidNotificationTarget" select="false()" />
+                        <ctl:with-param name="invalidParameters" select="false()" />
+                        <ctl:with-param name="missingRequiredParameters" select="true()" />
+                        <ctl:with-param name="invalidTimeFrame" select="false()" />
+                    </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with missing required parameters:  <xsl:copy-of select="$submitRequestMissingRequiredParameters/*" /></ctl:message>
                 <!--Construct a Submit request with an invalid timeFrame element-->
                 <xsl:variable name="submitRequestInvalidTimeFrame">
-                    <Submit xmlns="http://www.opengis.net/sps" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe" service="SPS" version="1.0.0">
-                        <notificationTarget>
-                            <notificationID><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsUserID']" /></notificationID>
-                            <notificationURL><xsl:value-of select="$enterTaskingOptionsForm//input[@id='wnsURL']" /></notificationURL>
-                        </notificationTarget>
-                        <sensorParam>
-                            <sensorID><xsl:value-of select="$selectedSensorID" /></sensorID>
-                            <parameters>
-                                <xsl:for-each select="$enterTaskingOptionsForm//table/tr[contains(@id,'_Row')]">
-                                    <xsl:if test="(td[contains(@id,'_Use')]='required') or (string-length(normalize-space(td[contains(@id,'_Value')]))>0)">
-                                        <InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="td[contains(@id,'_ID')]" /></xsl:attribute>
-                                            <value>
-                                                <xsl:variable name="elementName" select="td[contains(@id,'_Type')]/text()" />
-                                                <xsl:variable name="elementValue" select="td[contains(@id,'_Value')]/text()" />
-                                                <!--//values/value[contains(@key='_Value')]-->
-                                                <xsl:element name="{$elementName}"><xsl:value-of select="$elementValue" /></xsl:element>
-                                            </value>
-                                        </InputParameter>
-                                    </xsl:if>
-                                </xsl:for-each>
-                            </parameters>
-                        </sensorParam>
-                        <timeFrame>
-                            <gml:TimeInstant>
-                                <gml:timePosition>
-                                    2000-01-01T00:00:00
-                                </gml:timePosition>
-                            </gml:TimeInstant>
-                        </timeFrame>
-                    </Submit>
+                    <ctl:call-function name="spsFunctions:buildSubmitRequest">
+                        <ctl:with-param name="sensorID" select="$selectedSensorID" />
+                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
+                        <ctl:with-param name="enterTaskingOptionsForm" select="$enterTaskingOptionsForm" />
+                        <ctl:with-param name="invalidNotificationTarget" select="false()" />
+                        <ctl:with-param name="invalidParameters" select="false()" />
+                        <ctl:with-param name="missingRequiredParameters" select="false()" />
+                        <ctl:with-param name="invalidTimeFrame" select="true()" />
+                    </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with an invalid timeFrame element:  <xsl:copy-of select="$submitRequestInvalidTimeFrame/*" /></ctl:message>
                 <!--Execute the valid Submit request-->
@@ -2057,6 +1935,11 @@
                 </xsl:variable>
                 <ctl:message>Submit request submitted at:  <xsl:value-of select="$submitTime" /></ctl:message>
                 <!--Call the other request tests using the Submit request that was constructed previously-->
+                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersExpectedResponse.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequest" />
+                  <ctl:with-param name="submitResponse" select="$submitResponse" />
+                </ctl:call-test>
                 <ctl:call-test name="sps:core-SPS.Submit-RequestInvalidNotificationTarget.1">
                     <ctl:with-param name="submitURL" select="$submitURL" />
                     <ctl:with-param name="submitRequest" select="$submitRequestInvalidNotificationTarget" />
@@ -2072,11 +1955,6 @@
                 <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersMissingRequiredParameters.1">
                   <ctl:with-param name="submitURL" select="$submitURL" />
                   <ctl:with-param name="submitRequest" select="$submitRequestMissingRequiredParameters" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersExpectedResponse.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                  <ctl:with-param name="submitRequest" select="$submitRequest" />
-                  <ctl:with-param name="submitResponse" select="$submitResponse" />
                 </ctl:call-test>
                 <ctl:call-test name="sps:core-SPS.Submit-RequestValidTimeFrame.1">
                   <ctl:with-param name="submitURL" select="$submitURL" />
@@ -2382,7 +2260,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>estimatedToC:</td>
-                                                    <td><xsl:value-of select="$submitResponse//sps:estimatedToC//text()" /></td>
+                                                    <td><xsl:value-of select="$submitResponse//sps:estimatedToC" /></td>
                                                 </tr>
                                                 <tr>
                                                     <td>alternative:</td>
@@ -2394,7 +2272,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>LatestResponseTime:</td>
-                                                    <td><xsl:value-of select="$submitResponse//sps:LatestResponseTime//text()" /></td>
+                                                    <td><xsl:value-of select="$submitResponse//sps:LatestResponseTime" /></td>
                                                 </tr>
                                             </tbody>
                                     </xsl:otherwise>
@@ -2479,9 +2357,11 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="$submitResponse/node()">
-                    <ctl:message><xsl:value-of select="local-name-from-QName(node-name(.))" /></ctl:message>
+                <ctl:message>The Submit response contains the following elements:</ctl:message>
+                <xsl:for-each select="$submitResponse/*">
+                    <ctl:message>Element name:  <xsl:value-of select="local-name-from-QName(node-name(.))" /> (<xsl:value-of select="namespace-uri-from-QName(node-name(.))" />)</ctl:message>
                 </xsl:for-each>
+                <ctl:message>Checking these elements for validity...</ctl:message>
                 <!--Validate taskID in the response-->
                 <ctl:call-test name="sps:core-SPS.Submit-ResponseValidTaskID.1">
                     <ctl:with-param name="submitResponse" select="$submitResponse" />
@@ -2527,19 +2407,19 @@
       <ctl:comment>Pass if the response is a valid Submit response and the estimatedToC parameter of the response contains a value that is a valid time value and occurs after the time the request was submitted; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the estimatedToC parameter of a Submit response occurs after the time the request was submitted.">ATS_URL#SPS.Submit-ResponseValidEstimatedToC</ctl:link>
       <ctl:code>
-        <xsl:if test="$submitResponse//sps:estimatedToC/gml:TimeInstant/gml:timePosition">
-            <xsl:variable name="estimatedToC" select="." />
-            <xsl:if test="$estimatedToC">
-                <xsl:variable name="isTimeValid">
-                    <ctl:call-function name="spsFunctions:checkTime">
-                        <ctl:with-param name="timeToCheck" select="$estimatedToC" />
-                        <ctl:with-param name="compareTime" select="$submitTime" />
-                    </ctl:call-function>
-                </xsl:variable>
-                <xsl:if test="not(xsd:boolean($isTimeValid))">
-                    <ctl:message>FAILURE:  The value in the estimatedToC element (<xsl:value-of select="$estimatedToC" />) is null or does not occur after the time the Submit request was submitted (<xsl:value-of select="$submitTime" />)</ctl:message>
-                    <ctl:fail />
-                </xsl:if>
+        <xsl:variable name="estimatedToC">
+            <xsl:value-of select="$submitResponse//sps:estimatedToC" />
+        </xsl:variable>
+        <xsl:if test="$estimatedToC">
+            <xsl:variable name="isTimeValid">
+                <ctl:call-function name="spsFunctions:checkTime">
+                    <ctl:with-param name="timeToCheck" select="$estimatedToC" />
+                    <ctl:with-param name="compareTime" select="$submitTime" />
+                </ctl:call-function>
+            </xsl:variable>
+            <xsl:if test="not(xsd:boolean($isTimeValid))">
+                <ctl:message>FAILURE:  The value in the estimatedToC element (<xsl:value-of select="$estimatedToC" />) is null or does not occur after the time the Submit request was submitted (<xsl:value-of select="$submitTime" />)</ctl:message>
+                <ctl:fail />
             </xsl:if>
         </xsl:if>
       </ctl:code>
@@ -2565,8 +2445,10 @@
       <ctl:comment>Pass if the response is a valid Submit response with a LatestResponseTime parameter value time occuring after the time the request was submitted; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the LatestResponseTime parameter of a Submit response occurs after the time the request was submitted.">ATS_URL#SPS.Submit-ResponseValidLatestResponseTime</ctl:link>
       <ctl:code>
-        <xsl:if test="$submitResponse//sps:LatestResponseTime/gml:TimeInstant/gml:timePosition">
-            <xsl:variable name="latestResponseTime" select="." />
+        <xsl:variable name="latestResponseTime">
+            <xsl:value-of select="$submitResponse//sps:LatestResponseTime" />
+        </xsl:variable>
+        <xsl:if test="$latestResponseTime">
             <xsl:variable name="isTimeValid">
                 <ctl:call-function name="spsFunctions:checkTime">
                     <ctl:with-param name="timeToCheck" select="$latestResponseTime" />
