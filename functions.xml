@@ -482,15 +482,15 @@
         <ctl:description>Builds a Submit request document from the supplied parameters.  This document can either have valid or invalid parameters.</ctl:description>
         <ctl:code>
             <xsl:variable name="submitRequest">
-                    <!--<sps:Submit xmlns:sps="http://www.opengis.net/sps/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" service="SPS" version="1.0.0">
+                    <sps:Submit xmlns:sps="http://www.opengis.net/sps/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" service="SPS" version="1.0.0">
                         <sps:notificationTarget>
                             <sps:notificationID>
-                                <xsl:if test="not($invalidNotificationTarget)">
+                                <xsl:if test="not(xs:boolean($invalidNotificationTarget))">
                                     <xsl:value-of select="$enterTaskingOptionsForm/values/value[@key='wnsUserID']" />
                                 </xsl:if>
                             </sps:notificationID>
                             <sps:notificationURL>
-                                <xsl:if test="not($invalidNotificationTarget)">
+                                <xsl:if test="not(xs:boolean($invalidNotificationTarget))">
                                     <xsl:value-of select="$enterTaskingOptionsForm/values/value[@key='wnsURL']" />
                                 </xsl:if>
                             </sps:notificationURL>
@@ -509,7 +509,7 @@
                                     <xsl:variable name="parameterValue" select="$enterTaskingOptionsForm/values/value[@key=$inputID]" />
                                     <xsl:variable name="includeParameter">
                                         <xsl:choose>
-                                            <xsl:when test="not($missingRequiredParameters)">
+                                            <xsl:when test="not(xs:boolean($missingRequiredParameters))">
                                                 <xsl:value-of select="($use='required') or (string-length(normalize-space($parameterValue))>0)" />
                                             </xsl:when>
                                             <xsl:otherwise>
@@ -517,14 +517,14 @@
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:variable>
-                                    <xsl:if test="$includeParameter">
+                                    <xsl:if test="xs:boolean($includeParameter)">
                                         <sps:InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="$parameterID" /></xsl:attribute>
                                             <sps:value>
                                                 <xsl:variable name="definitionNode" select="sps:definition/sps:commonData/*[1]" />
                                                 <xsl:variable name="elementName" select="local-name-from-QName(node-name($definitionNode))" />
                                                 <xsl:variable name="elementValue">
                                                     <xsl:choose>
-                                                        <xsl:when test="not($invalidParameters)">
+                                                        <xsl:when test="not(xs:boolean($invalidParameters))">
                                                             <xsl:value-of select="$parameterValue" />
                                                         </xsl:when>
                                                         <xsl:otherwise>
@@ -621,7 +621,7 @@
                             <gml:TimeInstant>
                                 <gml:timePosition>
                                     <xsl:choose>
-                                        <xsl:when test="not($invalidTimeFrame)">
+                                        <xsl:when test="not(xs:boolean($invalidTimeFrame))">
                                             <xsl:value-of select="$enterTaskingOptionsForm/values/value[@key='timeFrame']" />
                                         </xsl:when>
                                         <xsl:otherwise>
@@ -631,7 +631,7 @@
                                 </gml:timePosition>
                             </gml:TimeInstant>
                         </sps:timeFrame>
-                    </sps:Submit>-->
+                    </sps:Submit>
                 </xsl:variable>
                 <xsl:copy-of select="$submitRequest" />
         </ctl:code>

@@ -89,33 +89,33 @@
       <ctl:link title="1. OWS">ATS_URL#ows</ctl:link>
       <ctl:code>
         <ctl:call-test name="sps:ows-OWS.ClientError.1">
-          <ctl:with-param name="test.document" select="$serviceURL" />
+          <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
         <ctl:call-test name="sps:ows-OWS.ContentType.1">
-          <ctl:with-param name="test.document" select="$serviceURL" />
+          <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
         <ctl:call-test name="sps:ows-OWS.CaseInsensitiveKvpNames.1">
-          <ctl:with-param name="test.document" select="$serviceURL" />
+          <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
         <ctl:call-test name="sps:ows-OWS.GetCapabilities.1">
-          <ctl:with-param name="test.document" select="$serviceURL" />
+          <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
         <ctl:call-test name="sps:ows-OWS.GetCapabilities-Exceptions.1">
-          <ctl:with-param name="test.document" select="$serviceURL" />
+          <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
         <ctl:call-test name="sps:ows-OWS.GetCapabilities-AcceptVersions.1">
-          <ctl:with-param name="test.document" select="$serviceURL" />
+          <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
         <ctl:call-test name="sps:ows-OWS.GetCapabilities-Sections.1">
-          <ctl:with-param name="test.document" select="$serviceURL" />
+          <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
         <ctl:call-test name="sps:ows-OWS.GetCapabilities-AcceptFormats.1">
-          <ctl:with-param name="test.document" select="$serviceURL" />
+          <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:ows-OWS.ClientError.1">
-      <ctl:param name="test.document" />
+      <ctl:param name="serviceURL" />
       <ctl:assertion>Test purpose</ctl:assertion>
       <ctl:comment>Test method</ctl:comment>
       <ctl:link title="Client error">ATS_URL#OWS.ClientError</ctl:link>
@@ -124,7 +124,7 @@
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:ows-OWS.ContentType.1">
-      <ctl:param name="test.document" />
+      <ctl:param name="serviceURL" />
       <ctl:assertion>Test purpose</ctl:assertion>
       <ctl:comment>Test method</ctl:comment>
       <ctl:link title="Content-Type response header">ATS_URL#OWS.ContentType</ctl:link>
@@ -133,7 +133,7 @@
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:ows-OWS.CaseInsensitiveKvpNames.1">
-      <ctl:param name="test.document" />
+      <ctl:param name="serviceURL" />
       <ctl:assertion>Test purpose</ctl:assertion>
       <ctl:comment>Test method</ctl:comment>
       <ctl:link title="KVP parameter names">ATS_URL#OWS.CaseInsensitiveKvpNames</ctl:link>
@@ -142,7 +142,7 @@
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:ows-OWS.GetCapabilities.1">
-      <ctl:param name="test.document" />
+      <ctl:param name="serviceURL" />
       <ctl:assertion>Test purpose</ctl:assertion>
       <ctl:comment>Test method</ctl:comment>
       <ctl:link title="GetCapabilities request">ATS_URL#OWS.GetCapabilities</ctl:link>
@@ -151,7 +151,7 @@
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:ows-OWS.GetCapabilities-Exceptions.1">
-      <ctl:param name="test.document" />
+      <ctl:param name="serviceURL" />
       <ctl:assertion>Test purpose</ctl:assertion>
       <ctl:comment>Test method</ctl:comment>
       <ctl:link title="GetCapabilities - Exceptions">ATS_URL#OWS.GetCapabilities-Exceptions</ctl:link>
@@ -160,7 +160,7 @@
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:ows-OWS.GetCapabilities-AcceptVersions.1">
-      <ctl:param name="test.document" />
+      <ctl:param name="serviceURL" />
       <ctl:assertion>Test purpose</ctl:assertion>
       <ctl:comment>Test method</ctl:comment>
       <ctl:link title="GetCapabilities - AcceptVersions parameter">ATS_URL#OWS.GetCapabilities-AcceptVersions</ctl:link>
@@ -169,7 +169,7 @@
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:ows-OWS.GetCapabilities-Sections.1">
-      <ctl:param name="test.document" />
+      <ctl:param name="serviceURL" />
       <ctl:assertion>Test purpose</ctl:assertion>
       <ctl:comment>Test method</ctl:comment>
       <ctl:link title="GetCapabilities - Sections parameter">ATS_URL#OWS.GetCapabilities-Sections</ctl:link>
@@ -178,7 +178,7 @@
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:ows-OWS.GetCapabilities-AcceptFormats.1">
-      <ctl:param name="test.document" />
+      <ctl:param name="serviceURL" />
       <ctl:assertion>Test purpose</ctl:assertion>
       <ctl:comment>Test method</ctl:comment>
       <ctl:link title="GetCapabilities - AcceptFormats parameter">ATS_URL#OWS.GetCapabilities-AcceptFormats</ctl:link>
@@ -1686,7 +1686,7 @@
                           <blockquote>
                             <h2>
                                 Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.
-                                The supplied value can either be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or an ISO 8601 duration (i.e. PT5M).
+                                The supplied value must be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or duration (i.e. PT5M).
                             </h2>
                              <table border="1" padding="4" bgcolor="#00ffff">
                                 <tr>
@@ -1702,6 +1702,18 @@
                 <!--TODO:  Add in parameter checking somehow?-->
                 <!--Create a valid Submit request based on user input from the previously displayed form-->
                 <!--xsi:schemaLocation="http://www.opengis.net/sps/1.0 http://schemas.opengis.net/sps/1.0.0/spsAll.xsd" xmlns="http://www.opengis.net/sps/1.0" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SPS" version="1.0.0">-->
+                <xsl:variable name="submitRequest">
+                    <ctl:call-function name="spsFunctions:buildSubmitRequest">
+                        <ctl:with-param name="sensorID" select="$selectedSensorID" />
+                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
+                        <ctl:with-param name="enterTaskingOptionsForm" select="$enterTaskingOptionsForm" />
+                        <ctl:with-param name="invalidNotificationTarget" select="false()" />
+                        <ctl:with-param name="invalidParameters" select="false()" />
+                        <ctl:with-param name="missingRequiredParameters" select="false()" />
+                        <ctl:with-param name="invalidTimeFrame" select="false()" />
+                    </ctl:call-function>
+                </xsl:variable>
+                <![CDATA[ /*
                 <xsl:variable name="submitRequest">
                     <sps:Submit xmlns:sps="http://www.opengis.net/sps/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" service="SPS" version="1.0.0">
                         <sps:notificationTarget>
@@ -1836,6 +1848,7 @@
                         </sps:timeFrame>
                     </sps:Submit>
                 </xsl:variable>
+                */ ]]>
                 <ctl:message>Valid Submit request constructed:  <xsl:copy-of select="$submitRequest" /></ctl:message>
                 <!--Construct a Submit request with an invalid notificationTarget element-->
                 <xsl:variable name="submitRequestInvalidNotificationTarget">
@@ -2430,8 +2443,11 @@
       <ctl:comment>Pass if the response is a valid Submit response with a status of "rejected, alternatives available" and the alternative parameter is provided and has a value; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the alternative parameter of a Submit response is used only when the status is rejected, alternatives available.">ATS_URL#SPS.Submit-ResponseCorrectUseOfAlternative</ctl:link>
       <ctl:code>
-        <xsl:variable name="isStatusRejected" select="$submitResponse//sps:SubmitRequestResponse/sps:status[text()='rejected, alternatives available']" />
-        <xsl:variable name="isAlternativeSupplied" select="$submitResponse//sps:SubmitRequestResponse/sps:alternative/*" />
+        <xsl:variable name="status">
+            <xsl:value-of select="$submitResponse//sps:status" />
+        </xsl:variable>
+        <xsl:variable name="isStatusRejected" select="$status='rejected, alternatives available'" />
+        <xsl:variable name="isAlternativeSupplied" select="$submitResponse/sps:SubmitRequestResponse/sps:alternative/*" />
         <xsl:if test="($isStatusRejected and not($isAlternativeSupplied)) or (not($isStatusRejected) and $isAlternativeSupplied)">
             <ctl:message>FAILURE:  When the status is "rejected, alternatives available", at least one alternative element should be supplied; when one or more alternative elements are supplied, then the status should be "rejected, alternatives available".</ctl:message>
             <ctl:fail />
