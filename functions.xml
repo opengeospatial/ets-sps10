@@ -61,7 +61,7 @@
                     <ctl:body>
                         <xsl:value-of select="$postBody" />
                     </ctl:body>
-                    <parsers:XMLValidatingParser ignoreErrors="true" ignoreWarnings="true">
+                    <parsers:XMLValidatingParser>
                         <parsers:schemas>
                             <parsers:schema type="url">
                                 <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -96,7 +96,7 @@
                             </xsl:for-each>
                         </DescribeTasking>
                     </ctl:body>
-                    <parsers:XMLValidatingParser ignoreErrors="true" ignoreWarnings="true">
+                    <parsers:XMLValidatingParser>
                         <parsers:schemas>
                             <parsers:schema type="url">
                                 <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -142,7 +142,7 @@
                             </xsl:choose>
                         </DescribeResultAccess>
                     </ctl:body>
-                    <parsers:XMLValidatingParser ignoreErrors="true" ignoreWarnings="true">
+                    <parsers:XMLValidatingParser>
                         <parsers:schemas>
                             <parsers:schema type="url">
                                 <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -256,7 +256,7 @@
         <ctl:return>The GetCapabilitiesResponse document if it's valid</ctl:return>
         <ctl:description>Validates a GetCapabilitiesResponse document according to its schema</ctl:description>
         <ctl:code>
-            <parsers:XMLValidatingParser ignoreErrors="true" ignoreWarnings="true">
+            <parsers:XMLValidatingParser>
                 <parsers:schemas>
                     <parsers:schema type="url">
                         <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -279,7 +279,7 @@
         <ctl:return>The DescribeTaskingResponse document if it's valid</ctl:return>
         <ctl:description>Validates a DescribeTaskingResponse document according to its schema</ctl:description>
         <ctl:code>
-            <parsers:XMLValidatingParser ignoreErrors="true" ignoreWarnings="true">
+            <parsers:XMLValidatingParser>
                 <parsers:schemas>
                     <parsers:schema type="url">
                         <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -325,7 +325,7 @@
         <ctl:return>The DescribeResultAccessResponse document if it's valid</ctl:return>
         <ctl:description>Validates a DescribeResultAccessResponse document according to its schema</ctl:description>
         <ctl:code>
-            <parsers:XMLValidatingParser ignoreErrors="true" ignoreWarnings="true">
+            <parsers:XMLValidatingParser>
                 <parsers:schemas>
                     <parsers:schema type="url">
                         <ctl:call-function name="spsFunctions:getSchemaLocation">
@@ -424,13 +424,13 @@
         <ctl:return>True if the time to check is valid; false otherwise</ctl:return>
         <ctl:description>Checks that the supplied timeToCheck value is a valid time or duration and that it occurs on or after the compareTime</ctl:description>
         <ctl:code>
-            <xsl:variable name="isValidDuration">
+            <!--<xsl:variable name="isValidDuration">
                 <ctl:call-function name="spsFunctions:checkDuration">
                     <ctl:with-param name="durationToCheck" select="$timeToCheck" />
                 </ctl:call-function>
-            </xsl:variable>
+            </xsl:variable>-->
             <xsl:choose>
-                <xsl:when test="xs:boolean($isValidDuration)">
+                <xsl:when test="xs:boolean(spsFunctions:checkDuration($timeToCheck))">
                     <xsl:value-of select="true()" />
                 </xsl:when>
                 <xsl:otherwise>
