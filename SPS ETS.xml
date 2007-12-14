@@ -722,8 +722,8 @@
                 <ctl:fail />
             </xsl:if>
             <!--Check Phenomenon (for an empty string or an invalid URN?)-->
-            <xsl:if test="string-length($phenomenon)=0">
-                <ctl:message>FAILURE:  The Phenomenon value for SensorOffering with SensorID <xsl:value-of select="$sensorID" /> is null.</ctl:message>
+            <xsl:if test="string-length($phenomenon)=0 or not(spsFunctions:validateURN($phenomenon))">
+                <ctl:message>FAILURE:  The Phenomenon value for SensorOffering with SensorID <xsl:value-of select="$sensorID" /> is null or is not a valid URN.</ctl:message>
                 <ctl:fail />
             </xsl:if>
             <!--Check SensorDefinition (for an empty string)-->
@@ -732,8 +732,8 @@
                 <ctl:fail />
             </xsl:if>
             <!--Check SensorID (for an empty string or an invalid URN?)-->
-            <xsl:if test="string-length($sensorID)=0">
-                <ctl:message>FAILURE:  A SensorID value is null.</ctl:message>
+            <xsl:if test="string-length($sensorID)=0 or not(spsFunctions:validateURN($sensorID))">
+                <ctl:message>FAILURE:  A SensorID value is null or is not a valid URN.</ctl:message>
                 <ctl:fail />
             </xsl:if>
         </xsl:for-each>
