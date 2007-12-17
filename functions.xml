@@ -608,8 +608,8 @@
         <ctl:return>True/false depending on whether or not the WGS84BoundingBox is valid</ctl:return>
         <ctl:description>Checks position values for validity</ctl:description>
         <ctl:code>
-            <xsl:variable name="upperCorner" select="$wgs84BoundingBox//ows:UpperCorner" />
-            <xsl:variable name="lowerCorner" select="$wgs84BoundingBox//ows:LowerCorner" />
+            <xsl:variable name="upperCorner" select="$wgs84BoundingBoxToCheck//ows:UpperCorner" />
+            <xsl:variable name="lowerCorner" select="$wgs84BoundingBoxToCheck//ows:LowerCorner" />
             <xsl:variable name="isUpperCornerValid">
                 <ctl:call-function name="spsFunctions:checkWGS84Position">
                     <ctl:with-param name="positionToCheck" select="$upperCorner" />
