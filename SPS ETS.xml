@@ -2344,7 +2344,7 @@
                                     <ctl:with-param name="locatorToCheck" select="string('*')" />
                                 </ctl:call-function>
                             </xsl:variable>
-                            <xsl:if test="not(xsd:boolean(isTaskIDExpiredResponse))">
+                            <xsl:if test="not(xsd:boolean($isTaskIDExpiredResponse))">
                                 <ctl:message>FAILURE:  The response to a DescribeResultAccess request was expected to a DescribeResultAccessRequestResponse document or an ExceptionReport with an exceptionCode of TaskIDExpired; an ExceptionReport with an exceptionCode other than TaskIDExpired was returned instead.</ctl:message>
                                 <ctl:fail />
                             </xsl:if>
