@@ -1460,6 +1460,14 @@
                     <xsl:value-of select="current-dateTime()" />
                 </xsl:variable>
                 <ctl:message>Valid Submit request submitted at:  <xsl:value-of select="$submitTime" /></ctl:message>
+                <!--Call the response tests using the Submit response from the user input-->
+                <ctl:call-test name="sps:core-SPS.Submit-ResponseMain.1">
+                    <ctl:with-param name="submitURL" select="$submitURL" />
+                    <ctl:with-param name="submitRequest" select="$submitRequest" />
+                    <ctl:with-param name="submitResponse" select="$submitResponse" />
+                    <ctl:with-param name="submitTime" select="$submitTime" />
+                    <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
+                </ctl:call-test>
                 <!--Call the other request tests using the Submit request that was constructed previously-->
                 <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersExpectedResponse.1">
                   <ctl:with-param name="submitURL" select="$submitURL" />
@@ -1485,14 +1493,6 @@
                 <ctl:call-test name="sps:core-SPS.Submit-RequestValidTimeFrame.1">
                   <ctl:with-param name="submitURL" select="$submitURL" />
                   <ctl:with-param name="submitRequest" select="$submitRequestInvalidTimeFrame" />
-                </ctl:call-test>
-                <!--Call the response tests using the Submit response from the user input-->
-                <ctl:call-test name="sps:core-SPS.Submit-ResponseMain.1">
-                    <ctl:with-param name="submitURL" select="$submitURL" />
-                    <ctl:with-param name="submitRequest" select="$submitRequest" />
-                    <ctl:with-param name="submitResponse" select="$submitResponse" />
-                    <ctl:with-param name="submitTime" select="$submitTime" />
-                    <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
                 </ctl:call-test>
             </xsl:otherwise>
         </xsl:choose>
@@ -2337,8 +2337,17 @@
                             <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ValidException.1">
                                 <ctl:with-param name="describeResultAccessDocument" select="$describeResultAccessRequestResponse" />
                             </ctl:call-test>
-                            <ctl:message>FAILURE:  The response to a DescribeResultAccess request was expected to a DescribeResultAccessRequestResponse document; an ExceptionReport was returned instead.</ctl:message>
-                            <ctl:fail />
+                            <xsl:variable name="isTaskIDExpiredResponse">
+                                <ctl:call-function name="spsFunctions:checkExceptionReport">
+                                    <ctl:with-param name="exceptionReportToCheck" select="$describeResultAccessRequestResponse" />
+                                    <ctl:with-param name="exceptionCodeToCheck" select="string('TaskIDExpired')" />
+                                    <ctl:with-param name="locatorToCheck" select="string('*')" />
+                                </ctl:call-function>
+                            </xsl:variable>
+                            <xsl:if test="not(xsd:boolean(isTaskIDExpiredResponse))">
+                                <ctl:message>FAILURE:  The response to a DescribeResultAccess request was expected to a DescribeResultAccessRequestResponse document or an ExceptionReport with an exceptionCode of TaskIDExpired; an ExceptionReport with an exceptionCode other than TaskIDExpired was returned instead.</ctl:message>
+                                <ctl:fail />
+                            </xsl:if>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:choose>
