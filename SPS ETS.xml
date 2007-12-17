@@ -296,7 +296,7 @@
                             <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
                             <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
                             <ctl:with-param name="submitURL" select="$submitURL" />
-                            <ctl:with-param name="describeResultAccessURL" select="$decribeResultAccessURL" />
+                            <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
                         </ctl:call-test>
                     </xsl:if>
                     
@@ -2270,32 +2270,32 @@
             <ctl:message>Response:  <xsl:copy-of select="$describeResultAccessRequestResponse" /></ctl:message>
             <xsl:choose>
                 <xsl:when test="not($describeResultAccessRequestResponse/*)">
-                    <ctl:message>FAILURE:  Sending a valid DescribeResultAccess request with a sensorID parameter of "<xsl:value-of select="$sensorID" />" did not return a response or the response was not valid according to the expected schema.</ctl:message>
+                    <ctl:message>FAILURE:  Sending a valid DescribeResultAccess request with a taskID parameter of "<xsl:value-of select="$validTaskID" />" did not return a response or the response was not valid according to the expected schema.</ctl:message>
                     <ctl:fail />
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:choose>
-                        <xsl:when test="$describeResultAccessResponse//ows:ExceptionReport">
+                        <xsl:when test="$describeResultAccessRequestResponse//ows:ExceptionReport">
                             <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ValidException.1">
-                                <ctl:with-param name="describeResultAccessDocument" select="$describeResultAccessResponse" />
+                                <ctl:with-param name="describeResultAccessDocument" select="$describeResultAccessRequestResponse" />
                             </ctl:call-test>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:choose>
-                                <xsl:when test="$describeResultAccessResponse/sps:DataNotAvailable">
+                                <xsl:when test="$describeResultAccessRequestResponse/sps:DataNotAvailable">
                                     <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidDataNotAvailable.1">
-                                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessResponse" />
+                                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
                                     </ctl:call-test>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <!--Check that the ServiceType is valid-->
                                     <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceType.1">
-                                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                        <ctl:with-param name="requestedSensorID" select="$validTaskID" />
                                         <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
                                     </ctl:call-test>
                                     <!--Check that the ServiceURL is valid-->
                                     <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceURL.1">
-                                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                        <ctl:with-param name="requestedSensorID" select="$validTaskID" />
                                         <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
                                     </ctl:call-test>
                                 </xsl:otherwise>
@@ -2390,7 +2390,7 @@
         <xsl:variable name="dataNotAvailableElement" select="$describeResultAccessResponse/sps:DataNotAvailable" />
         <xsl:variable name="reason" select="normalize-space($dataNotAvailableElement/sps:reason)" />
         <xsl:if test="string-length(normalize-space($reason))=0">
-            <ctl:message>FAILURE:  The DescribeResultAccess request for taskID <xsl:value-of select="$taskID" /> produced a DataNotAvailable response with an empty string for the reason element.</ctl:message>
+            <ctl:message>FAILURE:  The DescribeResultAccess request produced a DataNotAvailable response with an empty string for the reason element.</ctl:message>
             <ctl:fail />
         </xsl:if>
       </ctl:code>
