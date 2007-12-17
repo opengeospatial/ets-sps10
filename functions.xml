@@ -597,8 +597,8 @@
             </xsl:variable>
             <xsl:variable name="longitude" select="$parts[1]" />
             <xsl:variable name="latitude" select="$parts[2]" />
-            <xsl:variable name="isValidLongitude" select="xs:double($longitude)>=-180.0 and xs:double($longitude)<=180" />
-            <xsl:variable name="isValidLatitude" select="xs:double($latitude)>=-90.0 and xs:double($latitude)<=90.0" />
+            <xsl:variable name="isValidLongitude" select="xs:double($longitude)&gt;=-180.0 and xs:double($longitude)&lt;=180" />
+            <xsl:variable name="isValidLatitude" select="xs:double($latitude)&gt;=-90.0 and xs:double($latitude)&lt;=90.0" />
             <xsl:value-of select="xs:boolean($isValidFormat) and xs:boolean($isValidLongitude) and xs:boolean($isValidLatitude)" />
         </ctl:code>
     </ctl:function>
