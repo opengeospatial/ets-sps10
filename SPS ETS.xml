@@ -265,6 +265,16 @@
                     <xsl:variable name="describeTaskingURL">
                         <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='DescribeTasking']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
                     </xsl:variable>
+                    <!--Get the Submit URL-->
+                    <xsl:variable name="submitURL">
+                        <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='Submit']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
+                    </xsl:variable>
+                    <!--Get the DescribeResultAccess URL-->
+                    <xsl:variable name="describeResultAccessURL">
+                        <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='DescribeResultAccess']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
+                    </xsl:variable>
+                    
+                    <!--Execute DescribeTasking tests-->
                     <xsl:if test="string-length(normalize-space($describeTaskingURL))>0">
                         <ctl:message>Running DescribeTasking tests...</ctl:message>
                         <ctl:call-test name="sps:core-SPS.DescribeTasking-RequestInvalidSensorIDs.1">
@@ -279,23 +289,18 @@
                         </ctl:call-test>
                     </xsl:if>
                                         
-                    <!--Get the Submit URL-->
-                    <xsl:variable name="submitURL">
-                        <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='Submit']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
-                    </xsl:variable>
+                    <!--Execute Submit tests-->
                     <xsl:if test="string-length(normalize-space($submitURL))>0">
                         <ctl:message>Running Submit tests...</ctl:message>
                         <ctl:call-test name="sps:core-SPS.Submit-RequestMain.1">
                             <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
                             <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
                             <ctl:with-param name="submitURL" select="$submitURL" />
+                            <ctl:with-param name="describeResultAccessURL" select="$decribeResultAccessURL" />
                         </ctl:call-test>
                     </xsl:if>
                     
-                    <!--Get the DescribeResultAccess URL-->
-                    <xsl:variable name="describeResultAccessURL">
-                        <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='DescribeResultAccess']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
-                    </xsl:variable>       
+                    <!--Execute DescribeResultAccess tests-->                    
                     <xsl:if test="string-length(normalize-space($describeResultAccessURL))>0">
                         <ctl:message>Running DescribeResultAccess tests...</ctl:message>
                         <ctl:call-test name="sps:core-SPS.DescribeResultAccess-RequestNullSensorID.1">
@@ -1160,6 +1165,7 @@
       <ctl:param name="getCapabilitiesResponse" />
       <ctl:param name="describeTaskingURL" />
       <ctl:param name="submitURL" />
+      <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>All Submit request assertions are satisfied.</ctl:assertion>
       <ctl:comment>Pass if all Submit request assertions are satisfied; fail otherwise.</ctl:comment>
       <ctl:link title=""></ctl:link>
@@ -1483,6 +1489,7 @@
                     <ctl:with-param name="submitRequest" select="$submitRequest" />
                     <ctl:with-param name="submitResponse" select="$submitResponse" />
                     <ctl:with-param name="submitTime" select="$submitTime" />
+                    <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
                 </ctl:call-test>
             </xsl:otherwise>
         </xsl:choose>
@@ -1812,6 +1819,7 @@
       <ctl:param name="submitRequest" />
       <ctl:param name="submitResponse" />
       <ctl:param name="submitTime" />
+      <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>The response to a valid Submit request contains valid values for its sub-elements</ctl:assertion>
       <ctl:comment>Pass if the response is a valid SubmitRequestResponse document and the values of the sub-elements are valid</ctl:comment>
       <ctl:link title="">ATS_URL#SPS.Submit-ResponseMain</ctl:link>
@@ -1830,6 +1838,7 @@
                 <!--Validate taskID in the response-->
                 <ctl:call-test name="sps:core-SPS.Submit-ResponseValidTaskID.1">
                     <ctl:with-param name="submitResponse" select="$submitResponse" />
+                    <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
                 </ctl:call-test>
                 <!--Validate estimatedToC in the response-->
                 <ctl:call-test name="sps:core-SPS.Submit-ResponseValidEstimatedToC.1">
@@ -1853,16 +1862,26 @@
     </ctl:test>
     <ctl:test name="sps:core-SPS.Submit-ResponseValidTaskID.1">
       <ctl:param name="submitResponse" />
+      <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>The taskID parameter of a Submit response contains a value.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid Submit response and the taskID parameter of the response contains a value; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the taskID parameter of a Submit response contains a value.">ATS_URL#SPS.Submit-ResponseValidTaskID</ctl:link>
       <ctl:code>
         <xsl:variable name="taskID" select="$submitResponse//sps:taskID" />
         <ctl:message>Checking for a value in the taskID element.  The following value was returned "<xsl:value-of select="$taskID" />".</ctl:message>
-        <xsl:if test="string-length(normalize-space($taskID))=0">
-            <ctl:message>FAILURE:  The taskID in the response for the Submit request was null.</ctl:message>
-            <ctl:fail />
-        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="string-length(normalize-space($taskID))=0">
+                <ctl:message>FAILURE:  The taskID in the response for the Submit request was null.</ctl:message>
+                <ctl:fail />
+            </xsl:when>
+            <xsl:otherwise>
+                <ctl:message>The returned taskID "<xsl:value-of select="$taskID" />" is valid.  Executing DescribeResultAccess tests with this taskID...</ctl:message>
+                <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseMain-TaskID.1">
+                    <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
+                    <ctl:with-param name="validTaskID" select="$taskID" />
+                </ctl:call-test>
+            </xsl:otherwise>
+        </xsl:choose>
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.Submit-ResponseValidEstimatedToC.1">
@@ -2224,6 +2243,69 @@
         </xsl:for-each>
       </ctl:code>
     </ctl:test>
+    <ctl:test name="sps:core-SPS.DescribeResultAccess-ResponseMain-TaskID.1">
+      <ctl:param name="describeResultAccessURL" />
+      <ctl:param name="validTaskID" />
+      <ctl:assertion>All assertions applicable to a DescribeResultAccess response are satisfied.</ctl:assertion>
+      <ctl:comment>Fail if any of the DescribeResultAccess response assertions fail; pass otherwise.</ctl:comment>
+      <ctl:link title="Verify that a valid request containing a sensorID parameter produces a valid response other than DataNotAvailable.">ATS_URL#SPS.DescribeResultAccess-ResponseSensorIDValidResponse</ctl:link>
+      <ctl:code>
+        <!--PUT TEST CODE HERE-->
+        <!--Call each of the DescribeResultAccess sub-tests using SensorID values from the Capabilities document-->
+            <ctl:message>Executing DescribeResultAccess request for taskID:  <xsl:value-of select="$validTaskID" /></ctl:message>
+            <xsl:variable name="describeResultAccessRequestResponse">
+                <ctl:request>
+                    <ctl:url>
+                        <xsl:value-of select="$describeResultAccessURL" />
+                    </ctl:url>
+                    <ctl:method>post</ctl:method>
+                    <ctl:body>
+                        <DescribeResultAccess xmlns="http://www.opengis.net/sps/1.0" service="SPS" version="1.0.0">
+                            <sensorID><xsl:value-of select="$validTaskID" /></sensorID>
+                        </DescribeResultAccess>
+                    </ctl:body>
+                    <ctl:call-function name="spsFunctions:validateDescribeResultAccessResponse" />
+                </ctl:request>
+            </xsl:variable>
+            <ctl:message>Response:  <xsl:copy-of select="$describeResultAccessRequestResponse" /></ctl:message>
+            <xsl:choose>
+                <xsl:when test="not($describeResultAccessRequestResponse/*)">
+                    <ctl:message>FAILURE:  Sending a valid DescribeResultAccess request with a sensorID parameter of "<xsl:value-of select="$sensorID" />" did not return a response or the response was not valid according to the expected schema.</ctl:message>
+                    <ctl:fail />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:choose>
+                        <xsl:when test="$describeResultAccessResponse//ows:ExceptionReport">
+                            <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ValidException.1">
+                                <ctl:with-param name="describeResultAccessDocument" select="$describeResultAccessResponse" />
+                            </ctl:call-test>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:choose>
+                                <xsl:when test="$describeResultAccessResponse/sps:DataNotAvailable">
+                                    <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidDataNotAvailable.1">
+                                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessResponse" />
+                                    </ctl:call-test>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <!--Check that the ServiceType is valid-->
+                                    <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceType.1">
+                                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
+                                    </ctl:call-test>
+                                    <!--Check that the ServiceURL is valid-->
+                                    <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceURL.1">
+                                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
+                                    </ctl:call-test>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
+      </ctl:code>
+    </ctl:test>
     <ctl:test name="sps:core-SPS.DescribeResultAccess-ResponseSensorIDValidResponse.1">
       <ctl:param name="requestedSensorID" />
       <ctl:param name="describeResultAccessResponse" />
@@ -2300,60 +2382,17 @@
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.DescribeResultAccess-ResponseValidDataNotAvailable.1">
-      <ctl:param name="describeResultAccessURL" />
+      <ctl:param name="describeResultAccessResponse" />
       <ctl:assertion>A DataNotAvailable response is valid and contains values for each of the parameters.</ctl:assertion>
       <ctl:comment>Pass if the DataNotAvailable response is valid and contains a value for each of the parameters; fail otherwise</ctl:comment>
       <ctl:link title="Verify that a DataNotAvailable response is valid and contains values for each of the parameters.">ATS_URL#SPS.DescribeResultAccess-ResponseValidDataNotAvailable</ctl:link>
       <ctl:code>
-        <!--PUT TEST CODE HERE-->
-        <!--
-                    1.)  DescribeResultAccess request with a previously generated taskID or with an empty string for the taskID.
-                    2.)  Validate response according to the DescribeResultAccessRequestResponse schema
-                    3.)  Iterate through the key parameters of the DescribeResultAccess response to ensure that each parameter/element contains a value
-                -->
-        <xsl:variable name="taskID" select="string('')" />
-        <xsl:variable name="describeResultAccessResponse">
-            <!--<ctl:call-function name="spsFunctions:describeResultAccessRequest">
-                <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
-                <ctl:with-param name="sensorOrTaskID" select="$taskID" />
-                <ctl:with-param name="type" select="taskID" />
-            </ctl:call-function>-->
-            <ctl:request>
-                    <ctl:url>
-                        <xsl:value-of select="$describeResultAccessURL" />
-                    </ctl:url>
-                    <ctl:method>post</ctl:method>
-                    <ctl:body>
-                        <DescribeResultAccess xmlns="http://www.opengis.net/sps/1.0" service="SPS" version="1.0.0">
-                            <taskID><xsl:value-of select="$taskID" /></taskID>
-                        </DescribeResultAccess>
-                    </ctl:body>
-                    <ctl:call-function name="spsFunctions:validateDescribeResultAccessResponse" />
-                </ctl:request>
-        </xsl:variable>
-        <!--Validate-->
-        <xsl:choose>
-            <xsl:when test="not($describeResultAccessResponse/*)">
-                <ctl:message>FAILURE:  The server did not return a response from a DescribeResultAccess request with a taskID of "<xsl:value-of select="$taskID" />", or the response was not valid according to the DescribeResultAccessRequestResponse schema.</ctl:message>
-                <ctl:fail />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:variable name="dataNotAvailableElement" select="$describeResultAccessResponse/sps:DataNotAvailable" />
-                <xsl:choose>
-                    <xsl:when test="$dataNotAvailableElement">
-                        <xsl:variable name="reason" select="normalize-space($dataNotAvailableElement/sps:reason)" />
-                        <xsl:if test="string-length(normalize-space($reason))=0">
-                            <ctl:message>FAILURE:  The DescribeResultAccess request for taskID <xsl:value-of select="$taskID" /> produced a DataNotAvailable response with an empty string for the reason element.</ctl:message>
-                            <ctl:fail />
-                        </xsl:if>
-                    </xsl:when>
-                <xsl:otherwise>
-                    <ctl:message>FAILURE:  The DescribeResultAccess response for taskID <xsl:value-of select="$taskID" /> was expected to be a DataNotAvailable response.  "<xsl:value-of select="$describeResultAccessResponse/*" />" was returned instead.</ctl:message>
-                    <ctl:fail />
-                </xsl:otherwise>
-                </xsl:choose>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:variable name="dataNotAvailableElement" select="$describeResultAccessResponse/sps:DataNotAvailable" />
+        <xsl:variable name="reason" select="normalize-space($dataNotAvailableElement/sps:reason)" />
+        <xsl:if test="string-length(normalize-space($reason))=0">
+            <ctl:message>FAILURE:  The DescribeResultAccess request for taskID <xsl:value-of select="$taskID" /> produced a DataNotAvailable response with an empty string for the reason element.</ctl:message>
+            <ctl:fail />
+        </xsl:if>
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.DescribeResultAccess-ValidException.1">
