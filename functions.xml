@@ -597,7 +597,7 @@
             </xsl:variable>
             <xsl:variable name="longitude" select="$parts[1]" />
             <xsl:variable name="latitude" select="$parts[2]" />
-            <xsl:variable name="isValidLongitude" select="xs:double($longitude)&gt;=-180.0 and xs:double($longitude)&lt;=180" />
+            <xsl:variable name="isValidLongitude" select="xs:double($longitude)&gt;=-180.0 and xs:double($longitude)&lt;=180.0" />
             <xsl:variable name="isValidLatitude" select="xs:double($latitude)&gt;=-90.0 and xs:double($latitude)&lt;=90.0" />
             <xsl:value-of select="xs:boolean($isValidFormat) and xs:boolean($isValidLongitude) and xs:boolean($isValidLatitude)" />
         </ctl:code>
@@ -610,16 +610,8 @@
         <ctl:code>
             <xsl:variable name="upperCorner" select="$wgs84BoundingBoxToCheck//ows:UpperCorner" />
             <xsl:variable name="lowerCorner" select="$wgs84BoundingBoxToCheck//ows:LowerCorner" />
-            <xsl:variable name="isUpperCornerValid">
-                <ctl:call-function name="spsFunctions:checkWGS84Position">
-                    <ctl:with-param name="positionToCheck" select="$upperCorner" />
-                </ctl:call-function>
-            </xsl:variable>
-            <xsl:variable name="isLowerCornerValid">
-                <ctl:call-function name="spsFunctions:checkWGS84Position">
-                    <ctl:with-param name="positionToCheck" select="$lowerCorner" />
-                </ctl:call-function>
-            </xsl:variable>
+            <xsl:variable name="isUpperCornerValid" select="spsFunctions:checkWGS84Position($upperCorner)" />
+            <xsl:variable name="isLowerCornerValid" select="spsFunctions:checkWGS84Position($lowerCorner)" />
             <xsl:variable name="isUCGreater" select="true()" />
             <xsl:value-of select="xs:boolean($isUpperCornerValid) and xs:boolean($isLowerCornerValid) and xs:boolean($isUCGreater)" />
         </ctl:code>
