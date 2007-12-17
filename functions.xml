@@ -154,9 +154,8 @@
         <ctl:return>True/false depending on whether or not the provided exceptionCode is a valid exceptionCode for the provided operationName</ctl:return>
         <ctl:description></ctl:description>
         <ctl:code>
-            <xsl:variable name="exceptionReportElement" select="$exceptionReport/ows:ExceptionReport" />
             <xsl:variable name="exceptionCodes" select="$validExceptionCodes//spsTesting:exceptionCode" />
-            <xsl:variable name="exceptionCode" select="$exceptionReportElement/ows:Exception/@exceptionCode" />
+            <xsl:variable name="exceptionCode" select="$exceptionReport//ows:Exception/@exceptionCode" />
             <xsl:variable name="validException" select="exists(index-of($exceptionCodes,$exceptionCode))" />
             <xsl:value-of select="$validException" />
         </ctl:code>
