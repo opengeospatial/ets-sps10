@@ -730,11 +730,31 @@
             <xsl:variable name="sensorDefinition" select="normalize-space(sps:SensorDefinition)" />
             <xsl:variable name="sensorID" select="normalize-space(sps:SensorID)" />
             <!--Check AreaOfService (for a child element or more?)-->
-            <xsl:if test="not($areaOfService/*)">
-                <!--TODO: Check AreaOfService-->
-                <ctl:message>FAILURE:  The AreaOfService value for SensorOffering with SensorID <xsl:value-of select="$sensorID" /> is null.</ctl:message>
-                <ctl:fail />
-            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="not($areaOfService/*)">
+                    <!--TODO: Check AreaOfService-->
+                    <ctl:message>FAILURE:  The AreaOfService value for SensorOffering with SensorID <xsl:value-of select="$sensorID" /> is null.</ctl:message>
+                    <ctl:fail />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:choose>
+                        <xsl:when test="$areaOfService/ows:WGS84BoundingBox">
+                            <xsl:variable name="wgs84BoundingBox" select="$areaOfService/ows:WGS84BoundingBox" />
+                            <xsl:variable name="isWGS84BoundingBoxValid">
+                                <ctl:call-function name="spsFunctions:checkWGS84BoundingBox">
+                                    <ctl:with-param name="wgs84BoundingBoxToCheck" select="$wgs84BoundingBox" />
+                                </ctl:call-function>
+                            </xsl:variable>
+                            <xsl:if test="not(xsd:boolean($isWGS84BoundingBoxValid))">
+                                <ctl:message>FAILURE:  The WGS84BoundingBox provided in the AreaOfService element for sensorID "<xsl:value-of select="$sensorID" />" is not a valid WGS84BoundingBox.</ctl:message>
+                                <ctl:fail />
+                            </xsl:if>
+                        </xsl:when>
+                        <xsl:otherwise>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
             <!--Check Phenomenon (for an empty string or an invalid URN?)-->
             <xsl:if test="string-length($phenomenon)=0 or not(xsd:boolean(spsFunctions:validateURN($phenomenon)))">
                 <ctl:message>FAILURE:  The Phenomenon value for SensorOffering with SensorID <xsl:value-of select="$sensorID" /> is null or is not a valid URN.</ctl:message>
