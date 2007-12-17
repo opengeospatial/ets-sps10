@@ -132,7 +132,7 @@
                             </ctl:call-test>
                             <!--Invalid update sequence-->
                             <xsl:if test="not(string($capabilitiesDocument//@updateSequence)='')">
-                                <ctl:message>updateSequence is supported for GetCapabilities requests.</ctl:message>
+                                <ctl:message>updateSequence is supported for GetCapabilities requests.  Running updateSequence tests...</ctl:message>
                     			<ctl:call-test name="owsTests:ows-OWS.GetCapabilities-UpdateSequence.1">
                     				<ctl:with-param name="serviceURL" select="$serviceURL"/>
                                     <ctl:with-param name="serviceVersion" select="$serviceVersion" />
@@ -184,7 +184,7 @@
                             </ctl:call-test>
                             <!-- run tests for optional capabilities that are implemented -->           
                             <xsl:if test="$capabilitiesDocument//ows:OperationsMetadata/ows:Operation[@name='GetCapabilities']/ows:Parameter[lower-case(@name)='sections']">
-                              <ctl:message>Sections parameter is supported for GetCapabilities requests.</ctl:message>
+                              <ctl:message>Sections parameter is supported for GetCapabilities requests.  Running Sections tests...</ctl:message>
                               <ctl:call-test name="owsTests:ows-OWS.GetCapabilities-Sections.1">
                                 <ctl:with-param name="serviceURL" select="$serviceURL"/>
                                 <ctl:with-param name="serviceType" select="$serviceType" />
@@ -201,7 +201,7 @@
                               </ctl:call-test>
                             </xsl:if>
                             <xsl:if test="$capabilitiesDocument//ows:OperationsMetadata/ows:Operation[@name='GetCapabilities']/ows:Parameter[lower-case(@name)='acceptformats']">
-                              <ctl:message>AcceptFormats parameter is supported for GetCapabilities requests.</ctl:message>
+                              <ctl:message>AcceptFormats parameter is supported for GetCapabilities requests.  Running AcceptFormats tests...</ctl:message>
                               <ctl:call-test name="owsTests:ows-OWS.GetCapabilities-AcceptFormats.1">
                                 <ctl:with-param name="serviceURL" select="$serviceURL"/>
                                 <ctl:with-param name="serviceType" select="$serviceType" />
@@ -306,7 +306,7 @@
                     <xsl:variable name="request2Root" select="local-name-from-QName(node-name($request2/*[1]))" />
                     <xsl:variable name="request3Root" select="local-name-from-QName(node-name($request3/*[1]))" />
                     <xsl:if test="not($request1Root=$rootElementName) or not($request2Root=$rootElementName) or not($request3Root=$rootElementName)">
-                        <ctl:message>The root element(s) from the responses to GetCapabilities requests with mixed-case parameters do not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
+                        <ctl:message>FAILURE:  The root element(s) from the responses to GetCapabilities requests with mixed-case parameters do not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
 				</xsl:otherwise>
@@ -349,7 +349,7 @@
 					<xsl:variable name="request1Root" select="local-name-from-QName(node-name($request1/response/content/*[1]))" />
                     <xsl:choose>
                         <xsl:when test="not($request1Root=$rootElementName)">
-                            <ctl:message>The root element from the response to a GetCapabilities request "<xsl:value-of select="$request1Root" />" does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
+                            <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request "<xsl:value-of select="$request1Root" />" does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                             <ctl:fail />
                         </xsl:when>
                         <xsl:otherwise>
@@ -412,7 +412,7 @@
 			    <xsl:otherwise>
                     <xsl:variable name="request1Root" select="local-name-from-QName(node-name($request1/*[1]))" />
                     <xsl:if test="not($request1Root=$rootElementName)">
-                        <ctl:message>The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
+                        <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
 				</xsl:otherwise>
@@ -462,7 +462,7 @@
 			    <xsl:otherwise>
 					<xsl:variable name="request1Root" select="local-name-from-QName(node-name($request1/*[1]))" />
                     <xsl:if test="not($request1Root=$rootElementName)">
-                        <ctl:message>The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
+                        <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
 				</xsl:otherwise>
@@ -509,7 +509,7 @@
 			    </xsl:when>
 			    <xsl:otherwise>
                     <xsl:if test="not($request1/ows:ExceptionReport)">
-                        <ctl:message>The root element from the response to a GetCapabilities request does not match the expected root element of ExceptionReport</ctl:message>
+                        <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of ExceptionReport</ctl:message>
                         <ctl:fail />
                     </xsl:if>
 				</xsl:otherwise>
@@ -561,11 +561,11 @@
                         <xsl:value-of select="$request1/*[1]/@version" />
                     </xsl:variable>
                     <xsl:if test="not($request1Root=$rootElementName)">
-                        <ctl:message>The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
+                        <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
                     <xsl:if test="not($version=$serviceVersion)">
-                        <ctl:message>The returned value in the version attribute "<xsl:value-of select="$version" />" does not match the expected version of "<xsl:value-of select="$serviceVersion" />"</ctl:message>
+                        <ctl:message>FAILURE:  The returned value in the version attribute "<xsl:value-of select="$version" />" does not match the expected version of "<xsl:value-of select="$serviceVersion" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
 				</xsl:otherwise>
@@ -617,11 +617,11 @@
                         <xsl:value-of select="$request1/*[1]/@version" />
                     </xsl:variable>
                     <xsl:if test="not($request1Root=$rootElementName)">
-                        <ctl:message>The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
+                        <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
                     <xsl:if test="not($version=$serviceVersion)">
-                        <ctl:message>The returned value in the version attribute "<xsl:value-of select="$version" />" does not match the expected version of "<xsl:value-of select="$serviceVersion" />"</ctl:message>
+                        <ctl:message>FAILURE:  The returned value in the version attribute "<xsl:value-of select="$version" />" does not match the expected version of "<xsl:value-of select="$serviceVersion" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
 				</xsl:otherwise>
@@ -675,11 +675,11 @@
                         <xsl:value-of select="$request1/*[1]/@version" />
                     </xsl:variable>
                     <xsl:if test="not($request1Root=$rootElementName)">
-                        <ctl:message>The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
+                        <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
                     <xsl:if test="not($version=$serviceVersion)">
-                        <ctl:message>The returned value in the version attribute "<xsl:value-of select="$version" />" does not match the expected version of "<xsl:value-of select="$serviceVersion" />"</ctl:message>
+                        <ctl:message>FAILURE:  The returned value in the version attribute "<xsl:value-of select="$version" />" does not match the expected version of "<xsl:value-of select="$serviceVersion" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
 				</xsl:otherwise>
@@ -1059,7 +1059,7 @@
 			    <xsl:otherwise>
 					<xsl:variable name="request1Root" select="local-name-from-QName(node-name($request1/*[1]))" />
 					<xsl:if test="not($request1Root=$rootElementName)">
-                        <ctl:message>The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
+                        <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>		
 				</xsl:otherwise>
@@ -1162,7 +1162,7 @@
                     <xsl:variable name="sectionName" select="local-name-from-QName(node-name(.))" />
                     <ctl:message>Testing the "<xsl:value-of select="$sectionName" />" section...</ctl:message>
                     <xsl:if test="count(index-of($response//ows:OperationsMetadata/ows:Operation[@name='GetCapabilities']/ows:Parameter[@name='Sections']//ows:Value,$sectionName))>0">
-                        <ctl:message>The "<xsl:value-of select="$sectionName" />" section should not be listed in the returned Capabilities document.</ctl:message>
+                        <ctl:message>FAILURE:  The "<xsl:value-of select="$sectionName" />" section should not be listed in the returned Capabilities document.</ctl:message>
                         <ctl:fail/>
                     </xsl:if>
                 </xsl:for-each>

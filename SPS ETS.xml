@@ -180,14 +180,15 @@
     </ctl:test>
     <ctl:test name="sps:general-SPS.General-ValidResponse.1">
       <ctl:param name="responseDocument" />
-      <ctl:assertion>A response is a valid response for the SPS</ctl:assertion>
-      <ctl:comment>Test method</ctl:comment>
+      <ctl:assertion>A response is a valid response for the SPS.  This general assertion should be tested by all other tests.</ctl:assertion>
+      <ctl:comment>Tested through other tests.</ctl:comment>
       <ctl:link title="Verify that a response entity is schema-valid">ATS_URL#SPS.General-ValidResponse</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
                     1.) Validate response according to its associated schema.  This includes if the response is an ExceptionReport.
                 -->
+        <!--
         <xsl:variable name="validationResponse">
             <ctl:call-function name="spsFunctions:validateResponse">
                 <ctl:with-param name="responseDocument" select="$responseDocument" />
@@ -197,6 +198,8 @@
             <ctl:message>FAILURE:  The response was not a valid response for the SPS.</ctl:message>
             <ctl:fail />
         </xsl:if>
+        -->
+        <ctl:message>This general assertion is tested by all other tests, so there is nothing specific to test now.</ctl:message>
       </ctl:code>
     </ctl:test>
   </ctl:package>
@@ -207,7 +210,7 @@
       <ctl:comment>Test driver for the core module.</ctl:comment>
       <ctl:link title="3. Core">ATS_URL#core</ctl:link>
       <ctl:code>
-        <ctl:message>Beginning SPS specific GetCapabilities tests.</ctl:message>
+        <ctl:message>Running SPS specific GetCapabilities tests...</ctl:message>
         <ctl:call-test name="sps:core-SPS.GetCapabilities-KVPRequestParameterHandling.1">
           <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
@@ -217,11 +220,6 @@
         <ctl:call-test name="sps:core-SPS.GetCapabilities-KVPRequestRequestParameterHandling.1">
           <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
-        <!--<xsl:variable name="getCapabilitiesResponse">
-            <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseMain.1">
-                <ctl:with-param name="serviceURL" select="$serviceURL" />
-            </ctl:call-test>
-        </xsl:variable>-->
         <ctl:message>Issuing a valid GetCapabilities request to <xsl:value-of select="$serviceURL" /></ctl:message>
               <xsl:variable name="getCapabilitiesResponse">
                 <ctl:request>
@@ -268,7 +266,7 @@
                         <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='DescribeTasking']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
                     </xsl:variable>
                     <xsl:if test="string-length(normalize-space($describeTaskingURL))>0">
-                        <ctl:message>Beginning DescribeTasking tests.</ctl:message>
+                        <ctl:message>Running DescribeTasking tests...</ctl:message>
                         <ctl:call-test name="sps:core-SPS.DescribeTasking-RequestInvalidSensorIDs.1">
                             <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
                         </ctl:call-test>
@@ -286,7 +284,7 @@
                         <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='Submit']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
                     </xsl:variable>
                     <xsl:if test="string-length(normalize-space($submitURL))>0">
-                        <ctl:message>Beginning Submit tests.</ctl:message>
+                        <ctl:message>Running Submit tests...</ctl:message>
                         <ctl:call-test name="sps:core-SPS.Submit-RequestMain.1">
                             <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
                             <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
@@ -299,7 +297,7 @@
                         <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='DescribeResultAccess']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
                     </xsl:variable>       
                     <xsl:if test="string-length(normalize-space($describeResultAccessURL))>0">
-                        <ctl:message>Beginning DescribeResultAccess tests.</ctl:message>
+                        <ctl:message>Running DescribeResultAccess tests...</ctl:message>
                         <ctl:call-test name="sps:core-SPS.DescribeResultAccess-RequestNullSensorID.1">
                             <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
                         </ctl:call-test>
