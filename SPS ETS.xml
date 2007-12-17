@@ -1040,8 +1040,8 @@
                 <xsl:otherwise>
                     <xsl:choose>
                         <xsl:when test="$describeTaskingResponse//ows:ExceptionReport">
-                            <ctl:call-test name="sps:core-SPS.Submit-ValidException.1">
-                                <ctl:with-param name="submitResponse" select="$submitResponse" />
+                            <ctl:call-test name="sps:core-SPS.DescribeTasking-ValidException.1">
+                                <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
                             </ctl:call-test>
                             <ctl:message>FAILURE:  The response to a DescribeTasking request was expected to a DescribeTaskingRequestResponse document; an ExceptionReport was returned instead.</ctl:message>
                             <ctl:fail />
