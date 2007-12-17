@@ -583,26 +583,37 @@
                     <ctl:fail />
                 </xsl:when>
                 <xsl:otherwise>
-                    <!--Check for mandatory operations-->
-                    <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseOperationMetadataMandatoryOperations.1">
-                        <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
-                    </ctl:call-test>
-                    <!--Check for optional operations-->
-                    <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseOperationMetadataOptionalOperations.1">
-                        <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
-                    </ctl:call-test>
-                    <!--Check for valid SensorOffering elements-->
-                    <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseContentsSensorOfferings.1">
-                        <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
-                    </ctl:call-test>
-                    <!--Check for valid SensorDefinition elements-->
-                    <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseContentsSensorOfferingsValidSensorDefinition.1">
-                        <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
-                    </ctl:call-test>
-                    <!--Check for valid PhenomenonOffering elements-->
-                    <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseContentsPhenomenonOfferings.1">
-                        <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
-                    </ctl:call-test>
+                    <xsl:choose>
+                        <xsl:when test="$getCapabilitiesResponse//ows:ExceptionReport">
+                            <ctl:call-test name="sps:core-SPS.GetCapabilities-ValidException.1">
+                                <ctl:with-param name="getCapabilitiesDocument" select="$getCapabilitiesResponse" />
+                            </ctl:call-test>
+                            <ctl:message>FAILURE:  The response to a GetCapabilities request was expected to a Capabilities document; an ExceptionReport was returned instead.</ctl:message>
+                            <ctl:fail />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!--Check for mandatory operations-->
+                            <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseOperationMetadataMandatoryOperations.1">
+                                <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
+                            </ctl:call-test>
+                            <!--Check for optional operations-->
+                            <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseOperationMetadataOptionalOperations.1">
+                                <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
+                            </ctl:call-test>
+                            <!--Check for valid SensorOffering elements-->
+                            <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseContentsSensorOfferings.1">
+                                <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
+                            </ctl:call-test>
+                            <!--Check for valid SensorDefinition elements-->
+                            <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseContentsSensorOfferingsValidSensorDefinition.1">
+                                <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
+                            </ctl:call-test>
+                            <!--Check for valid PhenomenonOffering elements-->
+                            <ctl:call-test name="sps:core-SPS.GetCapabilities-ResponseContentsPhenomenonOfferings.1">
+                                <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
+                            </ctl:call-test>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:otherwise>
               </xsl:choose>
               <xsl:value-of select="$getCapabilitiesResponse/*" />
@@ -915,6 +926,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
+                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($describeTaskingResponse)" /></ctl:message>
                 <xsl:for-each select="$describeTaskingResponse//ows:ExceptionReport/ows:Exception">
                     <xsl:variable name="locatorValue">
                         <xsl:value-of select="@locator" />
@@ -928,7 +940,6 @@
                         <ctl:message>FAILURE:  An exceptionCode of UnknownSensorID was expected in the response.  "<xsl:value-of select="@exceptionCode" />" was provided instead.</ctl:message>
                         <ctl:fail />
                     </xsl:if>
-                    <!--TODO:  Figure out what to do here-->
                     <xsl:variable name="sensorIDSequence" select="tokenize($sensorIDs,',')" />
                     <xsl:variable name="locatorSequence" select="tokenize($locatorValue,',')" />
                     <xsl:for-each select="$sensorIDSequence">
@@ -938,10 +949,6 @@
                             <ctl:fail />
                         </xsl:if>
                     </xsl:for-each>
-                    <!--<xsl:if test="not(empty($sensorIDSequence except $locatorSequence))">
-                                                    <ctl:message>The locator value was expected to be one of the following values:  <xsl:value-of select="$sensorIDs" />; "<xsl:value-of select="$locatorValue" />" was provided instead.</ctl:message>
-                                                    <ctl:fail />
-                                             </xsl:if>-->
                 </xsl:for-each>
             </xsl:otherwise>
         </xsl:choose>
@@ -959,12 +966,7 @@
                     2.)  Validate response against ExceptionReport schema.
                     3.)  If response validates, then check that the exceptionCode parameter is "InvalidParameterValue".
                 -->
-        <!--<xsl:variable name="sensorIDs" select="string('')" />-->
         <xsl:variable name="describeTaskingResponse">
-            <!--<ctl:call-function name="spsFunctions:describeTaskingRequest">
-                <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
-                <ctl:with-param name="sensorIDs" select="string('')" />
-            </ctl:call-function>-->
             <ctl:request>
                     <ctl:url>
                         <xsl:value-of select="$describeTaskingURL" />
@@ -984,24 +986,18 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="$describeTaskingResponse//ows:ExceptionReport/ows:Exception">
-                    <xsl:variable name="locatorValue">
-                        <xsl:value-of select="@locator" />
-                    </xsl:variable>
-                    <xsl:variable name="exceptionCode">
-                        <xsl:value-of select="@exceptionCode" />
-                    </xsl:variable>
-                    <ctl:message>Exception locator:  <xsl:value-of select="$locatorValue" /></ctl:message>
-                    <ctl:message>Exception exceptionCode:  <xsl:value-of select="$exceptionCode" /></ctl:message>
-                    <xsl:if test="not($exceptionCode='InvalidParameterValue')">
-                        <ctl:message>FAILURE:  An exceptionCode of InvalidParameterValue was expected in the response</ctl:message>
-                        <ctl:fail />
-                    </xsl:if>
-                    <xsl:if test="not(lower-case($locatorValue)='sensorid')">
-                        <ctl:message>FAILURE:  The locator value was expected to be "sensorID"; "<xsl:value-of select="$locatorValue" />" was provided instead.</ctl:message>
-                        <ctl:fail />
-                    </xsl:if>
-                </xsl:for-each>
+                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($describeTaskingResponse)" /></ctl:message>
+                <xsl:variable name="isCorrect">
+                    <ctl:call-function name="spsFunctions:checkExceptionReport">
+                        <ctl:with-param name="exceptionReportToCheck" select="$describeTaskingResponse" />
+                        <ctl:with-param name="exceptionCodeToCheck" select="string('InvalidParameterValue')" />
+                        <ctl:with-param name="locatorToCheck" select="string('sensorID')" />
+                    </ctl:call-function>
+                </xsl:variable>
+                <xsl:if test="not(xsd:boolean($isCorrect))">
+                    <ctl:message>FAILURE:  The returned exception report was expected to contain an exceptionCode of InvalidParameterValue and a locator of sensorID.</ctl:message>
+                    <ctl:fail />
+                </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
       </ctl:code>
@@ -1042,26 +1038,33 @@
                     <ctl:fail />
                 </xsl:when>
                 <xsl:otherwise>
-                    <!--Using the DescribeTasking response, ensure that the values in the sub-elements are valid by calling sub-tests-->
-                    <!--Ensure that the SensorID in the response matches the SensorID provided in the request-->
-                    <ctl:call-test name="sps:core-SPS.DescribeTasking-ResponseMatchingSensorIDs.1">
-                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
-                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
-                    </ctl:call-test>
-                    <!--Ensure that the InputDescriptor elements contain values for their sub-elements-->
-                    <ctl:call-test name="sps:core-SPS.DescribeTasking-ResponseValidInputDescriptor.1">
-                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
-                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
-                    </ctl:call-test>
-                    <!--Ensure that the parameterID of each InputDescriptor contains a value and that the parameterID is unique-->
-                    <ctl:call-test name="sps:core-SPS.DescribeTasking-ResponseValidInputDescriptorParameterID.1">
-                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
-                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
-                    </ctl:call-test>
-                    <!--If an exception report is returned, ensure that it is a valid exception report for the DescribeTasking operation-->
-                    <!--<ctl:call-test name="sps:core-SPS.DescribeTasking-ValidException.1">
-                        <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
-                    </ctl:call-test>-->
+                    <xsl:choose>
+                        <xsl:when test="$describeTaskingResponse//ows:ExceptionReport">
+                            <ctl:call-test name="sps:core-SPS.Submit-ValidException.1">
+                                <ctl:with-param name="submitResponse" select="$submitResponse" />
+                            </ctl:call-test>
+                            <ctl:message>FAILURE:  The response to a DescribeTasking request was expected to a DescribeTaskingRequestResponse document; an ExceptionReport was returned instead.</ctl:message>
+                            <ctl:fail />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!--Using the DescribeTasking response, ensure that the values in the sub-elements are valid by calling sub-tests-->
+                            <!--Ensure that the SensorID in the response matches the SensorID provided in the request-->
+                            <ctl:call-test name="sps:core-SPS.DescribeTasking-ResponseMatchingSensorIDs.1">
+                                <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
+                            </ctl:call-test>
+                            <!--Ensure that the InputDescriptor elements contain values for their sub-elements-->
+                            <ctl:call-test name="sps:core-SPS.DescribeTasking-ResponseValidInputDescriptor.1">
+                                <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
+                            </ctl:call-test>
+                            <!--Ensure that the parameterID of each InputDescriptor contains a value and that the parameterID is unique-->
+                            <ctl:call-test name="sps:core-SPS.DescribeTasking-ResponseValidInputDescriptorParameterID.1">
+                                <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
+                            </ctl:call-test>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>
@@ -1095,7 +1098,7 @@
       <ctl:link title="Verify that each InputDescriptor element contains appropriate values for its sub-elements.  This is probably tested through schema validation, so this test may be unnecessary.">ATS_URL#SPS.DescribeTasking-ResponseValidInputDescriptor</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
-        
+        <!--TODO:-->
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.DescribeTasking-ResponseValidInputDescriptorParameterID.1">
@@ -1621,11 +1624,22 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:variable name="status" select="$submitResponse//sps:status" />
-                <xsl:if test="not($status='rejected')">
-                    <ctl:message>FAILURE:  The server returned a valid Submit response, but the status element was expected to be "rejected" instead of "<xsl:value-of select="$status" />".</ctl:message>
-                    <ctl:fail />
-                </xsl:if>
+                <xsl:choose>
+                        <xsl:when test="$submitResponse//ows:ExceptionReport">
+                            <ctl:call-test name="sps:core-SPS.Submit-ValidException.1">
+                                <ctl:with-param name="submitResponse" select="$submitResponse" />
+                            </ctl:call-test>
+                            <ctl:message>FAILURE:  The response to a Submit request was expected to a SubmitRequestResponse document; an ExceptionReport was returned instead.</ctl:message>
+                            <ctl:fail />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:variable name="status" select="$submitResponse//sps:status" />
+                            <xsl:if test="not($status='rejected')">
+                                <ctl:message>FAILURE:  The server returned a valid Submit response, but the status element was expected to be "rejected" instead of "<xsl:value-of select="$status" />".</ctl:message>
+                                <ctl:fail />
+                            </xsl:if>
+                        </xsl:otherwise>
+                </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
       </ctl:code>
@@ -1657,11 +1671,22 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:variable name="status" select="$submitResponse//sps:status" />
-                <xsl:if test="not($status='incomplete request')">
-                    <ctl:message>FAILURE:  The server returned a valid Submit response, but the status element was expected to be "incomplete request" instead of "<xsl:value-of select="$status" />".</ctl:message>
-                    <ctl:fail />
-                </xsl:if>
+                <xsl:choose>
+                        <xsl:when test="$submitResponse//ows:ExceptionReport">
+                            <ctl:call-test name="sps:core-SPS.Submit-ValidException.1">
+                                <ctl:with-param name="submitResponse" select="$submitResponse" />
+                            </ctl:call-test>
+                            <ctl:message>FAILURE:  The response to a Submit request was expected to a SubmitRequestResponse document; an ExceptionReport was returned instead.</ctl:message>
+                            <ctl:fail />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:variable name="status" select="$submitResponse//sps:status" />
+                            <xsl:if test="not($status='incomplete request')">
+                                <ctl:message>FAILURE:  The server returned a valid Submit response, but the status element was expected to be "incomplete request" instead of "<xsl:value-of select="$status" />".</ctl:message>
+                                <ctl:fail />
+                            </xsl:if>
+                        </xsl:otherwise>
+                </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
       </ctl:code>
@@ -1804,12 +1829,23 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:variable name="status" select="$submitResponse//sps:status" />
-                <ctl:message>Checking for a value in the status element.  The following value was returned "<xsl:value-of select="$status" />".</ctl:message>
-                <xsl:if test="not($status='rejected')">
-                    <ctl:message>FAILURE:  The server returned a valid Submit response, but the status element value was expected to be "rejected" instead of "<xsl:value-of select="$status" />".</ctl:message>
-                    <ctl:fail />
-                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="$submitResponse//ows:ExceptionReport">
+                        <ctl:call-test name="sps:core-SPS.Submit-ValidException.1">
+                            <ctl:with-param name="submitResponse" select="$submitResponse" />
+                        </ctl:call-test>
+                        <ctl:message>FAILURE:  The response to a Submit request was expected to a SubmitRequestResponse document; an ExceptionReport was returned instead.</ctl:message>
+                        <ctl:fail />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:variable name="status" select="$submitResponse//sps:status" />
+                        <ctl:message>Checking for a value in the status element.  The following value was returned "<xsl:value-of select="$status" />".</ctl:message>
+                        <xsl:if test="not($status='rejected')">
+                            <ctl:message>FAILURE:  The server returned a valid Submit response, but the status element value was expected to be "rejected" instead of "<xsl:value-of select="$status" />".</ctl:message>
+                            <ctl:fail />
+                        </xsl:if>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
       </ctl:code>
@@ -1830,32 +1866,43 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The Submit response contains the following elements:</ctl:message>
-                <xsl:for-each select="$submitResponse/*">
-                    <ctl:message>Element name:  <xsl:value-of select="local-name-from-QName(node-name(.))" /> (<xsl:value-of select="namespace-uri-from-QName(node-name(.))" />)</ctl:message>
-                </xsl:for-each>
-                <ctl:message>Checking these elements for validity...</ctl:message>
-                <!--Validate taskID in the response-->
-                <ctl:call-test name="sps:core-SPS.Submit-ResponseValidTaskID.1">
-                    <ctl:with-param name="submitResponse" select="$submitResponse" />
-                    <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
-                </ctl:call-test>
-                <!--Validate estimatedToC in the response-->
-                <ctl:call-test name="sps:core-SPS.Submit-ResponseValidEstimatedToC.1">
-                    <ctl:with-param name="submitResponse" select="$submitResponse" />
-                    <ctl:with-param name="submitTime" select="$submitTime" />
-                </ctl:call-test>
-                <!--Validate taskID in the response-->
-                <xsl:if test="$submitResponse//sps:status[text()='rejected, alternatives available'] or count($submitResponse//sps:alternative)>0">
-                    <ctl:call-test name="sps:core-SPS.Submit-ResponseCorrectUseOfAlternative.1">
-                        <ctl:with-param name="submitResponse" select="$submitResponse" />
-                    </ctl:call-test>
-                </xsl:if>
-                <!--Validate LatestResponseTime in the response-->
-                <ctl:call-test name="sps:core-SPS.Submit-ResponseValidLatestResponseTime.1">
-                    <ctl:with-param name="submitResponse" select="$submitResponse" />
-                    <ctl:with-param name="submitTime" select="$submitTime" />
-                </ctl:call-test>
+                <xsl:choose>
+                        <xsl:when test="$submitResponse//ows:ExceptionReport">
+                            <ctl:call-test name="sps:core-SPS.Submit-ValidException.1">
+                                <ctl:with-param name="submitResponse" select="$submitResponse" />
+                            </ctl:call-test>
+                            <ctl:message>FAILURE:  The response to a Submit request was expected to a SubmitRequestResponse document; an ExceptionReport was returned instead.</ctl:message>
+                            <ctl:fail />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <ctl:message>The Submit response contains the following elements:</ctl:message>
+                            <xsl:for-each select="$submitResponse/*">
+                                <ctl:message>Element name:  <xsl:value-of select="local-name-from-QName(node-name(.))" /> (<xsl:value-of select="namespace-uri-from-QName(node-name(.))" />)</ctl:message>
+                            </xsl:for-each>
+                            <ctl:message>Checking these elements for validity...</ctl:message>
+                            <!--Validate taskID in the response-->
+                            <ctl:call-test name="sps:core-SPS.Submit-ResponseValidTaskID.1">
+                                <ctl:with-param name="submitResponse" select="$submitResponse" />
+                                <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
+                            </ctl:call-test>
+                            <!--Validate estimatedToC in the response-->
+                            <ctl:call-test name="sps:core-SPS.Submit-ResponseValidEstimatedToC.1">
+                                <ctl:with-param name="submitResponse" select="$submitResponse" />
+                                <ctl:with-param name="submitTime" select="$submitTime" />
+                            </ctl:call-test>
+                            <!--Validate taskID in the response-->
+                            <xsl:if test="$submitResponse//sps:status[text()='rejected, alternatives available'] or count($submitResponse//sps:alternative)>0">
+                                <ctl:call-test name="sps:core-SPS.Submit-ResponseCorrectUseOfAlternative.1">
+                                    <ctl:with-param name="submitResponse" select="$submitResponse" />
+                                </ctl:call-test>
+                            </xsl:if>
+                            <!--Validate LatestResponseTime in the response-->
+                            <ctl:call-test name="sps:core-SPS.Submit-ResponseValidLatestResponseTime.1">
+                                <ctl:with-param name="submitResponse" select="$submitResponse" />
+                                <ctl:with-param name="submitTime" select="$submitTime" />
+                            </ctl:call-test>
+                        </xsl:otherwise>
+                </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
       </ctl:code>
@@ -2223,21 +2270,32 @@
                     <ctl:fail />
                 </xsl:when>
                 <xsl:otherwise>
-                    <!--Check that the response is not a DataNotAvailable response-->
-                    <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseSensorIDValidResponse.1">
-                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
-                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
-                    </ctl:call-test>
-                    <!--Check that the ServiceType is valid-->
-                    <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceType.1">
-                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
-                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
-                    </ctl:call-test>
-                    <!--Check that the ServiceURL is valid-->
-                    <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceURL.1">
-                        <ctl:with-param name="requestedSensorID" select="$sensorID" />
-                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
-                    </ctl:call-test>
+                    <xsl:choose>
+                        <xsl:when test="$describeResultAccessRequestResponse//ows:ExceptionReport">
+                            <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ValidException.1">
+                                <ctl:with-param name="describeResultAccessDocument" select="$describeResultAccessRequestResponse" />
+                            </ctl:call-test>
+                            <ctl:message>FAILURE:  The response to a DescribeResultAccess request was expected to a DescribeResultAccessRequestResponse document; an ExceptionReport was returned instead.</ctl:message>
+                            <ctl:fail />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!--Check that the response is not a DataNotAvailable response-->
+                            <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseSensorIDValidResponse.1">
+                                <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
+                            </ctl:call-test>
+                            <!--Check that the ServiceType is valid-->
+                            <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceType.1">
+                                <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
+                            </ctl:call-test>
+                            <!--Check that the ServiceURL is valid-->
+                            <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceURL.1">
+                                <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
+                            </ctl:call-test>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>
@@ -2246,7 +2304,7 @@
     <ctl:test name="sps:core-SPS.DescribeResultAccess-ResponseMain-TaskID.1">
       <ctl:param name="describeResultAccessURL" />
       <ctl:param name="validTaskID" />
-      <ctl:assertion>All assertions applicable to a DescribeResultAccess response are satisfied.</ctl:assertion>
+      <ctl:assertion>All assertions applicable to a DescribeResultAccess response are satisfied using a DescribeResultAccess request with a taskID parameter.</ctl:assertion>
       <ctl:comment>Fail if any of the DescribeResultAccess response assertions fail; pass otherwise.</ctl:comment>
       <ctl:link title="Verify that a valid request containing a sensorID parameter produces a valid response other than DataNotAvailable.">ATS_URL#SPS.DescribeResultAccess-ResponseSensorIDValidResponse</ctl:link>
       <ctl:code>
@@ -2261,7 +2319,7 @@
                     <ctl:method>post</ctl:method>
                     <ctl:body>
                         <DescribeResultAccess xmlns="http://www.opengis.net/sps/1.0" service="SPS" version="1.0.0">
-                            <sensorID><xsl:value-of select="$validTaskID" /></sensorID>
+                            <taskID><xsl:value-of select="$validTaskID" /></taskID>
                         </DescribeResultAccess>
                     </ctl:body>
                     <ctl:call-function name="spsFunctions:validateDescribeResultAccessResponse" />
@@ -2279,6 +2337,8 @@
                             <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ValidException.1">
                                 <ctl:with-param name="describeResultAccessDocument" select="$describeResultAccessRequestResponse" />
                             </ctl:call-test>
+                            <ctl:message>FAILURE:  The response to a DescribeResultAccess request was expected to a DescribeResultAccessRequestResponse document; an ExceptionReport was returned instead.</ctl:message>
+                            <ctl:fail />
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:choose>
