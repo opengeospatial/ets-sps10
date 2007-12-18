@@ -777,7 +777,7 @@
                                         <ctl:with-param name="positionToCheck" select="$pos" />
                                     </ctl:call-function>
                                 </xsl:variable>
-                                <xsl:if test="not(xsd:boolean($isPosValid)">
+                                <xsl:if test="not(xsd:boolean($isPosValid))">
                                     <ctl:message>FAILURE:  The gml:pos element provided in the AreaOfService element for sensorID "<xsl:value-of select="$sensorID" />" is not in a valid format.</ctl:message>
                                     <ctl:fail />
                                 </xsl:if>
@@ -792,7 +792,7 @@
                                     <ctl:with-param name="positionToCheck" select="$pos" />
                                 </ctl:call-function>
                             </xsl:variable>
-                            <xsl:if test="not(xsd:boolean($isPosValid)">
+                            <xsl:if test="not(xsd:boolean($isPosValid))">
                                 <ctl:message>FAILURE:  The gml:pos element provided in the AreaOfService element for sensorID "<xsl:value-of select="$sensorID" />" is not in a valid format.</ctl:message>
                                 <ctl:fail />
                             </xsl:if>
@@ -808,7 +808,7 @@
                                         <ctl:with-param name="positionToCheck" select="$pos" />
                                     </ctl:call-function>
                                 </xsl:variable>
-                                <xsl:if test="not(xsd:boolean($isPosValid)">
+                                <xsl:if test="not(xsd:boolean($isPosValid))">
                                     <ctl:message>FAILURE:  The gml:pos element provided in the AreaOfService element for sensorID "<xsl:value-of select="$sensorID" />" is not in a valid format.</ctl:message>
                                     <ctl:fail />
                                 </xsl:if>
