@@ -635,6 +635,17 @@
         </ctl:code>
     </ctl:function>
 
+    <ctl:function name="spsFunctions:printBoundingBox">
+        <ctl:param name="boundingBox"></ctl:param>
+        <ctl:return>True/false depending on whether or not the WGS84BoundingBox is valid</ctl:return>
+        <ctl:description></ctl:description>
+        <ctl:code>
+            <xsl:variable name="upperCorner" select="$boundingBox//ows:UpperCorner" />
+            <xsl:variable name="lowerCorner" select="$boundingBox//ows:LowerCorner" />
+            <xsl:value-of select="concat('Bounding Box (UC,LC):  ',$upperCorner,',',$lowerCorner)" />
+        </ctl:code>
+    </ctl:function>
+    
     <ctl:function name="spsFunctions:checkWGS84BoundingBox">
         <ctl:param name="wgs84BoundingBoxToCheck"></ctl:param>
         <ctl:return>True/false depending on whether or not the WGS84BoundingBox is valid</ctl:return>

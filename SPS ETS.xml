@@ -742,7 +742,7 @@
                         <xsl:when test="$areaOfService/ows:WGS84BoundingBox">
                             <ctl:message>ows:WGS84BoundingBox element found.  Performing ows:WGS84BoundingBox related tests.</ctl:message>
                             <xsl:variable name="wgs84BoundingBox" select="$areaOfService/ows:WGS84BoundingBox" />
-                            <ctl:message>Checking "<xsl:value-of select="$wgs84BoundingBox" />" for validity...</ctl:message>
+                            <ctl:message>Checking "<xsl:value-of select="spsFunctions:printBoundingBox($wgs84BoundingBox)" />" for validity...</ctl:message>
                             <xsl:variable name="isWGS84BoundingBoxValid">
                                 <ctl:call-function name="spsFunctions:checkWGS84BoundingBox">
                                     <ctl:with-param name="wgs84BoundingBoxToCheck" select="$wgs84BoundingBox" />
@@ -756,7 +756,7 @@
                         <xsl:when test="$areaOfService/ows:BoundingBox">
                             <ctl:message>ows:BoundingBox element found.  Performing ows:BoundingBox related tests.</ctl:message>
                             <xsl:variable name="boundingBox" select="$areaOfService/ows:BoundingBox" />
-                            <ctl:message>Checking "<xsl:value-of select="$boundingBox" />" for validity...</ctl:message>
+                            <ctl:message>Checking "<xsl:value-of select="spsFunctions:printBoundingBox($boundingBox)" />" for validity...</ctl:message>
                             <xsl:variable name="isBoundingBoxValid">
                                 <ctl:call-function name="spsFunctions:checkBoundingBox">
                                     <ctl:with-param name="boundingBoxToCheck" select="$boundingBox" />
