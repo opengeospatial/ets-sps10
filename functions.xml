@@ -404,7 +404,8 @@
         <ctl:return>True/false depending on whether or not the duration is valid</ctl:return>
         <ctl:description>Checks duration values for validity (i.e. P1Y2M3DT5H10M30S)</ctl:description>
         <ctl:code>
-            <xsl:value-of select="matches($durationToCheck,'-?P([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.[0-9]+)?S)?)?')" />
+            <!---?P([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.[0-9]+)?S)?)?-->
+            <xsl:value-of select="matches($durationToCheck,'-?P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?')" />
         </ctl:code>
     </ctl:function>
     
@@ -418,7 +419,11 @@
         <ctl:param name="missingRequiredParameters">True/False indicating whether the request should be constructed with missing required parameter values</ctl:param>
         <ctl:param name="invalidTimeFrame">True/False indicating whether the request should be constructed with an invalid timeFrame value</ctl:param>
         <ctl:return>A Submit request document based on the supplied parameters</ctl:return>
-        <ctl:description>Builds a Submit request document from the supplied parameters.  This document can either have valid or invalid parameters.</ctl:description>
+        <ctl:description>
+        Builds a Submit request document from the supplied parameters.  This document can either have valid or invalid parameters.
+        NOTE:  This function does not currently handle most of the more complex scenarios within a Submit document (other than Position w/ coordinates).
+        The function handles all simple InputParameters and Position InputParameters with coordinate elements.  This function should be updated in the future to handle the more complex scenarios.
+        </ctl:description>
         <ctl:code>
             <xsl:variable name="submitRequest">
                     <sps:Submit xmlns:sps="http://www.opengis.net/sps/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" service="SPS" version="1.0.0">
@@ -589,7 +594,12 @@
     <ctl:function name="spsFunctions:checkWGS84Position">
         <ctl:param name="positionToCheck"></ctl:param>
         <ctl:return>True/false depending on whether or not the position is valid</ctl:return>
-        <ctl:description>Checks position values for validity</ctl:description>
+        <ctl:description>
+        Checks WGS84 position values for validity:
+        1)  The position is in the correct format:  longitude latitude (in decimal degrees)
+        2)  The longitude is between -180 and 180
+        3)  The latitude is between -90 and 90
+        </ctl:description>
         <ctl:code>
             <xsl:variable name="isValidFormat" select="matches($positionToCheck,'-?\d{1,3}\.\d+ -?\d{1,2}\.\d+')" />
             <xsl:variable name="parts">
@@ -603,18 +613,74 @@
         </ctl:code>
     </ctl:function>
     
+        <ctl:function name="spsFunctions:comparePosition">
+        <ctl:param name="position1"></ctl:param>
+        <ctl:param name="position2"></ctl:param>
+        <ctl:return>True if position1 is greater than or equal to position2; false otherwise</ctl:return>
+        <ctl:description>Compares two position values</ctl:description>
+        <ctl:code>
+            <xsl:variable name="parts1">
+                <xsl:copy-of select="tokenize($position1,' ')" />
+            </xsl:variable>
+            <xsl:variable name="parts2">
+                <xsl:copy-of select="tokenize($position2,' ')" />
+            </xsl:variable>
+            <xsl:variable name="longitude1" select="$parts1[1]" />
+            <xsl:variable name="latitude1" select="$parts1[2]" />
+            <xsl:variable name="longitude2" select="$parts2[1]" />
+            <xsl:variable name="latitude2" select="$parts2[2]" />
+            <xsl:variable name="isLongitude1Greater" select="xs:double($longitude1)&gt;=xs:double($longitude2)" />
+            <xsl:variable name="isLatitude1Greater" select="xs:double($latitude1)&gt;=xs:double($latitude2)" />
+            <xsl:value-of select="xs:boolean($isLongitude1Greater) and xs:boolean($isLatitude1Greater)" />
+        </ctl:code>
+    </ctl:function>
+
     <ctl:function name="spsFunctions:checkWGS84BoundingBox">
         <ctl:param name="wgs84BoundingBoxToCheck"></ctl:param>
         <ctl:return>True/false depending on whether or not the WGS84BoundingBox is valid</ctl:return>
-        <ctl:description>Checks position values for validity</ctl:description>
+        <ctl:description>
+        Performs a specific check on an ows:WGS84BoundingBox:
+        1)  The UpperCorner and LowerCorner are valid according to the checkWGS84Position function
+        2)  The UpperCorner values are greater than or equal to the LowerCorner values
+        </ctl:description>
         <ctl:code>
             <xsl:variable name="upperCorner" select="$wgs84BoundingBoxToCheck//ows:UpperCorner" />
             <xsl:variable name="lowerCorner" select="$wgs84BoundingBoxToCheck//ows:LowerCorner" />
             <xsl:variable name="isUpperCornerValid" select="spsFunctions:checkWGS84Position($upperCorner)" />
             <xsl:variable name="isLowerCornerValid" select="spsFunctions:checkWGS84Position($lowerCorner)" />
-            <xsl:variable name="isUCGreater" select="true()" />
+            <xsl:variable name="isUCGreater" select="spsFunctions:comparePosition($upperCorner,$lowerCorner)" />
             <xsl:value-of select="xs:boolean($isUpperCornerValid) and xs:boolean($isLowerCornerValid) and xs:boolean($isUCGreater)" />
         </ctl:code>
     </ctl:function>
+    
+    <ctl:function name="spsFunctions:checkBoundingBox">
+        <ctl:param name="boundingBoxToCheck"></ctl:param>
+        <ctl:return>True/false depending on whether or not the BoundingBox is valid</ctl:return>
+        <ctl:description>
+        Performs a generic check on a ows:BoundingBox:
+        1)  The UpperCorner and LowerCorner values are valid according to the checkPosition function
+        2)  The UpperCorner values are greater than or equal to the LowerCorner values
+        </ctl:description>
+        <ctl:code>
+            <xsl:variable name="upperCorner" select="$boundingBoxToCheck//ows:UpperCorner" />
+            <xsl:variable name="lowerCorner" select="$boundingBoxToCheck//ows:LowerCorner" />
+            <xsl:variable name="isUpperCornerValid" select="spsFunctions:checkPosition($upperCorner)" />
+            <xsl:variable name="isLowerCornerValid" select="spsFunctions:checkPosition($lowerCorner)" />
+            <xsl:variable name="isUCGreater" select="spsFunctions:comparePosition($upperCorner,$lowerCorner)" />
+            <xsl:value-of select="xs:boolean($isUpperCornerValid) and xs:boolean($isLowerCornerValid) and xs:boolean($isUCGreater)" />
+        </ctl:code>
+    </ctl:function>
+    
+    <ctl:function name="spsFunctions:checkPosition">
+        <ctl:param name="positionToCheck"></ctl:param>
+        <ctl:return>True/false depending on whether or not the position element (gml:pos, etc.) is valid</ctl:return>
+        <ctl:description>
+        Checks position values for validity.  Does not do any specific checks to ensure that the position values correspond with their CRS.
+        This function only checks that the values in the gml:pos element are in a numeric format separated by spaces with 2 or 3 coordinates (i.e. -150 -89 or -34.234234 10.00000 or 0.0000 34.00000 250 or 234234 234324)                 
+        </ctl:description>
+        <ctl:code>
+            <xsl:value-of select="matches($positionToCheck,'(-?\d+\.?\d+ -?\d+\.?\d+)( -?\d+\.?\d+)?')" />
+        </ctl:code>
+    </ctl:function>    
     
 </ctl:package>

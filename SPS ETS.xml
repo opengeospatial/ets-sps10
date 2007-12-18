@@ -737,9 +737,12 @@
                     <ctl:fail />
                 </xsl:when>
                 <xsl:otherwise>
+                    <ctl:message>Checking AreaOfService value for validity...</ctl:message>
                     <xsl:choose>
                         <xsl:when test="$areaOfService/ows:WGS84BoundingBox">
+                            <ctl:message>ows:WGS84BoundingBox element found.  Performing ows:WGS84BoundingBox related tests.</ctl:message>
                             <xsl:variable name="wgs84BoundingBox" select="$areaOfService/ows:WGS84BoundingBox" />
+                            <ctl:message>Checking "<xsl:value-of select="$wgs84BoundingBox" />" for validity...</ctl:message>
                             <xsl:variable name="isWGS84BoundingBoxValid">
                                 <ctl:call-function name="spsFunctions:checkWGS84BoundingBox">
                                     <ctl:with-param name="wgs84BoundingBoxToCheck" select="$wgs84BoundingBox" />
@@ -750,7 +753,66 @@
                                 <ctl:fail />
                             </xsl:if>
                         </xsl:when>
+                        <xsl:when test="$areaOfService/ows:BoundingBox">
+                            <ctl:message>ows:BoundingBox element found.  Performing ows:BoundingBox related tests.</ctl:message>
+                            <xsl:variable name="boundingBox" select="$areaOfService/ows:BoundingBox" />
+                            <ctl:message>Checking "<xsl:value-of select="$boundingBox" />" for validity...</ctl:message>
+                            <xsl:variable name="isBoundingBoxValid">
+                                <ctl:call-function name="spsFunctions:checkBoundingBox">
+                                    <ctl:with-param name="boundingBoxToCheck" select="$boundingBox" />
+                                </ctl:call-function>
+                            </xsl:variable>
+                            <xsl:if test="not(xsd:boolean($isBoundingBoxValid))">
+                                <ctl:message>FAILURE:  The BoundingBox provided in the AreaOfService element for sensorID "<xsl:value-of select="$sensorID" />" is not a valid BoundingBox.</ctl:message>
+                                <ctl:fail />
+                            </xsl:if>
+                        </xsl:when>
+                        <xsl:when test="$areaOfService/gml:Polygon">
+                            <ctl:message>gml:Polygon element found.  Performing gml:Polygon related tests.</ctl:message>
+                            <xsl:for-each select="$areaOfService/gml:Polygon//gml:pos">
+                                <xsl:variable name="pos" select="." />
+                                <ctl:message>Checking "<xsl:value-of select="$pos" />" for validity...</ctl:message>
+                                <xsl:variable name="isPosValid">
+                                    <ctl:call-function name="spsFunctions:checkPosition">
+                                        <ctl:with-param name="positionToCheck" select="$pos" />
+                                    </ctl:call-function>
+                                </xsl:variable>
+                                <xsl:if test="not(xsd:boolean($isPosValid)">
+                                    <ctl:message>FAILURE:  The gml:pos element provided in the AreaOfService element for sensorID "<xsl:value-of select="$sensorID" />" is not in a valid format.</ctl:message>
+                                    <ctl:fail />
+                                </xsl:if>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:when test="$areaOfService/gml:pos">
+                            <ctl:message>gml:pos element found.  Performing gml:pos related tests.</ctl:message>
+                            <xsl:variable name="pos" select="$areaOfService/gml:pos" />
+                            <ctl:message>Checking "<xsl:value-of select="$pos" />" for validity...</ctl:message>
+                            <xsl:variable name="isPosValid">
+                                <ctl:call-function name="spsFunctions:checkPosition">
+                                    <ctl:with-param name="positionToCheck" select="$pos" />
+                                </ctl:call-function>
+                            </xsl:variable>
+                            <xsl:if test="not(xsd:boolean($isPosValid)">
+                                <ctl:message>FAILURE:  The gml:pos element provided in the AreaOfService element for sensorID "<xsl:value-of select="$sensorID" />" is not in a valid format.</ctl:message>
+                                <ctl:fail />
+                            </xsl:if>
+                        </xsl:when>
                         <xsl:otherwise>
+                            <!--This is a gml:Solid; only check gml:pos elements for validity-->
+                            <ctl:message>gml:Solid element found.  Performing gml:Solid related tests.</ctl:message>
+                            <xsl:for-each select="$areaOfService/gml:Solid//gml:pos">
+                                <xsl:variable name="pos" select="." />
+                                <ctl:message>Checking "<xsl:value-of select="$pos" />" for validity...</ctl:message>
+                                <xsl:variable name="isPosValid">
+                                    <ctl:call-function name="spsFunctions:checkPosition">
+                                        <ctl:with-param name="positionToCheck" select="$pos" />
+                                    </ctl:call-function>
+                                </xsl:variable>
+                                <xsl:if test="not(xsd:boolean($isPosValid)">
+                                    <ctl:message>FAILURE:  The gml:pos element provided in the AreaOfService element for sensorID "<xsl:value-of select="$sensorID" />" is not in a valid format.</ctl:message>
+                                    <ctl:fail />
+                                </xsl:if>
+                            </xsl:for-each>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:otherwise>
