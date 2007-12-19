@@ -598,9 +598,7 @@
         </ctl:description>
         <ctl:code>
             <xsl:variable name="isValidFormat" select="matches($positionToCheck,'-?\d{1,3}\.\d+ -?\d{1,2}\.\d+')" />
-            <xsl:variable name="parts">
-                <xsl:copy-of select="tokenize($positionToCheck/text(),'\s+')" />
-            </xsl:variable>
+            <xsl:variable name="parts" select="tokenize($positionToCheck/text(),'\s+')" />
             <xsl:variable name="longitude" select="$parts[1]" />
             <xsl:variable name="latitude" select="$parts[2]" />
             <xsl:variable name="isValidLongitude" select="xs:double($longitude)&gt;=-180.0 and xs:double($longitude)&lt;=180.0" />
@@ -615,12 +613,8 @@
         <ctl:return>True if position1 is greater than or equal to position2; false otherwise</ctl:return>
         <ctl:description>Compares two position values</ctl:description>
         <ctl:code>
-            <xsl:variable name="parts1">
-                <xsl:copy-of select="tokenize($position1/text(),'\s+')" />
-            </xsl:variable>
-            <xsl:variable name="parts2">
-                <xsl:copy-of select="tokenize($position2/text(),'\s+')" />
-            </xsl:variable>
+            <xsl:variable name="parts1" select="tokenize($position1/text(),'\s+')" />
+            <xsl:variable name="parts2" select="tokenize($position2/text(),'\s+')" />
             <xsl:variable name="longitude1" select="$parts1[1]" />
             <xsl:variable name="latitude1" select="$parts1[2]" />
             <xsl:variable name="longitude2" select="$parts2[1]" />
