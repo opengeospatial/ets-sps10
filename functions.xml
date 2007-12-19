@@ -502,7 +502,7 @@
                                                 <xsl:variable name="elementValue">
                                                     <xsl:choose>
                                                         <xsl:when test="not(xs:boolean($invalidParameters))">
-                                                            <xsl:copy-of select="$parameterValue" />
+                                                            <xsl:value-of select="$parameterValue" />
                                                         </xsl:when>
                                                         <xsl:otherwise>
                                                             <xsl:value-of select="string('')" />
@@ -583,7 +583,7 @@
                                                     <xsl:otherwise>
                                                         <xsl:element name="{$elementName}" namespace="http://www.opengis.net/swe/1.0">
                                                             <swe:value>
-                                                                <xsl:copy-of select="$elementValue" />
+                                                                <xsl:value-of select="$elementValue" />
                                                             </swe:value>
                                                         </xsl:element>
                                                     </xsl:otherwise>
