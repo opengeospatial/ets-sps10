@@ -497,7 +497,7 @@
                                     <xsl:if test="xs:boolean($includeParameter)">
                                         <sps:InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="$parameterID" /></xsl:attribute>
                                             <sps:value>
-                                                <xsl:variable name="definitionNode" select="sps:definition/*/*[1]" /><!--Changed sps:commonData to *-->
+                                                <xsl:variable name="definitionNode" select="sps:definition/*/*[1]" />
                                                 <xsl:variable name="elementName" select="local-name-from-QName(node-name($definitionNode))" />
                                                 <xsl:variable name="elementValue">
                                                     <xsl:choose>
@@ -509,7 +509,6 @@
                                                         </xsl:otherwise>
                                                     </xsl:choose>
                                                 </xsl:variable>
-                                                <!--Changed from value-of to copy-of in elementValue variable-->
                                                 <xsl:choose>
                                                     <xsl:when test="$elementName='Position'">
                                                         <xsl:variable name="positionChild" select="$definitionNode/*[1]" />
@@ -584,7 +583,7 @@
                                                     <xsl:otherwise>
                                                         <xsl:element name="{$elementName}" namespace="http://www.opengis.net/swe/1.0">
                                                             <swe:value>
-                                                                <xsl:copy-of select="$elementValue" /><!--Changed from value-of to copy-of-->
+                                                                <xsl:copy-of select="$elementValue" />
                                                             </swe:value>
                                                         </xsl:element>
                                                     </xsl:otherwise>
