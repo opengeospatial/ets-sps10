@@ -37,6 +37,7 @@
                 1.)  Prompt the user to provide the url for an SPS implementation.
                 2.)  Send a request to the provided url to determine if there is a response
                 3.)  If there is a response, then begin executing tests, else fail.
+                TODO:  Add notes section
             -->
         <ctl:message>Testing started at:  <xsl:value-of select="current-dateTime()" /></ctl:message>
         <xsl:variable name="form-values">
@@ -51,7 +52,7 @@
                   under test.
                   </p>
                   <blockquote>
-                     <table border="1" padding="4" bgcolor="#00ffff">
+                     <table border="1" padding="4" bgcolor="#99ccff">
                         <tr>
                            <td align="left">Service URL:</td>                        
                            <td align="center">
@@ -704,8 +705,6 @@
         <xsl:variable name="spsOperationsSet" select="$spsOperations//spsTesting:Operation" />
         <ctl:message>Verifying that the provided operations have valid SPS operation names.</ctl:message>
         <xsl:for-each select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation/@name">
-            <!--<xsl:variable name="operationName" select="." />-->
-            <!--TODO:  Complete this test.-->
             <ctl:message>Checking "<xsl:value-of select="." />" for validity.</ctl:message>
             <xsl:if test="empty(index-of($spsOperationsSet,.))">
                 <ctl:message>FAILURE:  The "<xsl:value-of select="." />" operation is not listed in the SPS specification.</ctl:message>
@@ -732,7 +731,6 @@
             <!--Check AreaOfService (for a child element or more?)-->
             <xsl:choose>
                 <xsl:when test="not($areaOfService/*)">
-                    <!--TODO: Check AreaOfService-->
                     <ctl:message>FAILURE:  The AreaOfService value for SensorOffering with SensorID <xsl:value-of select="$sensorID" /> is null.</ctl:message>
                     <ctl:fail />
                 </xsl:when>
@@ -1181,6 +1179,51 @@
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--TODO:-->
+        <!--Each attribute, if specified should have a value-->
+        <xsl:for-each select="$describeTaskingResponse//@*">
+            <xsl:variable name="attributeValue" select="." />
+            <xsl:variable name="attributeName" select="name()" />
+            <xsl:if test="string-length(normalize-space($attributeValue))=0">
+                <ctl:message>The "<xsl:value-of select="$attributeName" />" attribute value is null.</ctl:message>
+                <ctl:fail />
+            </xsl:if>
+            <!--An xlink:href attribute should be a valid URL or URN-->
+            <xsl:if test="$attributeName='href'">
+                <xsl:variable name="isValidURL" select="spsFunctions:validateURL($attributeValue)" />
+                <xsl:variable name="isValidURN" select="spsFunctions:validateURN($attributeValue)" />
+                <xsl:if test="not(xsd:boolean($isValidURL) or xsd:boolean($isValidURN))">
+                    <ctl:message>The "<xsl:value-of select="$attributeName" />" attribute value is not a valid URL or OGC URN (i.e. starts with urn:ogc).</ctl:message>
+                    <ctl:fail />
+                </xsl:if>
+            </xsl:if>
+            <!--A definiton or referenceFrame attribute should be a URL or a definition URN-->
+            <xsl:if test="$attributeName='definition' or $attributeName='referenceFrame'">
+                <xsl:variable name="isValidURL" select="spsFunctions:validateURL($attributeValue)" />
+                <xsl:variable name="isValidURN" select="spsFunctions:isValidDefinitionURN($attributeValue)" />
+                <xsl:if test="not(xsd:boolean($isValidURL) or xsd:boolean($isValidURN))">
+                    <ctl:message>The "<xsl:value-of select="$attributeName" />" attribute value is not a valid URL or OGC definition URN (i.e. starts with urn:ogc:def).</ctl:message>
+                    <ctl:fail />
+                </xsl:if>
+            </xsl:if>
+        </xsl:for-each>
+        <xsl:for-each select="$describeTaskingResponse//sps:InputDescriptor">
+            <xsl:variable name="parameterID">
+                <xsl:value-of select="@parameterID" />
+            </xsl:variable>
+            <!--Loop through the constraints and check for null values.  valueList is the only element that is not checked by schema validation, but the other elements will be left in just in case-->
+            <xsl:for-each select="//swe:constraint//swe:min | //swe:constraint//swe:max | //swe:constraint//swe:interval | //swe:constraint//swe:valueList">
+                <xsl:if test="string-length(normalize-space(.))=0">
+                    <ctl:message>The "<xsl:value-of select="$parameterID" />" parameter has an invalid constraint.</ctl:message>
+                    <ctl:fail />
+                </xsl:if>
+            </xsl:for-each>
+            <!--Determine if an interval constraint is valid for this InputDescriptor-->
+            <xsl:variable name="isConstraintValid" select="spsFunctions:checkIntervalConstraint(.)" />
+            <xsl:if test="not(xsd:boolean($isConstraintValid))">
+                <ctl:message>The "<xsl:value-of select="$parameterID" />" parameter has one or more invalid values for the interval specified in its constraints.</ctl:message>
+                <ctl:fail />
+            </xsl:if>
+        </xsl:for-each>
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.DescribeTasking-ResponseValidInputDescriptorParameterID.1">
@@ -1273,7 +1316,7 @@
                <body>
                   <h2>Please choose a sensor for performing Submit operation tests.</h2>
                   <blockquote>
-                     <table border="1" padding="4" bgcolor="#00ffff">
+                     <table border="1" padding="4" bgcolor="#99ccff">
                         <tr>
                            <td align="left">Sensor ID:</td>                        
                            <td align="center">
@@ -1320,7 +1363,7 @@
                        <body>
                           <h2>Please enter values for a WNS URL and User ID</h2>
                           <blockquote>
-                             <table border="1" padding="4" bgcolor="#00ffff">
+                             <table border="1" padding="4" bgcolor="#99ccff">
                                     <tr>
                                         <td>WNS URL:</td>
                                         <td><input name="wnsURL" type="text" /></td>
@@ -1333,7 +1376,7 @@
                           </blockquote>
                           <h2>Please enter valid values for the available taskable parameters for <xsl:value-of select="$selectedSensorID" /></h2>
                           <blockquote>
-                             <table border="1" padding="4" bgcolor="#00ffff">
+                             <table border="1" padding="4" bgcolor="#99ccff">
                                 <thead>
                                     <tr>
                                         <th>Parameter ID</th>
@@ -1352,11 +1395,11 @@
                                     <xsl:variable name="parameterID">
                                         <xsl:value-of select="@parameterID" />
                                     </xsl:variable>
-                                    <xsl:variable name="definitionNode" select="sps:definition/sps:commonData/*[1]" />
+                                    <xsl:variable name="definitionNode" select="sps:definition/*/*[1]" /><!--Replaced sps:commonData with *-->
                                     <xsl:variable name="definitionNodeName" select="local-name-from-QName(node-name($definitionNode))" />
                                     <xsl:variable name="constraintNode" select="$definitionNode/swe:constraint" />
-                                    <xsl:variable name="min" select="$constraintNode/swe:AllowedValues/swe:min" />
-                                    <xsl:variable name="max" select="$constraintNode/swe:AllowedValues/swe:max" />
+                                    <xsl:variable name="min" select="$constraintNode//swe:min" />
+                                    <xsl:variable name="max" select="$constraintNode//swe:max" />
                                     <xsl:variable name="interval" select="$constraintNode//swe:interval" />
                                     <xsl:variable name="intervalParts" select="tokenize($interval,'\s+')" />
                                     <xsl:variable name="intervalMin" select="$intervalParts[1]" />
@@ -1397,6 +1440,9 @@
                                                         <option value="false">false</option>
                                                     </select>
                                                 </xsl:when>
+                                                <xsl:when test="$definitionNodeName='Point' or $definitionNodeName='Line' or $definitionNodeName='Polygon'">
+                                                    <textarea width="80" height="40"><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>Enter GML <xsl:value-of select="$definitionNodeName" /> XML here...</textarea>
+                                                </xsl:when>
                                                 <xsl:when test="count($allowedTokens)>0">
                                                     <select><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>
                                                         <xsl:for-each select="$allowedTokens">
@@ -1433,7 +1479,7 @@
                                 Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.
                                 The supplied value must be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or duration (i.e. PT5M).
                             </h2>
-                             <table border="1" padding="4" bgcolor="#00ffff">
+                             <table border="1" padding="4" bgcolor="#99ccff">
                                 <tr>
                                     <td>timeFrame:</td>
                                     <td><input type="text" name="timeFrame"><xsl:attribute name="value" select="current-dateTime()" /></input></td>
@@ -1792,7 +1838,7 @@
                         <body>
                             <p>
                                 <h2>The server returned the following response to the valid Submit request you created earlier:</h2>
-                                <table id="submitResponseTable" border="1" padding="4" bgcolor="#00ffff">
+                                <table id="submitResponseTable" border="1" padding="4" bgcolor="#99ccff">
                                 <xsl:choose>
                                     <xsl:when test="$submitResponse//ows:Exception">
                                         <caption>Exception Report</caption>

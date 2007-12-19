@@ -59,10 +59,9 @@
       <param name="capabilitiesRootElementName" />
       <assertion>The GET method request must be supported (using HTTP GET).</assertion>
       <comment>GetCapabilities by GET.  Pass if all of the following conditions are true: (1) the response is schema valid; (2) the root element matches the provided root element.</comment>
-	  <link>wfs-1.1.0-Basic-GetCapabilities-atc1</link>
-      <link>OGC 04-094, 13.1, p.79</link>
+	  <link>OWS.GetCapabilities</link>
+      <link>OGC 05-008: cl. 7.1, p. 10, cl. 7.2.2; cl. 7.2.3</link>
 		<code>
-		
 			<xsl:variable name="request1">
 				<request>
 					<url>

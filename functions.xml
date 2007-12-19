@@ -329,9 +329,9 @@
     <ctl:function name="spsFunctions:isValidDefinitionURN">
         <ctl:param name="urnString">The URN to validate</ctl:param>
         <ctl:return>True/False depending on whether or not the URN is valid</ctl:return>
-        <ctl:description>Determines if a definition URN is valid.  Since this is a def urn, it must have 7 "pieces"</ctl:description>
+        <ctl:description>Determines if a definition URN is valid according to the OGC Definition URN scheme [OGC 07-092r1].  Since this is a def urn, it must have 7 "pieces".  NOTE:  this check allows for both ogc and x-ogc as the namespace authority.</ctl:description>
         <ctl:code>
-			<xsl:variable name="urnRegex" select="'^urn:ogc:def(:(\w|\(|\)|\+|,|-|\.|=|\$|_|!|\*|'';)+){4}$'"/>
+			<xsl:variable name="urnRegex" select="'^urn:(x-)?ogc:def(:(\w|\(|\)|\+|,|-|\.|=|\$|_|!|\*|'';)+){4}$'"/>
 			<xsl:value-of select="(matches($urnString, $urnRegex,'i'))"/>							
         </ctl:code>
     </ctl:function>
@@ -339,10 +339,10 @@
     <!--Check for a valid URN-->
     <ctl:function name="spsFunctions:validateURN">
         <ctl:param name="urnString">The URN to validate</ctl:param>
-        <ctl:return>True/False depending on whether or not the URN is valid</ctl:return>
+        <ctl:return>True/False depending on whether or not the URN is valid according to the OGC URN scheme.  NOTE:  this check allows for both ogc and x-ogc as the namespace authority.</ctl:return>
         <ctl:description>Determines if a URN is valid</ctl:description>
         <ctl:code>
-            <xsl:value-of select="(matches($urnString,'^urn:ogc(:(\w|\(|\)|\+|,|-|\.|=|\$|_|!|\*|'')+)+$', 'i'))" />
+            <xsl:value-of select="(matches($urnString,'^urn:(x-)?ogc(:(\w|\(|\)|\+|,|-|\.|=|\$|_|!|\*|'')+)+$', 'i'))" />
         </ctl:code>
     </ctl:function>
     
@@ -363,11 +363,6 @@
         <ctl:return>True if the time to check is valid; false otherwise</ctl:return>
         <ctl:description>Checks that the supplied timeToCheck value is a valid time or duration and that it occurs on or after the compareTime</ctl:description>
         <ctl:code>
-            <!--<xsl:variable name="isValidDuration">
-                <ctl:call-function name="spsFunctions:checkDuration">
-                    <ctl:with-param name="durationToCheck" select="$timeToCheck" />
-                </ctl:call-function>
-            </xsl:variable>-->
             <xsl:choose>
                 <xsl:when test="xs:boolean(spsFunctions:checkDuration($timeToCheck))">
                     <xsl:value-of select="true()" />
@@ -474,18 +469,19 @@
                                     <xsl:if test="xs:boolean($includeParameter)">
                                         <sps:InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="$parameterID" /></xsl:attribute>
                                             <sps:value>
-                                                <xsl:variable name="definitionNode" select="sps:definition/sps:commonData/*[1]" />
+                                                <xsl:variable name="definitionNode" select="sps:definition/*/*[1]" /><!--Changed sps:commonData to *-->
                                                 <xsl:variable name="elementName" select="local-name-from-QName(node-name($definitionNode))" />
                                                 <xsl:variable name="elementValue">
                                                     <xsl:choose>
                                                         <xsl:when test="not(xs:boolean($invalidParameters))">
-                                                            <xsl:value-of select="$parameterValue" />
+                                                            <xsl:copy-of select="$parameterValue" />
                                                         </xsl:when>
                                                         <xsl:otherwise>
                                                             <xsl:value-of select="string('')" />
                                                         </xsl:otherwise>
                                                     </xsl:choose>
                                                 </xsl:variable>
+                                                <!--Changed from value-of to copy-of in elementValue variable-->
                                                 <xsl:choose>
                                                     <xsl:when test="$elementName='Position'">
                                                         <xsl:variable name="positionChild" select="$definitionNode/*[1]" />
@@ -560,7 +556,7 @@
                                                     <xsl:otherwise>
                                                         <xsl:element name="{$elementName}" namespace="http://www.opengis.net/swe/1.0">
                                                             <swe:value>
-                                                                <xsl:value-of select="$elementValue" />
+                                                                <xsl:copy-of select="$elementValue" /><!--Changed from value-of to copy-of-->
                                                             </swe:value>
                                                         </xsl:element>
                                                     </xsl:otherwise>
@@ -694,4 +690,40 @@
         </ctl:code>
     </ctl:function>    
     
+    <ctl:function name="spsFunctions:checkIntervalConstraint">
+        <ctl:param name="inputDescriptorToCheck"></ctl:param>
+        <ctl:return>True/false depending on whether or not the InputDescriptor has a valid interval constraint</ctl:return>
+        <ctl:description>
+        </ctl:description>
+        <ctl:code>
+            <xsl:variable name="constraintNode" select="$inputDescriptorToCheck//swe:constraint/*" />
+            <xsl:variable name="constraintType" select="local-name-from-QName(node-name($constraintNode))" />
+            <xsl:variable name="interval" select="$constraintNode//swe:interval" />
+            <xsl:variable name="intervalParts" select="tokenize($interval,' ')" />
+            <xsl:variable name="intervalMin" select="$intervalParts[1]" />
+            <xsl:variable name="intervalMax" select="$intervalParts[2]" />
+            <xsl:choose>
+                <xsl:when test="$interval">
+                    <xsl:choose>
+                        <xsl:when test="$intervalMin and $intervalMax">
+                            <xsl:choose>
+                                <xsl:when test="$constraintType='AllowedTimes'">
+                                    <xsl:value-of select="xs:dateTime($intervalMax)>=xs:dateTime($intervalMin)" />
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="xs:double($intervalMax)>=xs:double($intervalMin)" />
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="false()" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="true()" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </ctl:code>
+    </ctl:function> 
 </ctl:package>
