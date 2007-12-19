@@ -396,11 +396,7 @@
                     <xsl:value-of select="true()" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:variable name="isValidDate">
-                        <ctl:call-function name="spsFunctions:isValidDate">
-                            <ctl:with-param name="dateString" select="$timeToCheck" />
-                        </ctl:call-function>
-                    </xsl:variable>
+                    <xsl:variable name="isValidDate" select="spsFunctions:isValidDate($timeToCheck)" />
                     <xsl:value-of select="xs:boolean($isValidDate) and (xs:dateTime($timeToCheck)>=xs:dateTime($compareTime))" />
                 </xsl:otherwise>
             </xsl:choose>
