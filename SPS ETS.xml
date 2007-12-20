@@ -1522,7 +1522,7 @@
                           </blockquote>
                           <xsl:variable name="visibilityValue">
                               <xsl:choose>
-                                <xsl:when test="xsd:boolean($allowUserDefinedTimeFrame)">
+                                <xsl:when test="xsd:boolean($allowUserSpecifiedTimeFrame)">
                                     <xsl:value-of select="string('visible')" />
                                 </xsl:when>
                                 <xsl:otherwise>
