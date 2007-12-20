@@ -90,6 +90,9 @@
       <ctl:comment>Test driver for the ows module.</ctl:comment>
       <ctl:link title="1. OWS">ATS_URL#ows</ctl:link>
       <ctl:code>
+        <ctl:message>***************************</ctl:message>
+        <ctl:message>Running OWS Common Tests...</ctl:message>
+        <ctl:message>***************************</ctl:message>
         <ctl:call-test name="owsTests:ows-main">
             <ctl:with-param name="serviceURL" select="$serviceURL"/>
             <ctl:with-param name="serviceType" select="string('SPS')"/>
@@ -211,7 +214,9 @@
       <ctl:comment>Test driver for the core module.</ctl:comment>
       <ctl:link title="3. Core">ATS_URL#core</ctl:link>
       <ctl:code>
+        <ctl:message>*********************************************</ctl:message>
         <ctl:message>Running SPS specific GetCapabilities tests...</ctl:message>
+        <ctl:message>*********************************************</ctl:message>
         <ctl:call-test name="sps:core-SPS.GetCapabilities-KVPRequestParameterHandling.1">
           <ctl:with-param name="serviceURL" select="$serviceURL" />
         </ctl:call-test>
@@ -277,7 +282,9 @@
                     
                     <!--Execute DescribeTasking tests-->
                     <xsl:if test="string-length(normalize-space($describeTaskingURL))>0">
+                        <ctl:message>********************************</ctl:message>
                         <ctl:message>Running DescribeTasking tests...</ctl:message>
+                        <ctl:message>********************************</ctl:message>
                         <ctl:call-test name="sps:core-SPS.DescribeTasking-RequestInvalidSensorIDs.1">
                             <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
                         </ctl:call-test>
@@ -292,7 +299,9 @@
                                         
                     <!--Execute Submit tests-->
                     <xsl:if test="string-length(normalize-space($submitURL))>0">
+                        <ctl:message>***********************</ctl:message>
                         <ctl:message>Running Submit tests...</ctl:message>
+                        <ctl:message>***********************</ctl:message>
                         <ctl:call-test name="sps:core-SPS.Submit-RequestMain.1">
                             <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
                             <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
@@ -303,7 +312,9 @@
                     
                     <!--Execute DescribeResultAccess tests-->                    
                     <xsl:if test="string-length(normalize-space($describeResultAccessURL))>0">
+                        <ctl:message>*************************************</ctl:message>
                         <ctl:message>Running DescribeResultAccess tests...</ctl:message>
+                        <ctl:message>*************************************</ctl:message>
                         <ctl:call-test name="sps:core-SPS.DescribeResultAccess-RequestNullSensorID.1">
                             <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
                         </ctl:call-test>
@@ -826,7 +837,7 @@
                 <ctl:fail />
             </xsl:if>
             <!--Check SensorID (for an empty string or an invalid URN?)-->
-            <xsl:if test="string-length($sensorID)=0"> <!-- or not(xsd:boolean(spsFunctions:validateURN($sensorID)))">-->
+            <xsl:if test="string-length($sensorID)=0 or not(xsd:boolean(spsFunctions:validateGenericURN($sensorID)))">
                 <ctl:message>FAILURE:  A SensorID value is null or is not a valid URN.</ctl:message>
                 <ctl:fail />
             </xsl:if>
@@ -885,7 +896,9 @@
                             </xsl:if>
                         </xsl:when>
                         <xsl:when test="$sensorDefinitionResponse//tml:tml">
-                            <xsl:variable name="responseSensorID" select="$sensorDefinitionResponse//tml:tml/@uid" />
+                            <xsl:variable name="responseSensorID"> 
+                                <xsl:value-of select="$sensorDefinitionResponse//tml:tml/@uid" />
+                            </xsl:variable>
                             <xsl:if test="string-length(normalize-space($responseSensorID))=0">
                                 <ctl:message>FAILURE:  There was no sensorID specified in the returned TML document.</ctl:message>
                                 <ctl:fail />
@@ -980,10 +993,6 @@
                 -->
         <xsl:variable name="sensorIDs" select="string('blah,adsjflkasjdflkdsajf,ewioruowireuoierwu,1384982348924988923893298438294')" />
         <xsl:variable name="describeTaskingResponse">
-            <!--<ctl:call-function name="spsFunctions:describeTaskingRequest">
-                <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
-                <ctl:with-param name="sensorIDs" select="$sensorIDs" />
-            </ctl:call-function>-->
             <ctl:request>
                     <ctl:url>
                         <xsl:value-of select="$describeTaskingURL" />
@@ -1095,10 +1104,6 @@
             <xsl:variable name="sensorID" select="." />
             <ctl:message>Sending DescribeTasking request with sensorID "<xsl:value-of select="$sensorID" />"</ctl:message>
             <xsl:variable name="describeTaskingResponse">
-                <!--<ctl:call-function name="spsFunctions:describeTaskingRequest">
-                    <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
-                    <ctl:with-param name="sensorIDs" select="." />
-                </ctl:call-function>-->
                 <ctl:request>
                     <ctl:url>
                         <xsl:value-of select="$describeTaskingURL" />
@@ -1177,8 +1182,6 @@
       <ctl:comment>Pass if each InputDescriptor element contains values for each of its sub-elements and these sub-element values appear to be valid; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that each InputDescriptor element contains appropriate values for its sub-elements.  This is probably tested through schema validation, so this test may be unnecessary.">ATS_URL#SPS.DescribeTasking-ResponseValidInputDescriptor</ctl:link>
       <ctl:code>
-        <!--PUT TEST CODE HERE-->
-        <!--TODO:-->
         <!--Each attribute, if specified should have a value-->
         <xsl:for-each select="$describeTaskingResponse//@*">
             <xsl:variable name="attributeValue" select="." />
@@ -1188,7 +1191,7 @@
                 <ctl:fail />
             </xsl:if>
             <!--An xlink:href attribute should be a valid URL or URN-->
-            <xsl:if test="$attributeName='href'">
+            <xsl:if test="$attributeName='href' or $attributeName='definition'">
                 <xsl:variable name="isValidURL" select="spsFunctions:validateURL($attributeValue)" />
                 <xsl:variable name="isValidURN" select="spsFunctions:validateURN($attributeValue)" />
                 <xsl:if test="not(xsd:boolean($isValidURL) or xsd:boolean($isValidURN))">
@@ -1197,7 +1200,7 @@
                 </xsl:if>
             </xsl:if>
             <!--A definiton or referenceFrame attribute should be a URL or a definition URN-->
-            <xsl:if test="$attributeName='definition' or $attributeName='referenceFrame'">
+            <xsl:if test="$attributeName='referenceFrame'">
                 <xsl:variable name="isValidURL" select="spsFunctions:validateURL($attributeValue)" />
                 <xsl:variable name="isValidURN" select="spsFunctions:isValidDefinitionURN($attributeValue)" />
                 <xsl:if test="not(xsd:boolean($isValidURL) or xsd:boolean($isValidURN))">
@@ -1349,7 +1352,7 @@
                         </DescribeTasking>
                     </ctl:body>
                     <ctl:call-function name="spsFunctions:validateDescribeTaskingResponse" />
-                </ctl:request>
+            </ctl:request>
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="not($describeTaskingResponse/*)">
@@ -1361,7 +1364,11 @@
                 <xsl:variable name="enterTaskingOptionsForm">
                     <ctl:form height="640" width="800">
                        <body>
-                          <h2>Please enter values for a WNS URL and User ID</h2>
+                          <h2>
+                          This form allows you to provide valid values for the Submit request that will be sent to <xsl:value-of select="$selectedSensorID" />.
+                          Please provide valid values for all required fields.  If valid values are not provided, then the service being tested may fail subsequent Submit tests.
+                          </h2>
+                          <h2>Please enter values for a WNS URL and User ID (<span style="color: Red; font-weight: bold;">required</span>)</h2>
                           <blockquote>
                              <table border="1" padding="4" bgcolor="#99ccff">
                                     <tr>
@@ -1412,7 +1419,16 @@
                                     <tr><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Row')" /></xsl:attribute>
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_ID')" /></xsl:attribute><xsl:value-of select="$parameterID" /></td>
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Description')" /></xsl:attribute><xsl:value-of select="gml:description" /></td>
-                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Use')" /></xsl:attribute><xsl:value-of select="@use" /></td>
+                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Use')" /></xsl:attribute>
+                                            <xsl:choose>
+                                                <xsl:when test="@use='required'">
+                                                    <p style="color: Red; font-weight: bold;"><xsl:value-of select="@use" /></p>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="@use" />
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </td>
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Type')" /></xsl:attribute><xsl:value-of select="$definitionNodeName" /></td>
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Definition')" /></xsl:attribute><xsl:value-of select="$definitionNode/@definition" /></td>
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Units')" /></xsl:attribute><xsl:value-of select="$definitionNode/swe:uom/@code" /></td>
@@ -1490,7 +1506,6 @@
                        </body>
                     </ctl:form>
                 </xsl:variable>
-                <!--TODO:  Add in parameter checking somehow?-->
                 <!--Create a valid Submit request based on user input from the previously displayed form-->
                 <xsl:variable name="submitRequest">
                     <ctl:call-function name="spsFunctions:buildSubmitRequest">
@@ -2416,12 +2431,14 @@
                             </ctl:call-test>
                             <!--Check that the ServiceType is valid-->
                             <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceType.1">
-                                <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                <ctl:with-param name="requestedID" select="$sensorID" />
+                                <ctl:with-param name="requestedType" select="'sensorID'" />
                                 <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
                             </ctl:call-test>
                             <!--Check that the ServiceURL is valid-->
                             <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceURL.1">
-                                <ctl:with-param name="requestedSensorID" select="$sensorID" />
+                                <ctl:with-param name="requestedID" select="$sensorID" />
+                                <ctl:with-param name="requestedType" select="'sensorID'" />
                                 <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
                             </ctl:call-test>
                         </xsl:otherwise>
@@ -2489,12 +2506,14 @@
                                 <xsl:otherwise>
                                     <!--Check that the ServiceType is valid-->
                                     <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceType.1">
-                                        <ctl:with-param name="requestedSensorID" select="$validTaskID" />
+                                        <ctl:with-param name="requestedID" select="$validTaskID" />
+                                        <ctl:with-param name="requestedType" select="'taskID'" />
                                         <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
                                     </ctl:call-test>
                                     <!--Check that the ServiceURL is valid-->
                                     <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceURL.1">
-                                        <ctl:with-param name="requestedSensorID" select="$validTaskID" />
+                                        <ctl:with-param name="requestedID" select="$validTaskID" />
+                                        <ctl:with-param name="requestedType" select="'taskID'" />
                                         <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
                                     </ctl:call-test>
                                 </xsl:otherwise>
@@ -2520,7 +2539,8 @@
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceType.1">
-      <ctl:param name="requestedSensorID" />
+      <ctl:param name="requestedID" />
+      <ctl:param name="requestedType" />
       <ctl:param name="describeResultAccessResponse" />
       <ctl:assertion>The ServiceType value in the response contains a value.</ctl:assertion>
       <ctl:comment>Pass if the ServiceType in the response contains a value; fail otherwise</ctl:comment>
@@ -2529,13 +2549,14 @@
         <!--Check to see if the ServiceType element contains a value-->
         <xsl:variable name="serviceType" select="$describeResultAccessResponse//sps:ServiceType" />
         <xsl:if test="string-length(normalize-space($serviceType))=0">
-            <ctl:message>FAILURE:  The ServiceType value in a DescribeResultAccess response for sensorID <xsl:value-of select="$requestedSensorID" /> is null.</ctl:message>
+            <ctl:message>FAILURE:  The ServiceType value in a DescribeResultAccess response for <xsl:value-of select="$requestedType" /> <xsl:value-of select="$requestedID" /> is null.</ctl:message>
             <ctl:fail />
         </xsl:if>
       </ctl:code>
     </ctl:test>
     <ctl:test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceURL.1">
-      <ctl:param name="requestedSensorID" />
+      <ctl:param name="requestedID" />
+      <ctl:param name="requestedType" />
       <ctl:param name="describeResultAccessResponse" />
       <ctl:assertion>The ServiceURL value in the response contains a value and is resolvable.</ctl:assertion>
       <ctl:comment>Pass if the ServiceType in the response contains a value and is resolvable; fail otherwise</ctl:comment>
@@ -2550,7 +2571,7 @@
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="not(xsd:boolean($isValidURL))">
-                <ctl:message>FAILURE:  The ServiceURL value in a DescribeResultAccess response for sensorID <xsl:value-of select="$requestedSensorID" /> is either null or does not have the proper syntax for a URL.</ctl:message>
+                <ctl:message>FAILURE:  The ServiceURL value in a DescribeResultAccess response for <xsl:value-of select="$requestedType" /> <xsl:value-of select="$requestedID" /> is either null or does not have the proper syntax for a URL.</ctl:message>
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
