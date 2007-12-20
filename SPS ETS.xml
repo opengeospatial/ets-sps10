@@ -1393,18 +1393,18 @@
                     <ctl:form height="640" width="800">
                        <body>
                           <h2>
-                          This form allows you to provide valid values for the Submit request that will be sent to <xsl:value-of select="$selectedSensorID" />.
+                          This form allows you to provide valid values for the Submit request that will be sent to <i><xsl:value-of select="$selectedSensorID" /></i>.
                           Please provide valid values for all required fields.  If valid values are not provided, then the service being tested may fail subsequent Submit tests.
                           </h2>
                           <h2>Please enter values for a WNS URL and User ID (<span style="color: Red; font-weight: bold;">required</span>)</h2>
                           <blockquote>
                              <table border="1" padding="4" bgcolor="#99ccff">
                                     <tr>
-                                        <td>WNS URL:</td>
+                                        <td><b>WNS URL:</b></td>
                                         <td><input name="wnsURL" type="text" /></td>
                                     </tr>
                                     <tr>
-                                        <td>WNS User ID:</td>
+                                        <td><b>WNS User ID:</b></td>
                                         <td><input name="wnsUserID" type="text" /></td>
                                     </tr>
                              </table>
@@ -1414,15 +1414,15 @@
                              <table border="1" padding="4" bgcolor="#99ccff">
                                 <thead>
                                     <tr>
-                                        <th>Parameter ID</th>
-                                        <th>Description</th>
-                                        <th>Use</th>
-                                        <th>Type</th>
-                                        <th>Definition</th>
-                                        <th>Units</th>
-                                        <th>Min</th>
-                                        <th>Max</th>
-                                        <th>Value</th>
+                                        <th><b>Parameter ID</b></th>
+                                        <th><b>Description</b></th>
+                                        <th><b>Use</b></th>
+                                        <th><b>Type</b></th>
+                                        <th><b>Definition</b></th>
+                                        <th><b>Units</b></th>
+                                        <th><b>Min</b></th>
+                                        <th><b>Max</b></th>
+                                        <th><b>Value</b></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1445,7 +1445,7 @@
                                     <xsl:variable name="locationVector" select="$definitionNode//swe:location/swe:Vector" />
                                     <xsl:variable name="coordinates" select="$locationVector//swe:coordinate" />
                                     <tr><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Row')" /></xsl:attribute>
-                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_ID')" /></xsl:attribute><xsl:value-of select="$parameterID" /></td>
+                                        <td><i><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_ID')" /></xsl:attribute><xsl:value-of select="$parameterID" /></i></td>
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Description')" /></xsl:attribute><xsl:value-of select="gml:description" /></td>
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Use')" /></xsl:attribute>
                                             <xsl:choose>
@@ -2547,27 +2547,31 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:choose>
-                                <xsl:when test="$describeResultAccessRequestResponse/sps:DataNotAvailable">
+                                <xsl:when test="$describeResultAccessRequestResponse//sps:DataNotAvailable">
                                     <ctl:message>**********************************************************************</ctl:message>
+                                    <ctl:message>DataNotAvailable response encountered.  Checking this response for validity...</ctl:message>
                                     <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidDataNotAvailable.1">
                                         <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
                                     </ctl:call-test>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <!--Check that the ServiceType is valid-->
-                                    <ctl:message>**********************************************************************</ctl:message>
-                                    <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceType.1">
-                                        <ctl:with-param name="requestedID" select="$validTaskID" />
-                                        <ctl:with-param name="requestedType" select="'taskID'" />
-                                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
-                                    </ctl:call-test>
-                                    <!--Check that the ServiceURL is valid-->
-                                    <ctl:message>**********************************************************************</ctl:message>
-                                    <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceURL.1">
-                                        <ctl:with-param name="requestedID" select="$validTaskID" />
-                                        <ctl:with-param name="requestedType" select="'taskID'" />
-                                        <ctl:with-param name="describeResultAccessResponse" select="$describeResultAccessRequestResponse" />
-                                    </ctl:call-test>
+                                    <ctl:message>One or more service response elements encountered.  Checking service element(s) for validity...</ctl:message>
+                                    <xsl:for-each select="$describeResultAccessRequestResponse//sps:service">
+                                        <ctl:message>**********************************************************************</ctl:message>
+                                        <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceType.1">
+                                            <ctl:with-param name="requestedID" select="$validTaskID" />
+                                            <ctl:with-param name="requestedType" select="'taskID'" />
+                                            <ctl:with-param name="describeResultAccessResponse" select="." />
+                                        </ctl:call-test>
+                                        <!--Check that the ServiceURL is valid-->
+                                        <ctl:message>**********************************************************************</ctl:message>
+                                        <ctl:call-test name="sps:core-SPS.DescribeResultAccess-ResponseValidServiceURL.1">
+                                            <ctl:with-param name="requestedID" select="$validTaskID" />
+                                            <ctl:with-param name="requestedType" select="'taskID'" />
+                                            <ctl:with-param name="describeResultAccessResponse" select="." />
+                                        </ctl:call-test>
+                                    </xsl:for-each>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:otherwise>
