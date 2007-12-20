@@ -1520,7 +1520,7 @@
                                 </tbody>
                              </table>
                           </blockquote>
-                          <xsl:variable name="$visibilityValue">
+                          <xsl:variable name="visibilityValue">
                               <xsl:choose>
                                 <xsl:when test="xsd:boolean($allowUserDefinedTimeFrame)">
                                     <xsl:value-of select="string('visible')" />
