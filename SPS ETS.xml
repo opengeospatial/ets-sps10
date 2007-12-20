@@ -307,6 +307,7 @@
                             <ctl:with-param name="describeTaskingURL" select="$describeTaskingURL" />
                             <ctl:with-param name="submitURL" select="$submitURL" />
                             <ctl:with-param name="describeResultAccessURL" select="$describeResultAccessURL" />
+                            <ctl:with-param name="allowUserSpecifiedTimeFrame" select="false()" />
                         </ctl:call-test>
                     </xsl:if>
                     
@@ -1325,6 +1326,7 @@
       <ctl:param name="describeTaskingURL" />
       <ctl:param name="submitURL" />
       <ctl:param name="describeResultAccessURL" />
+      <ctl:param name="allowUserSpecifiedTimeFrame" />
       <ctl:assertion>All Submit request assertions are satisfied.</ctl:assertion>
       <ctl:comment>Pass if all Submit request assertions are satisfied; fail otherwise.</ctl:comment>
       <ctl:link title=""></ctl:link>
@@ -1409,7 +1411,7 @@
                                     </tr>
                              </table>
                           </blockquote>
-                          <h2>Please enter valid values for the available taskable parameters for <xsl:value-of select="$selectedSensorID" /></h2>
+                          <h2>Please enter valid values for the available taskable parameters for <i><xsl:value-of select="$selectedSensorID" /></i></h2>
                           <blockquote>
                              <table border="1" padding="4" bgcolor="#99ccff">
                                 <thead>
@@ -1445,7 +1447,7 @@
                                     <xsl:variable name="locationVector" select="$definitionNode//swe:location/swe:Vector" />
                                     <xsl:variable name="coordinates" select="$locationVector//swe:coordinate" />
                                     <tr><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Row')" /></xsl:attribute>
-                                        <td><i><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_ID')" /></xsl:attribute><xsl:value-of select="$parameterID" /></i></td>
+                                        <td><b><i><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_ID')" /></xsl:attribute><xsl:value-of select="$parameterID" /></i></b></td>
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Description')" /></xsl:attribute><xsl:value-of select="gml:description" /></td>
                                         <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Use')" /></xsl:attribute>
                                             <xsl:choose>
@@ -1518,15 +1520,27 @@
                                 </tbody>
                              </table>
                           </blockquote>
+                          <xsl:variable name="$visibilityValue">
+                              <xsl:choose>
+                                <xsl:when test="xsd:boolean($allowUserDefinedTimeFrame)">
+                                    <xsl:value-of select="string('visible')" />
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="string('hidden')" />
+                                </xsl:otherwise>
+                              </xsl:choose>
+                          </xsl:variable>
                           <blockquote>
+                            <xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';')" /></xsl:attribute> 
                             <h2>
                                 Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.
-                                The supplied value must be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or duration (i.e. PT5M).
+                                The supplied value must be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or duration (i.e. PT5M).  The default value that appears below is one
+                                hour past the current time.
                             </h2>
                              <table border="1" padding="4" bgcolor="#99ccff">
                                 <tr>
                                     <td>timeFrame:</td>
-                                    <td><input type="text" name="timeFrame"><xsl:attribute name="value" select="current-dateTime()" /></input></td>
+                                    <td><input type="text" name="timeFrame"><xsl:attribute name="value" select="xsd:dateTime(current-dateTime()) + xsd:dayTimeDuration('P0DT1H0M0S')" /></input></td>
                                 </tr>
                              </table>
                           </blockquote>
@@ -1943,7 +1957,20 @@
                                                 </tr>
                                                 <tr>
                                                     <td>status:</td>
-                                                    <td><xsl:value-of select="$submitResponse//sps:status" /></td>
+                                                    <td>
+                                                            <xsl:variable name="status" select="$submitResponse//sps:status/text()"/>
+                                                            <span>
+                                                                <xsl:choose>
+                                                                    <xsl:when test="$status='confirmed'">
+                                                                        <xsl:attribute name="style"><xsl:value-of select="string('color: Green; font-weight: bold;')" /></xsl:attribute>
+                                                                    </xsl:when>
+                                                                    <xsl:otherwise>
+                                                                        <xsl:attribute name="style"><xsl:value-of select="string('color: Red; font-weight: bold;')" /></xsl:attribute>
+                                                                    </xsl:otherwise>
+                                                                </xsl:choose>
+                                                                <xsl:value-of select="$status" />
+                                                            </span>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>description:</td>
@@ -1957,7 +1984,7 @@
                                                     <td>alternative:</td>
                                                     <td>
                                                         <xsl:for-each select="$submitResponse//sps:alternative">
-                                                            <xsl:value-of select="." />
+                                                            <p><xsl:value-of select="." /></p>
                                                         </xsl:for-each>
                                                     </td>
                                                 </tr>
@@ -2077,8 +2104,8 @@
                                 <ctl:with-param name="submitTime" select="$submitTime" />
                             </ctl:call-test>
                             <!--Validate taskID in the response-->
-                            <ctl:message>**********************************************************************</ctl:message>
                             <xsl:if test="$submitResponse//sps:status[text()='rejected, alternatives available'] or count($submitResponse//sps:alternative)>0">
+                                <ctl:message>**********************************************************************</ctl:message>
                                 <ctl:call-test name="sps:core-SPS.Submit-ResponseCorrectUseOfAlternative.1">
                                     <ctl:with-param name="submitResponse" select="$submitResponse" />
                                 </ctl:call-test>

@@ -605,7 +605,8 @@
                                 <gml:timePosition>
                                     <xsl:choose>
                                         <xsl:when test="not(xs:boolean($invalidTimeFrame))">
-                                            <xsl:value-of select="$enterTaskingOptionsForm/values/value[@key='timeFrame']" />
+                                            <xsl:variable name="timeFrame" select="$enterTaskingOptionsForm/values/value[@key='timeFrame']" />
+                                            <xsl:value-of select="$timeFrame" />
                                         </xsl:when>
                                         <xsl:otherwise>
                                             2000-01-01T00:00:00.000Z
