@@ -1569,6 +1569,28 @@
                     </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with an invalid timeFrame element:  <xsl:copy-of select="$submitRequestInvalidTimeFrame/*" /></ctl:message>
+                <!--Submit requests with invalid parameters-->
+                <!--These tests were moved above the valid Submit request to ensure that service actually checks for invalid parameters.  If these tests appeared after the valid Submit request, then the tests might fail due to unexpected results (i.e. a rejected response since the sensor is in use)-->
+                <ctl:call-test name="sps:core-SPS.Submit-RequestInvalidNotificationTarget.1">
+                    <ctl:with-param name="submitURL" select="$submitURL" />
+                    <ctl:with-param name="submitRequest" select="$submitRequestInvalidNotificationTarget" />
+                </ctl:call-test>
+                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidSensorID.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequestInvalidSensorID" />
+                </ctl:call-test>
+                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidParameters.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequestInvalidParameters" />
+                </ctl:call-test>
+                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersMissingRequiredParameters.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequestMissingRequiredParameters" />
+                </ctl:call-test>
+                <ctl:call-test name="sps:core-SPS.Submit-RequestValidTimeFrame.1">
+                  <ctl:with-param name="submitURL" select="$submitURL" />
+                  <ctl:with-param name="submitRequest" select="$submitRequestInvalidTimeFrame" />
+                </ctl:call-test>
                 <!--Execute the valid Submit request-->
                 <xsl:variable name="submitResponse">
                     <ctl:request>
@@ -1601,26 +1623,6 @@
                   <ctl:with-param name="submitURL" select="$submitURL" />
                   <ctl:with-param name="submitRequest" select="$submitRequest" />
                   <ctl:with-param name="submitResponse" select="$submitResponse" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestInvalidNotificationTarget.1">
-                    <ctl:with-param name="submitURL" select="$submitURL" />
-                    <ctl:with-param name="submitRequest" select="$submitRequestInvalidNotificationTarget" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidSensorID.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                  <ctl:with-param name="submitRequest" select="$submitRequestInvalidSensorID" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidParameters.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                  <ctl:with-param name="submitRequest" select="$submitRequestInvalidParameters" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersMissingRequiredParameters.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                  <ctl:with-param name="submitRequest" select="$submitRequestMissingRequiredParameters" />
-                </ctl:call-test>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestValidTimeFrame.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                  <ctl:with-param name="submitRequest" select="$submitRequestInvalidTimeFrame" />
                 </ctl:call-test>
             </xsl:otherwise>
         </xsl:choose>

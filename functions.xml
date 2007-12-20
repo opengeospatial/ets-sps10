@@ -336,6 +336,16 @@
         </ctl:code>
     </ctl:function>
     
+        <!--Check for a valid URN-->
+    <ctl:function name="spsFunctions:validateGenericURN">
+        <ctl:param name="urnString">The URN to validate</ctl:param>
+        <ctl:return>True/False depending on whether or not the URN is a valid URN.</ctl:return>
+        <ctl:description>Determines if a URN is valid</ctl:description>
+        <ctl:code>
+            <xsl:value-of select="(matches($urnString,'^urn(:(\w|\(|\)|\+|,|-|\.|=|\$|_|!|\*|'')+)+$', 'i'))" />
+        </ctl:code>
+    </ctl:function>
+    
     <!--Check for a valid URN-->
     <ctl:function name="spsFunctions:validateURN">
         <ctl:param name="urnString">The URN to validate</ctl:param>
