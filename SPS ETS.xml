@@ -45,10 +45,9 @@
         <xsl:variable name="form-values">
             <ctl:form height="640" width="800">
                <body>
-                  <h2>Compliance test suite for Sensor Planning Service (SPS) 1.0</h2>
-                  <h3>Service metadata</h3>
+                  <h2>Compliance Test Suite for Sensor Planning Service (SPS) 1.0</h2>
                   <p>
-                  Please provide a URL from which a capabilities document can 
+                  Please provide a URL from which a Capabilities document can 
                   be retrieved. Modify the URL template below to specify the 
                   location of an OGC SPS implementation 
                   under test.
@@ -1530,14 +1529,23 @@
                                 </xsl:otherwise>
                               </xsl:choose>
                           </xsl:variable>
-                          <blockquote>
-                            <xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';')" /></xsl:attribute> 
-                            <h2>
+                          <xsl:variable name="displayValue">
+                            <xsl:choose>
+                                <xsl:when test="xsd:boolean($allowUserSpecifiedTimeFrame)">
+                                    <xsl:value-of select="string('inline')" />
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="string('none')" />
+                                </xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:variable>
+                          <blockquote><xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';','display: ',$displayValue,';')" /></xsl:attribute> 
+                            <h2><xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';','display: ',$displayValue,';')" /></xsl:attribute>
                                 Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.
                                 The supplied value must be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or duration (i.e. PT5M).  The default value that appears below is one
                                 hour past the current time.
                             </h2>
-                             <table border="1" padding="4" bgcolor="#99ccff">
+                             <table border="1" padding="4" bgcolor="#99ccff"><xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';','display: ',$displayValue,';')" /></xsl:attribute>
                                 <tr>
                                     <td>timeFrame:</td>
                                     <td><input type="text" name="timeFrame"><xsl:attribute name="value" select="xsd:dateTime(current-dateTime()) + xsd:dayTimeDuration('P0DT1H0M0S')" /></input></td>
