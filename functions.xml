@@ -12,6 +12,7 @@
  xmlns:spsTesting="https://cite.opengeospatial.org/spsTesting"
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+ xmlns:saxon="http://saxon.sf.net/" 
 >
     
     <!--Returns the appropriate schema path-->
@@ -447,6 +448,209 @@
         <ctl:param name="invalidParameters">True/False indicating whether the request should be constructed with invalid parameter values</ctl:param>
         <ctl:param name="missingRequiredParameters">True/False indicating whether the request should be constructed with missing required parameter values</ctl:param>
         <ctl:param name="invalidTimeFrame">True/False indicating whether the request should be constructed with an invalid timeFrame value</ctl:param>
+        <ctl:param name="unhandledInputParameters">True/False indicating whether the service has complex InputParameters that were not handled by the Submit request form</ctl:param>
+        <ctl:return>A Submit request document based on the supplied parameters</ctl:return>
+        <ctl:description>
+        Builds a Submit request document from the supplied parameters.  This document can either have valid or invalid parameters.
+        NOTE:  This function does not currently handle most of the more complex scenarios within a Submit document (other than Position w/ coordinates).
+        The function handles all simple InputParameters and Position InputParameters with coordinate elements.  This function should be updated in the future to handle the more complex scenarios.
+        </ctl:description>
+        <ctl:code>
+            <xsl:variable name="submitRequest">
+                    <sps:Submit xmlns:sps="http://www.opengis.net/sps/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" service="SPS" version="1.0.0">
+                        <sps:notificationTarget>
+                            <sps:notificationID>
+                                <xsl:choose>
+                                    <xsl:when test="not(xs:boolean($invalidNotificationTarget))">
+                                        <xsl:value-of select="$enterTaskingOptionsForm/values/value[@key='wnsUserID']" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="string('This is a test...')" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </sps:notificationID>
+                            <sps:notificationURL>
+                                <xsl:choose>
+                                    <xsl:when test="not(xs:boolean($invalidNotificationTarget))">
+                                        <xsl:value-of select="$enterTaskingOptionsForm/values/value[@key='wnsURL']" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="string('This is a test...')" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </sps:notificationURL>
+                        </sps:notificationTarget>
+                        <sps:sensorParam>
+                            <sps:sensorID><xsl:value-of select="$sensorID" /></sps:sensorID>
+                                <xsl:choose>
+                                    <xsl:when test="not(xs:boolean($unhandledInputParameters))">
+                                    <sps:parameters>
+                                        <xsl:for-each select="$describeTaskingResponse//sps:InputDescriptor">
+                                            <xsl:variable name="parameterID">
+                                                <xsl:value-of select="@parameterID" />
+                                            </xsl:variable>
+                                            <xsl:variable name="use">
+                                                <xsl:value-of select="@use" />
+                                            </xsl:variable>
+                                            <xsl:variable name="inputID" select="concat($parameterID,'_Value')" />
+                                            <xsl:variable name="parameterValue" select="$enterTaskingOptionsForm/values/value[@key=$inputID]" />
+                                            <xsl:variable name="includeParameter">
+                                                <xsl:choose>
+                                                    <xsl:when test="not(xs:boolean($missingRequiredParameters))">
+                                                        <xsl:value-of select="($use='required') or (string-length(normalize-space($parameterValue))>0)" />
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:value-of select="($use='optional') and (string-length(normalize-space($parameterValue))>0)" />
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:variable>
+                                            <xsl:if test="xs:boolean($includeParameter)">
+                                                <sps:InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="$parameterID" /></xsl:attribute>
+                                                    <sps:value>
+                                                        <xsl:variable name="definitionNode" select="sps:definition/*/*[1]" />
+                                                        <xsl:variable name="elementName" select="local-name-from-QName(node-name($definitionNode))" />
+                                                        <xsl:variable name="elementValue">
+                                                            <xsl:choose>
+                                                                <xsl:when test="not(xs:boolean($invalidParameters))">
+                                                                    <xsl:value-of select="$parameterValue" />
+                                                                </xsl:when>
+                                                                <xsl:otherwise>
+                                                                    <xsl:value-of select="string('')" />
+                                                                </xsl:otherwise>
+                                                            </xsl:choose>
+                                                        </xsl:variable>
+                                                        <xsl:choose>
+                                                            <xsl:when test="$elementName='Position'">
+                                                                <xsl:variable name="positionChild" select="$definitionNode/*[1]" />
+                                                                <xsl:variable name="positionChildName" select="local-name-from-QName(node-name($positionChild))" />
+                                                                <swe:Position>
+                                                                    <xsl:for-each select="$definitionNode/@*">
+                                                                        <xsl:variable name="attributeName" select="name()" />
+                                                                        <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>
+                                                                    </xsl:for-each>
+                                                                    <xsl:choose>
+                                                                        <xsl:when test="$positionChildName='time'">
+                                                                            <swe:time>
+                                                                                <swe:Time>
+                                                                                    <swe:value></swe:value>
+                                                                                </swe:Time>
+                                                                            </swe:time>
+                                                                        </xsl:when>
+                                                                        <xsl:when test="$positionChildName='location'">
+                                                                            <swe:location>
+                                                                                <swe:Vector>           
+                                                                                    <xsl:variable name="coordinates" select="$positionChild/*[1]/*" />
+                                                                                    <xsl:for-each select="$coordinates">
+                                                                                        <xsl:variable name="coordinateName">
+                                                                                            <xsl:value-of select="@name" />
+                                                                                        </xsl:variable>
+                                                                                        <xsl:variable name="coordinateChild" select="*[1]" />
+                                                                                        <xsl:variable name="coordinateChildName" select="local-name-from-QName(node-name($coordinateChild))" />
+                                                                                        <swe:coordinate><xsl:attribute name="name"><xsl:value-of select="$coordinateName" /></xsl:attribute>
+                                                                                            <xsl:element name="{$coordinateChildName}" namespace="http://www.opengis.net/swe/1.0">
+                                                                                                <xsl:for-each select="$coordinateChild/@*">
+                                                                                                    <xsl:variable name="attributeName" select="name()" />
+                                                                                                    <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>                                                                                        
+                                                                                                </xsl:for-each>
+                                                                                                <xsl:for-each select="$coordinateChild/*">
+                                                                                                    <xsl:variable name="childName" select="local-name-from-QName(node-name(.))" />
+                                                                                                    <xsl:if test="not($childName='constraint')">
+                                                                                                        <xsl:element name="{$childName}" namespace="http://www.opengis.net/swe/1.0">
+                                                                                                            <xsl:for-each select="@*">
+                                                                                                                <xsl:variable name="attributeName" select="name()" />
+                                                                                                                <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>
+                                                                                                            </xsl:for-each>
+                                                                                                            <xsl:value-of select="." />
+                                                                                                        </xsl:element>
+                                                                                                    </xsl:if>
+                                                                                                </xsl:for-each>
+                                                                                                <xsl:variable name="updatedInputID" select="concat($parameterID,'_',translate($coordinateName,' ','_'),'_Value')" />
+                                                                                                <xsl:variable name="updatedInputIDValue" select="$enterTaskingOptionsForm/values/value[@key=$updatedInputID]" />
+                                                                                                <swe:value><xsl:value-of select="$updatedInputIDValue" /></swe:value>
+                                                                                            </xsl:element>
+                                                                                        </swe:coordinate>
+                                                                                    </xsl:for-each>
+                                                                                </swe:Vector>
+                                                                            </swe:location>
+                                                                        </xsl:when>
+                                                                        <xsl:when test="$positionChildName='orientation'">
+                                                                            <swe:orientation>
+                                                                            </swe:orientation>
+                                                                        </xsl:when>
+                                                                        <xsl:when test="$positionChildName='velocity'">
+                                                                        </xsl:when>
+                                                                        <xsl:when test="$positionChildName='angularVelocity'">
+                                                                        </xsl:when>
+                                                                        <xsl:when test="$positionChildName='acceleration'">
+                                                                        </xsl:when>
+                                                                        <xsl:when test="$positionChildName='angularAcceleration'">
+                                                                        </xsl:when>
+                                                                        <xsl:otherwise>
+                                                                        </xsl:otherwise>
+                                                                    </xsl:choose>
+                                                                </swe:Position>
+                                                            </xsl:when>
+                                                            <xsl:otherwise>
+                                                                <xsl:element name="{$elementName}" namespace="http://www.opengis.net/swe/1.0">
+                                                                    <swe:value>
+                                                                        <xsl:value-of select="$elementValue" />
+                                                                    </swe:value>
+                                                                </xsl:element>
+                                                            </xsl:otherwise>
+                                                        </xsl:choose>                                             
+                                                    </sps:value>
+                                                </sps:InputParameter>
+                                            </xsl:if>
+                                        </xsl:for-each>
+                                        </sps:parameters>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:variable name="parametersStartTag" select="string('&lt;sps:parameters xmlns:sps=&quot;http://www.opengis.net/sps/1.0&quot; xmlns:swe=&quot;http://www.opengis.net/swe/1.0&quot; xmlns:gml=&quot;http://www.opengis.net/gml&quot;&gt;')" />
+                                        <xsl:variable name="parametersEndTag" select="string('&lt;/sps:parameters&gt;')" />
+                                        <xsl:choose>
+                                            <xsl:when test="xsd:boolean($invalidParameters)">
+                                                <xsl:copy-of select="saxon:parse(concat($parametersStartTag,$enterTaskingOptionsForm/values/value[@key='invalidInputParameters'],$parametersEndTag))" />
+                                            </xsl:when>
+                                            <xsl:when test="xsd:boolean($missingRequiredParameters)">
+                                                <xsl:copy-of select="saxon:parse(concat($parametersStartTag,$enterTaskingOptionsForm/values/value[@key='missingRequiredInputParameters'],$parametersEndTag))" />
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:copy-of select="saxon:parse(concat($parametersStartTag,$enterTaskingOptionsForm/values/value[@key='validInputParameters'],$parametersEndTag))" />
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                        </sps:sensorParam>
+                        <sps:timeFrame>
+                            <gml:TimeInstant>
+                                <gml:timePosition>
+                                    <xsl:choose>
+                                        <xsl:when test="not(xs:boolean($invalidTimeFrame))">
+                                            <xsl:variable name="timeFrame" select="$enterTaskingOptionsForm/values/value[@key='timeFrame']" />
+                                            <xsl:value-of select="$timeFrame" />
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            2000-01-01T00:00:00.000Z
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </gml:timePosition>
+                            </gml:TimeInstant>
+                        </sps:timeFrame>
+                    </sps:Submit>
+                </xsl:variable>
+                <xsl:copy-of select="$submitRequest" />
+        </ctl:code>
+    </ctl:function>
+    
+    <!---->
+    <ctl:function name="spsFunctions:buildSubmitRequestFromInput">
+        <ctl:param name="sensorID">SensorID used in the Submit request</ctl:param>
+        <ctl:param name="describeTaskingResponse">The response to a DescribeTasking request for the sensor identified by the sensorID parameter</ctl:param>
+        <ctl:param name="enterTaskingOptionsForm">The form used to gather the user input for the tasking request.</ctl:param>
+        <ctl:param name="invalidNotificationTarget">True/False indicating whether the request should be constructed with an invalid notificationTarget element</ctl:param>
+        <ctl:param name="invalidParameters">True/False indicating whether the request should be constructed with invalid parameter values</ctl:param>
+        <ctl:param name="missingRequiredParameters">True/False indicating whether the request should be constructed with missing required parameter values</ctl:param>
+        <ctl:param name="invalidTimeFrame">True/False indicating whether the request should be constructed with an invalid timeFrame value</ctl:param>
         <ctl:return>A Submit request document based on the supplied parameters</ctl:return>
         <ctl:description>
         Builds a Submit request document from the supplied parameters.  This document can either have valid or invalid parameters.
@@ -481,123 +685,17 @@
                         <sps:sensorParam>
                             <sps:sensorID><xsl:value-of select="$sensorID" /></sps:sensorID>
                             <sps:parameters>
-                                <xsl:for-each select="$describeTaskingResponse//sps:InputDescriptor">
-                                    <xsl:variable name="parameterID">
-                                        <xsl:value-of select="@parameterID" />
-                                    </xsl:variable>
-                                    <xsl:variable name="use">
-                                        <xsl:value-of select="@use" />
-                                    </xsl:variable>
-                                    <xsl:variable name="inputID" select="concat($parameterID,'_Value')" />
-                                    <xsl:variable name="parameterValue" select="$enterTaskingOptionsForm/values/value[@key=$inputID]" />
-                                    <xsl:variable name="includeParameter">
-                                        <xsl:choose>
-                                            <xsl:when test="not(xs:boolean($missingRequiredParameters))">
-                                                <xsl:value-of select="($use='required') or (string-length(normalize-space($parameterValue))>0)" />
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="($use='optional') and (string-length(normalize-space($parameterValue))>0)" />
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    </xsl:variable>
-                                    <xsl:if test="xs:boolean($includeParameter)">
-                                        <sps:InputParameter><xsl:attribute name="parameterID"><xsl:value-of select="$parameterID" /></xsl:attribute>
-                                            <sps:value>
-                                                <xsl:variable name="definitionNode" select="sps:definition/*/*[1]" />
-                                                <xsl:variable name="elementName" select="local-name-from-QName(node-name($definitionNode))" />
-                                                <xsl:variable name="elementValue">
-                                                    <xsl:choose>
-                                                        <xsl:when test="not(xs:boolean($invalidParameters))">
-                                                            <xsl:value-of select="$parameterValue" />
-                                                        </xsl:when>
-                                                        <xsl:otherwise>
-                                                            <xsl:value-of select="string('')" />
-                                                        </xsl:otherwise>
-                                                    </xsl:choose>
-                                                </xsl:variable>
-                                                <xsl:choose>
-                                                    <xsl:when test="$elementName='Position'">
-                                                        <xsl:variable name="positionChild" select="$definitionNode/*[1]" />
-                                                        <xsl:variable name="positionChildName" select="local-name-from-QName(node-name($positionChild))" />
-                                                        <swe:Position>
-                                                            <xsl:for-each select="$definitionNode/@*">
-                                                                <xsl:variable name="attributeName" select="name()" />
-                                                                <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>
-                                                            </xsl:for-each>
-                                                            <xsl:choose>
-                                                                <xsl:when test="$positionChildName='time'">
-                                                                    <swe:time>
-                                                                        <swe:Time>
-                                                                            <swe:value></swe:value>
-                                                                        </swe:Time>
-                                                                    </swe:time>
-                                                                </xsl:when>
-                                                                <xsl:when test="$positionChildName='location'">
-                                                                    <swe:location>
-                                                                        <swe:Vector>           
-                                                                            <xsl:variable name="coordinates" select="$positionChild/*[1]/*" />
-                                                                            <xsl:for-each select="$coordinates">
-                                                                                <xsl:variable name="coordinateName">
-                                                                                    <xsl:value-of select="@name" />
-                                                                                </xsl:variable>
-                                                                                <xsl:variable name="coordinateChild" select="*[1]" />
-                                                                                <xsl:variable name="coordinateChildName" select="local-name-from-QName(node-name($coordinateChild))" />
-                                                                                <swe:coordinate><xsl:attribute name="name"><xsl:value-of select="$coordinateName" /></xsl:attribute>
-                                                                                    <xsl:element name="{$coordinateChildName}" namespace="http://www.opengis.net/swe/1.0">
-                                                                                        <xsl:for-each select="$coordinateChild/@*">
-                                                                                            <xsl:variable name="attributeName" select="name()" />
-                                                                                            <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>                                                                                        
-                                                                                        </xsl:for-each>
-                                                                                        <xsl:for-each select="$coordinateChild/*">
-                                                                                            <xsl:variable name="childName" select="local-name-from-QName(node-name(.))" />
-                                                                                            <xsl:if test="not($childName='constraint')">
-                                                                                                <xsl:element name="{$childName}" namespace="http://www.opengis.net/swe/1.0">
-                                                                                                    <xsl:for-each select="@*">
-                                                                                                        <xsl:variable name="attributeName" select="name()" />
-                                                                                                        <xsl:attribute name="{$attributeName}"><xsl:value-of select="." /></xsl:attribute>
-                                                                                                    </xsl:for-each>
-                                                                                                    <xsl:value-of select="." />
-                                                                                                </xsl:element>
-                                                                                            </xsl:if>
-                                                                                        </xsl:for-each>
-                                                                                        <xsl:variable name="updatedInputID" select="concat($parameterID,'_',translate($coordinateName,' ','_'),'_Value')" />
-                                                                                        <xsl:variable name="updatedInputIDValue" select="$enterTaskingOptionsForm/values/value[@key=$updatedInputID]" />
-                                                                                        <swe:value><xsl:value-of select="$updatedInputIDValue" /></swe:value>
-                                                                                    </xsl:element>
-                                                                                </swe:coordinate>
-                                                                            </xsl:for-each>
-                                                                        </swe:Vector>
-                                                                    </swe:location>
-                                                                </xsl:when>
-                                                                <xsl:when test="$positionChildName='orientation'">
-                                                                    <swe:orientation>
-                                                                    </swe:orientation>
-                                                                </xsl:when>
-                                                                <xsl:when test="$positionChildName='velocity'">
-                                                                </xsl:when>
-                                                                <xsl:when test="$positionChildName='angularVelocity'">
-                                                                </xsl:when>
-                                                                <xsl:when test="$positionChildName='acceleration'">
-                                                                </xsl:when>
-                                                                <xsl:when test="$positionChildName='angularAcceleration'">
-                                                                </xsl:when>
-                                                                <xsl:otherwise>
-                                                                </xsl:otherwise>
-                                                            </xsl:choose>
-                                                        </swe:Position>
-                                                    </xsl:when>
-                                                    <xsl:otherwise>
-                                                        <xsl:element name="{$elementName}" namespace="http://www.opengis.net/swe/1.0">
-                                                            <swe:value>
-                                                                <xsl:value-of select="$elementValue" />
-                                                            </swe:value>
-                                                        </xsl:element>
-                                                    </xsl:otherwise>
-                                                </xsl:choose>                                             
-                                            </sps:value>
-                                        </sps:InputParameter>
-                                    </xsl:if>
-                                </xsl:for-each>
+                                <xsl:choose>
+                                    <xsl:when test="xsd:boolean($invalidParameters)">
+                                        <xsl:copy-of select="$enterTaskingOptionsForm/values/value[@key='invalidInputParameters']" />
+                                    </xsl:when>
+                                    <xsl:when test="xsd:boolean($missingRequiredParameters)">
+                                        <xsl:copy-of select="$enterTaskingOptionsForm/values/value[@key='missingRequiredInputParameters']" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:copy-of select="$enterTaskingOptionsForm/values/value[@key='validInputParameters']" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </sps:parameters>
                         </sps:sensorParam>
                         <sps:timeFrame>

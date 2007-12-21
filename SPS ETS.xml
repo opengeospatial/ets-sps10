@@ -1390,12 +1390,26 @@
                     <ctl:call-function name="spsFunctions:validateDescribeTaskingResponse" />
             </ctl:request>
         </xsl:variable>
+        
+                                                              
         <xsl:choose>
             <xsl:when test="not($describeTaskingResponse/*)">
                 <ctl:message>FAILURE:  Unable to construct a Submit request form containing taskable parameters, since the server did not return a valid response to the DescribeTasking request for "<xsl:value-of select="$selectedSensorID" />".</ctl:message>
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
+                <xsl:variable name="complexInputParameters" select="$describeTaskingResponse//swe:ConditionalData | $describeTaskingResponse//swe:ConditionalValue | 
+                                                                    $describeTaskingResponse//swe:DataRecord | $describeTaskingResponse//swe:Envelope | 
+                                                                    $describeTaskingResponse//swe:GeoLocationArea | $describeTaskingResponse//swe:NormalizedCurve |
+                                                                    $describeTaskingResponse//swe:Position/swe:time | $describeTaskingResponse//swe:Position/swe:orientation |
+                                                                    $describeTaskingResponse//swe:Position/swe:velocity | $describeTaskingResponse//swe:Position/swe:angularVelocity |
+                                                                    $describeTaskingResponse//swe:Position/swe:acceleration | $describeTaskingResponse//swe:Position/swe:angularAcceleration |
+                                                                    $describeTaskingResponse//swe:Position/swe:state | $describeTaskingResponse//swe:SimpleDataRecord |
+                                                                    $describeTaskingResponse//swe:Vector | $describeTaskingResponse//swe:Curve |
+                                                                    $describeTaskingResponse//swe:DataArray | $describeTaskingResponse//swe:SquareMatrix |
+                                                                    $describeTaskingResponse//sps:TaskMessageDefinition | $describeTaskingResponse//sps:GeometryDefinition |
+                                                                    $describeTaskingResponse//sps:TemporalDefinition" />
+                <xsl:variable name="unhandledInputParameters" select="count($complexInputParameters)>0" />
                 <!--Display a form allowing the user to enter in values for the taskable parameters for the selected sensor-->
                 <xsl:variable name="enterTaskingOptionsForm">
                     <ctl:form height="640" width="800">
@@ -1418,115 +1432,155 @@
                                     </tr>
                              </table>
                           </blockquote>
-                          <h2>Please enter valid values for the available taskable parameters for <i><xsl:value-of select="$selectedSensorID" /></i></h2>
-                          <blockquote>
-                             <table border="1" padding="4" bgcolor="#99ccff">
-                                <thead>
+                          <xsl:choose>
+                              <xsl:when test="not(xsd:boolean($unhandledInputParameters))">
+                                  <h2>Please enter valid values for the available taskable parameters for <i><xsl:value-of select="$selectedSensorID" /></i></h2>
+                                  <blockquote>
+                                     <table border="1" padding="4" bgcolor="#99ccff">
+                                        <thead>
+                                            <tr>
+                                                <th><b>Parameter ID</b></th>
+                                                <th><b>Description</b></th>
+                                                <th><b>Use</b></th>
+                                                <th><b>Type</b></th>
+                                                <th><b>Definition</b></th>
+                                                <th><b>Units</b></th>
+                                                <th><b>Min</b></th>
+                                                <th><b>Max</b></th>
+                                                <th><b>Value</b></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <xsl:for-each select="$describeTaskingResponse//sps:InputDescriptor">
+                                            <xsl:variable name="parameterID">
+                                                <xsl:value-of select="@parameterID" />
+                                            </xsl:variable>
+                                            <xsl:variable name="definitionNode" select="sps:definition/*/*[1]" /><!--Replaced sps:commonData with *-->
+                                            <xsl:variable name="definitionNodeName" select="local-name-from-QName(node-name($definitionNode))" />
+                                            <xsl:variable name="constraintNode" select="$definitionNode/swe:constraint" />
+                                            <xsl:variable name="min" select="$constraintNode//swe:min" />
+                                            <xsl:variable name="max" select="$constraintNode//swe:max" />
+                                            <xsl:variable name="interval" select="$constraintNode//swe:interval" />
+                                            <xsl:variable name="intervalParts" select="tokenize($interval,'\s+')" />
+                                            <xsl:variable name="intervalMin" select="$intervalParts[1]" />
+                                            <xsl:variable name="intervalMax" select="$intervalParts[2]" />
+                                            <xsl:variable name="allowedTokens" select="$constraintNode/swe:AllowedTokens//swe:tokenList" />
+                                            <xsl:variable name="allowedTokens2" select="$constraintNode/swe:AllowedTokens/swe:valueList" />
+                                            <xsl:variable name="allowedTokens2Sequence" select="tokenize($allowedTokens2,'\s+')" />
+                                            <xsl:variable name="locationVector" select="$definitionNode//swe:location/swe:Vector" />
+                                            <xsl:variable name="coordinates" select="$locationVector//swe:coordinate" />
+                                            <tr><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Row')" /></xsl:attribute>
+                                                <td><b><i><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_ID')" /></xsl:attribute><xsl:value-of select="$parameterID" /></i></b></td>
+                                                <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Description')" /></xsl:attribute><xsl:value-of select="gml:description" /></td>
+                                                <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Use')" /></xsl:attribute>
+                                                    <xsl:choose>
+                                                        <xsl:when test="@use='required'">
+                                                            <p style="color: Red; font-weight: bold;"><xsl:value-of select="@use" /></p>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="@use" />
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+                                                </td>
+                                                <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Type')" /></xsl:attribute><xsl:value-of select="$definitionNodeName" /></td>
+                                                <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Definition')" /></xsl:attribute><xsl:value-of select="$definitionNode/@definition" /></td>
+                                                <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Units')" /></xsl:attribute><xsl:value-of select="$definitionNode/swe:uom/@code" /></td>
+                                                <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Min')" /></xsl:attribute>
+                                                    <xsl:if test="string-length($min)>0">
+                                                        <xsl:value-of select="$min" />
+                                                    </xsl:if>
+                                                    <xsl:if test="string-length($intervalMin)>0">
+                                                        <xsl:value-of select="$intervalMin" />
+                                                    </xsl:if>
+                                                </td>
+                                                <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Max')" /></xsl:attribute>
+                                                    <xsl:if test="string-length($max)>0">
+                                                        <xsl:value-of select="$max" />
+                                                    </xsl:if>
+                                                    <xsl:if test="string-length($intervalMax)>0">
+                                                        <xsl:value-of select="$intervalMax" />
+                                                    </xsl:if>
+                                                </td>
+                                                <td>
+                                                    <xsl:choose>
+                                                        <xsl:when test="$definitionNodeName='Boolean'">
+                                                            <select><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>
+                                                                <option value="true">true</option>
+                                                                <option value="false">false</option>
+                                                            </select>
+                                                        </xsl:when>
+                                                        <xsl:when test="$definitionNodeName='Point' or $definitionNodeName='Line' or $definitionNodeName='Polygon'">
+                                                            <textarea width="80" height="40"><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>Enter GML <xsl:value-of select="$definitionNodeName" /> XML here...</textarea>
+                                                        </xsl:when>
+                                                        <xsl:when test="count($allowedTokens)>0">
+                                                            <select><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>
+                                                                <xsl:for-each select="$allowedTokens">
+                                                                    <option><xsl:attribute name="value"><xsl:value-of select="." /></xsl:attribute><xsl:value-of select="." /></option>
+                                                                </xsl:for-each>
+                                                            </select>
+                                                        </xsl:when>
+                                                        <xsl:when test="count($allowedTokens2Sequence)>0">
+                                                            <select><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>
+                                                                <xsl:for-each select="$allowedTokens2Sequence">
+                                                                    <option><xsl:attribute name="value"><xsl:value-of select="." /></xsl:attribute><xsl:value-of select="." /></option>
+                                                                </xsl:for-each>
+                                                            </select>
+                                                        </xsl:when>
+                                                        <xsl:when test="count($coordinates)>0">
+                                                            <xsl:for-each select="$coordinates">
+                                                                <xsl:variable name="coordinateInputID" select="concat($parameterID,'_',translate(@name,' ','_'),'_Value')" />
+                                                                <ctl:message><xsl:value-of select="$coordinateInputID" /></ctl:message>
+                                                                <xsl:value-of select="concat(@name,':  ')" /><input type="text"><xsl:attribute name="name"><xsl:value-of select="$coordinateInputID" /></xsl:attribute></input>
+                                                            </xsl:for-each>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <input type="text"><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute></input>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+                                                </td>
+                                            </tr>
+                                        </xsl:for-each>
+                                        </tbody>
+                                     </table>
+                                  </blockquote>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                  <p>
+                                  Please enter valid XML InputParameter elements for the parameters section of a Submit request.  These InputParameters will be used in subsequent Submit tests for testing how the
+                                  SPS implementation handles various valid and invalid Submit requests.  Please use the following namespaces in your XML:  <i>sps</i> for SPS schema elements, <i>swe</i> for 
+                                  SWE Common schema elements, and <i>gml</i> for GML elements
+                                  </p>
+                                  <table border="1" padding="4" bgcolor="#99ccff">
                                     <tr>
-                                        <th><b>Parameter ID</b></th>
-                                        <th><b>Description</b></th>
-                                        <th><b>Use</b></th>
-                                        <th><b>Type</b></th>
-                                        <th><b>Definition</b></th>
-                                        <th><b>Units</b></th>
-                                        <th><b>Min</b></th>
-                                        <th><b>Max</b></th>
-                                        <th><b>Value</b></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <xsl:for-each select="$describeTaskingResponse//sps:InputDescriptor">
-                                    <xsl:variable name="parameterID">
-                                        <xsl:value-of select="@parameterID" />
-                                    </xsl:variable>
-                                    <xsl:variable name="definitionNode" select="sps:definition/*/*[1]" /><!--Replaced sps:commonData with *-->
-                                    <xsl:variable name="definitionNodeName" select="local-name-from-QName(node-name($definitionNode))" />
-                                    <xsl:variable name="constraintNode" select="$definitionNode/swe:constraint" />
-                                    <xsl:variable name="min" select="$constraintNode//swe:min" />
-                                    <xsl:variable name="max" select="$constraintNode//swe:max" />
-                                    <xsl:variable name="interval" select="$constraintNode//swe:interval" />
-                                    <xsl:variable name="intervalParts" select="tokenize($interval,'\s+')" />
-                                    <xsl:variable name="intervalMin" select="$intervalParts[1]" />
-                                    <xsl:variable name="intervalMax" select="$intervalParts[2]" />
-                                    <xsl:variable name="allowedTokens" select="$constraintNode/swe:AllowedTokens//swe:tokenList" />
-                                    <xsl:variable name="allowedTokens2" select="$constraintNode/swe:AllowedTokens/swe:valueList" />
-                                    <xsl:variable name="allowedTokens2Sequence" select="tokenize($allowedTokens2,'\s+')" />
-                                    <xsl:variable name="locationVector" select="$definitionNode//swe:location/swe:Vector" />
-                                    <xsl:variable name="coordinates" select="$locationVector//swe:coordinate" />
-                                    <tr><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Row')" /></xsl:attribute>
-                                        <td><b><i><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_ID')" /></xsl:attribute><xsl:value-of select="$parameterID" /></i></b></td>
-                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Description')" /></xsl:attribute><xsl:value-of select="gml:description" /></td>
-                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Use')" /></xsl:attribute>
-                                            <xsl:choose>
-                                                <xsl:when test="@use='required'">
-                                                    <p style="color: Red; font-weight: bold;"><xsl:value-of select="@use" /></p>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    <xsl:value-of select="@use" />
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </td>
-                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Type')" /></xsl:attribute><xsl:value-of select="$definitionNodeName" /></td>
-                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Definition')" /></xsl:attribute><xsl:value-of select="$definitionNode/@definition" /></td>
-                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Units')" /></xsl:attribute><xsl:value-of select="$definitionNode/swe:uom/@code" /></td>
-                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Min')" /></xsl:attribute>
-                                            <xsl:if test="string-length($min)>0">
-                                                <xsl:value-of select="$min" />
-                                            </xsl:if>
-                                            <xsl:if test="string-length($intervalMin)>0">
-                                                <xsl:value-of select="$intervalMin" />
-                                            </xsl:if>
-                                        </td>
-                                        <td><xsl:attribute name="id"><xsl:value-of select="concat($parameterID,'_Max')" /></xsl:attribute>
-                                            <xsl:if test="string-length($max)>0">
-                                                <xsl:value-of select="$max" />
-                                            </xsl:if>
-                                            <xsl:if test="string-length($intervalMax)>0">
-                                                <xsl:value-of select="$intervalMax" />
-                                            </xsl:if>
+                                        <td>
+                                            Valid Submit InputParameters:
                                         </td>
                                         <td>
-                                            <xsl:choose>
-                                                <xsl:when test="$definitionNodeName='Boolean'">
-                                                    <select><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>
-                                                        <option value="true">true</option>
-                                                        <option value="false">false</option>
-                                                    </select>
-                                                </xsl:when>
-                                                <xsl:when test="$definitionNodeName='Point' or $definitionNodeName='Line' or $definitionNodeName='Polygon'">
-                                                    <textarea width="80" height="40"><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>Enter GML <xsl:value-of select="$definitionNodeName" /> XML here...</textarea>
-                                                </xsl:when>
-                                                <xsl:when test="count($allowedTokens)>0">
-                                                    <select><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>
-                                                        <xsl:for-each select="$allowedTokens">
-                                                            <option><xsl:attribute name="value"><xsl:value-of select="." /></xsl:attribute><xsl:value-of select="." /></option>
-                                                        </xsl:for-each>
-                                                    </select>
-                                                </xsl:when>
-                                                <xsl:when test="count($allowedTokens2Sequence)>0">
-                                                    <select><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute>
-                                                        <xsl:for-each select="$allowedTokens2Sequence">
-                                                            <option><xsl:attribute name="value"><xsl:value-of select="." /></xsl:attribute><xsl:value-of select="." /></option>
-                                                        </xsl:for-each>
-                                                    </select>
-                                                </xsl:when>
-                                                <xsl:when test="count($coordinates)>0">
-                                                    <xsl:for-each select="$coordinates">
-                                                        <xsl:variable name="coordinateInputID" select="concat($parameterID,'_',translate(@name,' ','_'),'_Value')" />
-                                                        <ctl:message><xsl:value-of select="$coordinateInputID" /></ctl:message>
-                                                        <xsl:value-of select="concat(@name,':  ')" /><input type="text"><xsl:attribute name="name"><xsl:value-of select="$coordinateInputID" /></xsl:attribute></input>
-                                                    </xsl:for-each>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    <input type="text"><xsl:attribute name="name"><xsl:value-of select="concat($parameterID,'_Value')" /></xsl:attribute></input>
-                                                </xsl:otherwise>
-                                            </xsl:choose>
+                                            <textarea name="validInputParameters" rows="10" cols="50">
+                                            </textarea>
                                         </td>
                                     </tr>
-                                </xsl:for-each>
-                                </tbody>
-                             </table>
-                          </blockquote>
+                                    <tr>
+                                        <td>
+                                            Submit InputParameters (Invalid Parameters):
+                                        </td>
+                                        <td>
+                                            <textarea name="invalidInputParameters" rows="10" cols="50">
+                                            </textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Submit InputParameters (Missing Required Parameters):
+                                        </td>
+                                        <td>
+                                            <textarea name="missingRequiredInputParameters" rows="10" cols="50">
+                                            </textarea>
+                                        </td>
+                                    </tr>
+                                  </table>
+                              </xsl:otherwise>
+                          </xsl:choose>
                           <xsl:variable name="visibilityValue">
                               <xsl:choose>
                                 <xsl:when test="xsd:boolean($allowUserSpecifiedTimeFrame)">
@@ -1577,6 +1631,7 @@
                         <ctl:with-param name="invalidParameters" select="false()" />
                         <ctl:with-param name="missingRequiredParameters" select="false()" />
                         <ctl:with-param name="invalidTimeFrame" select="false()" />
+                        <ctl:with-param name="unhandledInputParameters" select="$unhandledInputParameters" />
                     </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Valid Submit request constructed:  <xsl:copy-of select="$submitRequest" /></ctl:message>
@@ -1590,6 +1645,7 @@
                         <ctl:with-param name="invalidParameters" select="false()" />
                         <ctl:with-param name="missingRequiredParameters" select="false()" />
                         <ctl:with-param name="invalidTimeFrame" select="false()" />
+                        <ctl:with-param name="unhandledInputParameters" select="$unhandledInputParameters" />
                     </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with an invalid notificationTarget element:  <xsl:copy-of select="$submitRequestInvalidNotificationTarget/*" /></ctl:message>
@@ -1603,6 +1659,7 @@
                         <ctl:with-param name="invalidParameters" select="false()" />
                         <ctl:with-param name="missingRequiredParameters" select="false()" />
                         <ctl:with-param name="invalidTimeFrame" select="false()" />
+                        <ctl:with-param name="unhandledInputParameters" select="$unhandledInputParameters" />
                     </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with an invalid sensorID element:  <xsl:copy-of select="$submitRequestInvalidSensorID/*" /></ctl:message>
@@ -1616,6 +1673,7 @@
                         <ctl:with-param name="invalidParameters" select="true()" />
                         <ctl:with-param name="missingRequiredParameters" select="false()" />
                         <ctl:with-param name="invalidTimeFrame" select="false()" />
+                        <ctl:with-param name="unhandledInputParameters" select="$unhandledInputParameters" />
                     </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with invalid parameters:  <xsl:copy-of select="$submitRequestInvalidParameters/*" /></ctl:message>
@@ -1629,6 +1687,7 @@
                         <ctl:with-param name="invalidParameters" select="false()" />
                         <ctl:with-param name="missingRequiredParameters" select="true()" />
                         <ctl:with-param name="invalidTimeFrame" select="false()" />
+                        <ctl:with-param name="unhandledInputParameters" select="$unhandledInputParameters" />
                     </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with missing required parameters:  <xsl:copy-of select="$submitRequestMissingRequiredParameters/*" /></ctl:message>
@@ -1642,6 +1701,7 @@
                         <ctl:with-param name="invalidParameters" select="false()" />
                         <ctl:with-param name="missingRequiredParameters" select="false()" />
                         <ctl:with-param name="invalidTimeFrame" select="true()" />
+                        <ctl:with-param name="unhandledInputParameters" select="$unhandledInputParameters" />
                     </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>Submit request constructed with an invalid timeFrame element:  <xsl:copy-of select="$submitRequestInvalidTimeFrame/*" /></ctl:message>
