@@ -13,17 +13,17 @@
  xmlns:owsTests="https://www.cite.opengeospatial.org/ows-1.0/tests"
  xmlns:owsFunctions="https://www.cite.opengeospatial.org/ows-1.0/functions">
  
-    <!---->
+    <!--The main test that should be called by your ETS in order to execute the OWS Common tests.-->
     <ctl:test name="owsTests:ows-main">
-      <param name="serviceURL"/>
-      <param name="serviceType" />
-      <param name="serviceVersion" />
-      <param name="capabilitiesRootElementName" />
-      <param name="capabilitiesResponseSchemaLocation" />
-      <param name="capabilitiesResponseSchemaType" />
-      <param name="capabilitiesResponseContentType" />
-      <param name="exceptionReportSchemaLocation" />
-      <param name="exceptionReportSchemaType" />
+      <param name="serviceURL">The URL of the service being tested</param>
+      <param name="serviceType">The OGC identifier for the type of service being tested (i.e. SPS)</param>
+      <param name="serviceVersion">The version of the service being tested</param>
+      <param name="capabilitiesRootElementName">The name of the root element of a Capabilities document returned by this service (i.e. Capabilities, WFS_Capabilities, etc.)</param>
+      <param name="capabilitiesResponseSchemaLocation">The location of the Capabilities schema for the service being tested</param>
+      <param name="capabilitiesResponseSchemaType">The type of resource specified in the capabilitiesResponseSchemaLocation above (i.e. url, file, resource).  Corresponds with the CTL XMLValidatingParser schema type attribute.</param>
+      <param name="capabilitiesResponseContentType">The expected HTTP header content type of the GetCapabilities response (i.e. text/xml)</param>
+      <param name="exceptionReportSchemaLocation">The location of the ExceptionReport schema for the version of OWS Common being tested</param>
+      <param name="exceptionReportSchemaType">The type of resource specified in the exceptionReportSchemaLocation above (i.e. url, file, resource).  Corresponds with the CTL XMLValidatingParser schema type attribute.</param>
       <ctl:assertion>
       Run test group for GetCapabilities requests using the GET method. Target endpoint is {$serviceURL//ows:OperationsMetadata/ows:Operation[@name='GetCapabilities']/ows:DCP/ows:HTTP/ows:Get/@xlink:href}.
       </ctl:assertion>
