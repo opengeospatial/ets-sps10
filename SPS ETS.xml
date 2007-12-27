@@ -1166,6 +1166,7 @@
                     <xsl:choose>
                         <xsl:when test="$describeTaskingResponse//ows:ExceptionReport">
                             <ctl:message>**********************************************************************</ctl:message>
+                            <ctl:message>The service returned an ExceptionReport.  Checking if this ExceptionReport is a valid ExceptionReport for the DescribeTasking operation...</ctl:message>
                             <ctl:call-test name="sps:core-SPS.DescribeTasking-ValidException.1">
                                 <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
                             </ctl:call-test>
@@ -1213,6 +1214,7 @@
                     3.)  If the reponse validates, then check that the SensorID value in each of the TaskingDescriptor elements matches one the request sensorID(s).
                 -->
         <xsl:variable name="responseSensorID" select="$describeTaskingResponse//sps:sensorID" />
+        <ctl:message>Comparing the requested sensorID "<xsl:value-of select="$requestedSensorID" />" with the sensorID in the response "<xsl:value-of select="$responseSensorID" />"...</ctl:message>
         <xsl:if test="not($responseSensorID=$requestedSensorID)">
             <ctl:message>FAILURE:  The sensorID of the response "<xsl:value-of select="$responseSensorID" />" does not match the sensorID in the request "<xsl:value-of select="$requestedSensorID" />".</ctl:message>
             <ctl:fail />
@@ -1431,6 +1433,7 @@
                           Please provide valid values for all required fields (and optional fields as appropriate).  
                           If valid values are not provided, then the service being tested may fail subsequent Submit tests.
                           </h2>
+                          <p>
                           <h2>Please enter values for a WNS URL and User ID (<span style="color: Red; font-weight: bold;">required</span>)</h2>
                           
                              <table border="1" padding="4" bgcolor="#99ccff">
@@ -1443,7 +1446,8 @@
                                         <td><input name="wnsUserID" type="text" /></td>
                                     </tr>
                              </table>
-                          
+                          </p>
+                          <p>
                           <xsl:choose>
                               <xsl:when test="not(xsd:boolean($unhandledInputParameters))">
                                   <h2>Please enter valid values for the available taskable parameters for <i><xsl:value-of select="$selectedSensorID" /></i></h2>
@@ -1607,6 +1611,7 @@
                                   </table>
                               </xsl:otherwise>
                           </xsl:choose>
+                          </p>
                           <xsl:variable name="visibilityValue">
                               <xsl:choose>
                                 <xsl:when test="xsd:boolean($allowUserSpecifiedTimeFrame)">
