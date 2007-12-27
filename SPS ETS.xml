@@ -76,7 +76,7 @@
 
 		<!-- Get user input:  Get the value of the SPS URL that the user supplies -->
 		<xsl:variable name="sps.service.get.url" select="$form-values/values/value[@key='service-url']"/>
-        
+        <ctl:message>Executing tests on the SPS implementation found at the following URL:  <xsl:value-of select="$sps.service.get.url" /></ctl:message>
         <!--Call each test passing the capabilities URL as the parameter-->
         <ctl:call-test name="sps:ows-main">
             <ctl:with-param name="serviceURL" select="$sps.service.get.url" />
@@ -1564,13 +1564,15 @@
                                   
                                   <p>
                                     <blockquote>
-                                        <sps:InputParameter parameterID="parameter1">
-                                            <sps:value>
-                                                <swe:Boolean>
-                                                    <swe:value>true</swe:value>
-                                                </swe:Boolean>
-                                            </sps:value>
-                                        </sps:InputParameter>
+                                        <pre>
+&lt;sps:InputParameter parameterID="parameter1"&gt;
+    &lt;sps:value&gt;
+        &lt;swe:Boolean&gt;
+            &lt;swe:value&gt;true&lt;/swe:value&gt;
+        &lt;/swe:Boolean&gt;
+    &lt;/sps:value&gt;
+&lt;/sps:InputParameter&gt;
+                                        </pre>
                                     </blockquote>
                                   </p>
                                   </p>
@@ -1625,22 +1627,23 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                           </xsl:variable>
-                           
-                            <h2><xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';','display: ',$displayValue,';')" /></xsl:attribute>
-                                Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.
-                                The supplied value must be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or duration (i.e. PT5M).  
-                                <i>
-                                NOTE:  The default value that appears below is one
-                                hour past the current time.
-                                </i>
-                            </h2>
+                            <p>
+                                <h2><xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';','display: ',$displayValue,';')" /></xsl:attribute>
+                                    Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.
+                                    The supplied value must be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or duration (i.e. PT5M).  
+                                    <i>
+                                    NOTE:  The default value that appears below is one hour past the current time.
+                                    </i>
+                                </h2>
+                            </p>
+                            <p>
                              <table border="1" padding="4" bgcolor="#99ccff"><xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';','display: ',$displayValue,';')" /></xsl:attribute>
                                 <tr>
                                     <td>timeFrame:</td>
                                     <td><input type="text" name="timeFrame"><xsl:attribute name="value" select="xsd:dateTime(current-dateTime()) + xsd:dayTimeDuration('P0DT1H0M0S')" /></input></td>
                                 </tr>
                              </table>
-                          
+                            </p>
                           <input type="submit" value="Submit"/>
                        </body>
                     </ctl:form>
