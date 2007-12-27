@@ -44,18 +44,20 @@
             <ctl:form height="640" width="800">
                <body>
                   <h2>Compliance Test Suite for Sensor Planning Service (SPS) 1.0</h2>
+                  <blockquote>
                   <h3>
                     NOTES:
                   </h3>
                   <textarea rows="5" cols="80" readonly="true">
                     <xsl:value-of select="unparsed-text('Readme.txt')" />
                   </textarea>
+                  </blockquote>
                   <p>
                   Please provide a URL from which a Capabilities document can 
                   be retrieved. Modify the URL template below to specify the 
                   location of an OGC SPS 1.0 implementation to be tested.
                   </p>
-                  <blockquote>
+                    <blockquote>
                      <table border="1" padding="4" bgcolor="#99ccff">
                         <tr>
                            <td align="left"><b>Service URL:</b></td>                        
@@ -66,7 +68,7 @@
                            </td>
                         </tr>
                      </table>
-                  </blockquote>
+                    </blockquote>
                   <input type="submit" value="Start"/>
                </body>
             </ctl:form>
@@ -671,6 +673,7 @@
                     <xsl:value-of select="$describeResultAccessElement/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
                 </xsl:variable>
                 <!--Check for a GetCapabilities operation-->
+                <ctl:message>Checking for a GetCapabilities operation...</ctl:message>
                 <xsl:if test="not($getCapabilitiesElement/*)">
                     <ctl:message>FAILURE:  The GetCapabilities operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
                     <ctl:fail />
@@ -680,6 +683,7 @@
                     <ctl:fail />
                 </xsl:if>
                 <!--Check for a DescribeTasking operation--> 
+                <ctl:message>Checking for a DescribeTasking operation...</ctl:message>
                 <xsl:if test="not($describeTaskingElement/*)">
                     <ctl:message>FAILURE:  The DescribeTasking operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
                     <ctl:fail />
@@ -689,6 +693,7 @@
                     <ctl:fail />
                 </xsl:if>
                 <!--Check for a Submit operation-->
+                <ctl:message>Checking for a Submit operation...</ctl:message>
                 <xsl:if test="not($submitElement/*)">
                     <ctl:message>FAILURE:  The Submit operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
                     <ctl:fail />
@@ -697,7 +702,8 @@
                     <ctl:message>FAILURE:  The Submit operation is a mandatory operation.  Therefore, a URL must be supplied for the HTTP POST binding for this operation.  No URL was supplied for this binding.</ctl:message>
                     <ctl:fail />
                 </xsl:if>
-                <!--Check for a DescribeResultAccess operation--> 
+                <!--Check for a DescribeResultAccess operation-->
+                <ctl:message>Checking for a DescribeResultAccess operation...</ctl:message>                
                 <xsl:if test="not($describeResultAccessElement/*)">
                     <ctl:message>FAILURE:  The DescribeResultAccess operation is a mandatory operation.  Therefore, it must be listed in the OperationsMetadata section of the GetCapabilities document.</ctl:message>
                     <ctl:fail />
@@ -734,10 +740,15 @@
         <ctl:message>Verifying that the provided operations have valid SPS operation names.</ctl:message>
         <xsl:for-each select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation/@name">
             <ctl:message>Checking "<xsl:value-of select="." />" for validity.</ctl:message>
-            <xsl:if test="empty(index-of($spsOperationsSet,.))">
-                <ctl:message>FAILURE:  The "<xsl:value-of select="." />" operation is not listed in the SPS specification.</ctl:message>
-                <ctl:fail />
-            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="empty(index-of($spsOperationsSet,.))">
+                    <ctl:message>FAILURE:  The "<xsl:value-of select="." />" operation is not listed in the SPS specification.</ctl:message>
+                    <ctl:fail />
+                </xsl:when>
+                <xsl:otherwise>
+                    <ctl:message><xsl:value-of select="." /> is a valid SPS operation name.</ctl:message>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:for-each>
       </ctl:code>
     </ctl:test>
@@ -1350,14 +1361,15 @@
         <xsl:variable name="sensorIDs" select="$getCapabilitiesResponse//sps:SensorOffering/sps:SensorID" />
         <ctl:message><xsl:value-of select="count($sensorIDs)" /> sensorID values were discovered from the Capabilities document.</ctl:message>
         <!--Provide a form to the user allowing them to pick a sensor for which Submit requests will be posted-->
+        <!--OR, don't let the user pick the sensor and loop through each sensor behind the SPS?-->
         <xsl:variable name="chooseSensorForm">
             <ctl:form height="640" width="800">
                <body>
                   <h2>Please choose a sensor for performing Submit operation tests.</h2>
-                  <blockquote>
+                    <blockquote>
                      <table border="1" padding="4" bgcolor="#99ccff">
                         <tr>
-                           <td align="left">Sensor ID:</td>                        
+                           <td align="left"><b>Sensor ID:</b></td>                        
                            <td align="center">
                               <select name="sensorIDDropDown">
                                 <xsl:for-each select="$sensorIDs">
@@ -1368,7 +1380,7 @@
                            </td>
                         </tr>
                      </table>
-                  </blockquote>
+                    </blockquote>
                   <input type="submit" value="Select"/>
                </body>
             </ctl:form>
@@ -1398,17 +1410,17 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:variable name="complexInputParameters" select="$describeTaskingResponse//swe:ConditionalData | $describeTaskingResponse//swe:ConditionalValue | 
-                                                                    $describeTaskingResponse//swe:DataRecord | $describeTaskingResponse//swe:Envelope | 
-                                                                    $describeTaskingResponse//swe:GeoLocationArea | $describeTaskingResponse//swe:NormalizedCurve |
-                                                                    $describeTaskingResponse//swe:Position/swe:time | $describeTaskingResponse//swe:Position/swe:orientation |
-                                                                    $describeTaskingResponse//swe:Position/swe:velocity | $describeTaskingResponse//swe:Position/swe:angularVelocity |
-                                                                    $describeTaskingResponse//swe:Position/swe:acceleration | $describeTaskingResponse//swe:Position/swe:angularAcceleration |
-                                                                    $describeTaskingResponse//swe:Position/swe:state | $describeTaskingResponse//swe:SimpleDataRecord |
-                                                                    $describeTaskingResponse//swe:Vector | $describeTaskingResponse//swe:Curve |
-                                                                    $describeTaskingResponse//swe:DataArray | $describeTaskingResponse//swe:SquareMatrix |
-                                                                    $describeTaskingResponse//sps:TaskMessageDefinition | $describeTaskingResponse//sps:GeometryDefinition |
-                                                                    $describeTaskingResponse//sps:TemporalDefinition" />
+                <xsl:variable name="complexInputParameters" select="$describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:ConditionalData | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:ConditionalValue | 
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:DataRecord | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Envelope | 
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:GeoLocationArea | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:NormalizedCurve |
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Position/swe:time | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Position/swe:orientation |
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Position/swe:velocity | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Position/swe:angularVelocity |
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Position/swe:acceleration | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Position/swe:angularAcceleration |
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Position/swe:state | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:SimpleDataRecord |
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Vector | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Curve |
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:DataArray | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:SquareMatrix |
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/sps:TaskMessageDefinition | $describeTaskingResponse//sps:InputDescriptor/sps:definition/sps:GeometryDefinition |
+                                                                    $describeTaskingResponse//sps:InputDescriptor/sps:definition/sps:TemporalDefinition" />
                 <xsl:variable name="unhandledInputParameters" select="count($complexInputParameters)>0" />
                 <!--Display a form allowing the user to enter in values for the taskable parameters for the selected sensor-->
                 <xsl:variable name="enterTaskingOptionsForm">
@@ -1416,11 +1428,11 @@
                        <body>
                           <h2>
                           This form allows you to provide values for the parameters of the Submit request that will be sent to <i><xsl:value-of select="$selectedSensorID" /></i>.
-                          Please provide valid values for all required fields (and optional fields as appropriate) that will lead to a Submit response that has a status of "confirmed".  
+                          Please provide valid values for all required fields (and optional fields as appropriate).  
                           If valid values are not provided, then the service being tested may fail subsequent Submit tests.
                           </h2>
                           <h2>Please enter values for a WNS URL and User ID (<span style="color: Red; font-weight: bold;">required</span>)</h2>
-                          <blockquote>
+                          
                              <table border="1" padding="4" bgcolor="#99ccff">
                                     <tr>
                                         <td><b>WNS URL:</b></td>
@@ -1431,11 +1443,11 @@
                                         <td><input name="wnsUserID" type="text" /></td>
                                     </tr>
                              </table>
-                          </blockquote>
+                          
                           <xsl:choose>
                               <xsl:when test="not(xsd:boolean($unhandledInputParameters))">
                                   <h2>Please enter valid values for the available taskable parameters for <i><xsl:value-of select="$selectedSensorID" /></i></h2>
-                                  <blockquote>
+                                  
                                      <table border="1" padding="4" bgcolor="#99ccff">
                                         <thead>
                                             <tr>
@@ -1542,18 +1554,30 @@
                                         </xsl:for-each>
                                         </tbody>
                                      </table>
-                                  </blockquote>
+                                  
                               </xsl:when>
                               <xsl:otherwise>
                                   <p>
                                   Please enter valid XML InputParameter elements for the parameters section of a Submit request.  These InputParameters will be used in subsequent Submit tests for testing how the
                                   SPS implementation handles various valid and invalid Submit requests.  Please use the following namespaces in your XML:  <i>sps</i> for SPS schema elements, <i>swe</i> for 
-                                  SWE Common schema elements, and <i>gml</i> for GML elements
+                                  SWE Common schema elements, and <i>gml</i> for GML elements.  An example InputParameter element appears below.
+                                  
+                                  <p>
+                                    <blockquote>
+                                        <sps:InputParameter parameterID="parameter1">
+                                            <sps:value>
+                                                <swe:Boolean>
+                                                    <swe:value>true</swe:value>
+                                                </swe:Boolean>
+                                            </sps:value>
+                                        </sps:InputParameter>
+                                    </blockquote>
+                                  </p>
                                   </p>
                                   <table border="1" padding="4" bgcolor="#99ccff">
                                     <tr>
                                         <td>
-                                            Valid Submit InputParameters:
+                                            Valid Submit InputParameters (<span style="color: Red; font-weight: bold;">required</span>):
                                         </td>
                                         <td>
                                             <textarea name="validInputParameters" rows="10" cols="50">
@@ -1562,7 +1586,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            Submit InputParameters (Invalid Parameters):
+                                            Submit InputParameters (Invalid Parameters) (<span style="color: Red; font-weight: bold;">required</span>):
                                         </td>
                                         <td>
                                             <textarea name="invalidInputParameters" rows="10" cols="50">
@@ -1571,7 +1595,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            Submit InputParameters (Missing Required Parameters):
+                                            Submit InputParameters (Missing Required Parameters) (<span style="color: Red; font-weight: bold;">required</span>):
                                         </td>
                                         <td>
                                             <textarea name="missingRequiredInputParameters" rows="10" cols="50">
@@ -1601,7 +1625,7 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                           </xsl:variable>
-                          <blockquote><xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';','display: ',$displayValue,';')" /></xsl:attribute> 
+                           
                             <h2><xsl:attribute name="style"><xsl:value-of select="concat('visibility: ',$visibilityValue,';','display: ',$displayValue,';')" /></xsl:attribute>
                                 Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.
                                 The supplied value must be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or duration (i.e. PT5M).  
@@ -1616,7 +1640,7 @@
                                     <td><input type="text" name="timeFrame"><xsl:attribute name="value" select="xsd:dateTime(current-dateTime()) + xsd:dayTimeDuration('P0DT1H0M0S')" /></input></td>
                                 </tr>
                              </table>
-                          </blockquote>
+                          
                           <input type="submit" value="Submit"/>
                        </body>
                     </ctl:form>

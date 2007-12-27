@@ -22,7 +22,9 @@ What IS Tested/Handled:
 
 - The sensorID in the SensorML or TML document describing a taskable sensor matches the sensorID in the SensorOffering for that sensor 
 
-- Most commonData InputDescriptor definition types (including Position w/ location).
+- All InputDescriptor definition types are handled:
+	1)  The most common commonData sub-types (including Position with location) are handled directly by allowing a user to enter in values for these elements directly in a user input form
+	2)  More complex definition types are handled by allowing a user to enter the InputParameter XML elements directly in a user input form.
 
 ***************************
 What IS NOT Tested/Handled:
@@ -33,12 +35,4 @@ What IS NOT Tested/Handled:
 - SPS interaction with a Web Notification Service (WNS).  Testing the interaction with a WNS would lead to developing compliance tests for the WNS.  Since the WNS is not an approved OGC v1.0 specification, compliance tests have not been written, and writing these compliance tests would be beyond the scope of the SPS tests.
 
 - Coordinate/axis ordering and the validity of coordinate values for GML objects with different coordinate reference systems
-
-- Various InputDescriptor definition types:
-	- TaskMessageDefinition
-	- GeometryDefinition
-	- TemporalDefinition
-	- commonData
-		- AbstractDataRecord types (other than Position w/ location)
-		- AbstractDataArray types
   
