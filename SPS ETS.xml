@@ -981,6 +981,7 @@
                     <ctl:fail />
                 </xsl:when>
                 <xsl:otherwise>
+                    <!--This is probably unnecessary, since this is most likely handled by schema validation-->
                     <ctl:message>Checking for the existence of a matching phenomenon element in the SensorOfferings...</ctl:message>
                     <xsl:variable name="sensorDefPhenomenonElement" select="$getCapabilitiesResponse//sps:Contents/sps:SensorOfferingList/sps:SensorOffering/sps:Phenomenon[text()=$phenomenon]" />
                     <xsl:variable name="phenomenonElementExists" select="string-length($sensorDefPhenomenonElement)>0" />
@@ -1001,6 +1002,7 @@
                         <ctl:fail />
                     </xsl:when>
                     <xsl:otherwise>
+                        <!--This is probably unnecessary, since this is most likely handled by schema validation-->
                         <ctl:message>Checking for the existence of a matching sensorID element in the SensorOfferings...</ctl:message>
                         <xsl:variable name="sensorDefSensorIDElement" select="$getCapabilitiesResponse//sps:Contents/sps:SensorOfferingList/sps:SensorOffering/sps:SensorID[text()=$sensorID]" />
                         <xsl:variable name="sensorIDElementExists" select="string-length($sensorDefSensorIDElement)>0" />
@@ -1062,6 +1064,7 @@
                     4.)  Repeat 1 - 3 with a set of random sensor IDs to test how the server handles multiple sensorIDs
                 -->
         <xsl:variable name="sensorIDs" select="string('blah,adsjflkasjdflkdsajf,ewioruowireuoierwu,1384982348924988923893298438294')" />
+        <ctl:message>Sending a DescribeTasking request with the following sensorID elements:  <xsl:value-of select="$sensorIDs" /></ctl:message>
         <xsl:variable name="describeTaskingResponse">
             <ctl:request>
                     <ctl:url>
@@ -1078,7 +1081,7 @@
                     <ctl:call-function name="spsFunctions:validateDescribeTaskingResponse" />
                 </ctl:request>
         </xsl:variable>
-        <ctl:message>A DescribeTasking request with the following sensorIDs "<xsl:value-of select="$sensorIDs" />" produced the following response:  "<xsl:value-of select="$describeTaskingResponse/*" />"</ctl:message>
+        <ctl:message>The DescribeTasking request produced the following response:  "<xsl:value-of select="$describeTaskingResponse/*" />"</ctl:message>
         <xsl:choose>
             <xsl:when test="not($describeTaskingResponse/*)">
                 <ctl:message>FAILURE:  The server did not return a response to an invalid DescribeTasking request or the response was not a valid exception.</ctl:message>
@@ -1125,6 +1128,7 @@
                     2.)  Validate response against ExceptionReport schema.
                     3.)  If response validates, then check that the exceptionCode parameter is "InvalidParameterValue".
                 -->
+        <ctl:message>Sending a DescribeTasking request with a null sensorID...</ctl:message>
         <xsl:variable name="describeTaskingResponse">
             <ctl:request>
                     <ctl:url>
@@ -1171,6 +1175,7 @@
       <ctl:link title="Verify a DescribeTasking response."></ctl:link>
       <ctl:code>
         <!--Loop through the SensorID values in the Capabilities document-->
+        <ctl:message>Iterating through the sensorID elements in the Capabilities document and verifying that a DescribeTasking request produces a valid response for each sensorID...</ctl:message>
         <xsl:for-each select="$getCapabilitiesResponse//sps:Contents/sps:SensorOfferingList/sps:SensorOffering/sps:SensorID">
             <!--Call DescribeTasking for each SensorID-->
             <xsl:variable name="sensorID" select="." />
@@ -1206,6 +1211,7 @@
                             <ctl:fail />
                         </xsl:when>
                         <xsl:otherwise>
+                            <ctl:message>Checking the elements of the DescribeTasking response...</ctl:message>
                             <!--Using the DescribeTasking response, ensure that the values in the sub-elements are valid by calling sub-tests-->
                             <!--Ensure that the SensorID in the response matches the SensorID provided in the request-->
                             <ctl:message>**********************************************************************</ctl:message>
@@ -1293,6 +1299,7 @@
             <xsl:variable name="parameterID">
                 <xsl:value-of select="@parameterID" />
             </xsl:variable>
+            <ctl:message>Checking the constraints for "<xsl:value-of select="$parameterID" />"</ctl:message>
             <!--Loop through the constraints and check for null values.  valueList is the only element that is not checked by schema validation, but the other elements will be left in just in case-->
             <xsl:for-each select="//swe:constraint//swe:min | //swe:constraint//swe:max | //swe:constraint//swe:interval | //swe:constraint//swe:valueList">
                 <xsl:if test="string-length(normalize-space(.))=0">
@@ -1681,7 +1688,9 @@
                                 </tr>
                              </table>
                             </p>
-                          <input type="submit" value="Submit"/>
+                            <p>
+                                <input type="submit" value="Submit"/>
+                            </p>
                        </body>
                     </ctl:form>
                 </xsl:variable>
@@ -1845,6 +1854,7 @@
         <!--Replace the notificationID in a valid request with an invalid notificationID-->
         <!--Replace the notificationURL in a valid request with an invalid notificationURL-->
         <!--Replace the notificationID and notificationURL in a valid request with invalid values-->
+        <ctl:message>Sending a Submit request with an invalid notificationTarget element...</ctl:message>
         <xsl:variable name="submitResponse">
                     <ctl:request>
                         <ctl:url>
@@ -1897,6 +1907,7 @@
       <ctl:link title="Verify that the server returns a valid exception message when an invalid sensorID is provided in the request.">ATS_URL#SPS.Submit-RequestSensorParamInvalidSensorID</ctl:link>
       <ctl:code>
         <!--Replace the sensorID in a valid request with an invalid value-->
+        <ctl:message>Sending a Submit request with an invalid sensorID element...</ctl:message>
         <xsl:variable name="submitResponse">
                     <ctl:request>
                         <ctl:url>
@@ -1942,6 +1953,7 @@
       <ctl:link title="Verify that the server returns a Submit response of rejected when invalid parameter values are supplied in the request.">ATS_URL#SPS.Submit-RequestSensorParamInvalidParameters</ctl:link>
       <ctl:code>
         <!--Replace the parameterID value(s) in a valid Submit request with invalid values-->
+        <ctl:message>Sending a Submit request with an invalid parameters...</ctl:message>
         <xsl:variable name="submitResponse">
                     <ctl:request>
                         <ctl:url>
@@ -1990,6 +2002,7 @@
       <ctl:link title="Verify that the server returns a Submit response of incomplete request when required parameters are missing from the request.">ATS_URL#SPS.Submit-RequestSensorParamParametersMissingRequiredParameters</ctl:link>
       <ctl:code>
         <!--Eliminate one or more required parameters from a valid Submit request-->
+        <ctl:message>Sending a Submit request with missing required parameters...</ctl:message>
         <xsl:variable name="submitResponse">
                     <ctl:request>
                         <ctl:url>
@@ -2162,6 +2175,7 @@
       <ctl:link title="Verify that the server returns a Submit response of rejected when an invalid time value is supplied in the timeFrame parameter.">ATS_URL#SPS.Submit-RequestValidTimeFrame</ctl:link>
       <ctl:code>
         <!--Modify the timeFrame value to occur in the past-->
+        <ctl:message>Sending a Submit request with an invalid timeFrame element...</ctl:message>
         <xsl:variable name="submitResponse">
                     <ctl:request>
                         <ctl:url>
