@@ -143,8 +143,8 @@
     </ctl:test>
     <ctl:test name="sps:general-SPS.General-InvalidRequest.1">
       <ctl:param name="serviceURL" />
-      <ctl:assertion>Test purpose</ctl:assertion>
-      <ctl:comment>Test method</ctl:comment>
+      <ctl:assertion>Sending a request that is non-conformant to a schema associated with an SPS operation causes the server to return a valid error report message with an exceptionCode value of InvalidRequest.</ctl:assertion>
+      <ctl:comment>Send several test documents that are invalid according to the schemas associated with some of the SPS operations (i.e. the mandatory operations). Pass if the service returns a valid exception message with an exceptionCode value of InvalidRequest; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that an invalid request produces an appropriate response from the server.">ATS_URL#SPS.General-InvalidRequest</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
@@ -269,18 +269,22 @@
                         <ctl:with-param name="getCapabilitiesResponse" select="$getCapabilitiesResponse" />
                     </ctl:call-test>
                     
+                    <ctl:message>The following URLs will be used for SPS operation specific tests:</ctl:message>
                     <!--Get the DescribeTasking URL-->
                     <xsl:variable name="describeTaskingURL">
                         <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='DescribeTasking']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
                     </xsl:variable>
+                    <ctl:message>DescribeTasking URL:  <xsl:value-of select="$describeTaskingURL" /></ctl:message>
                     <!--Get the Submit URL-->
                     <xsl:variable name="submitURL">
                         <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='Submit']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
                     </xsl:variable>
+                    <ctl:message>Submit URL:  <xsl:value-of select="$submitURL" /></ctl:message>
                     <!--Get the DescribeResultAccess URL-->
                     <xsl:variable name="describeResultAccessURL">
                         <xsl:value-of select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='DescribeResultAccess']/ows:DCP/ows:HTTP/ows:Post/@xlink:href" />
                     </xsl:variable>
+                    <ctl:message>DescribeResultAccess URL:  <xsl:value-of select="$describeResultAccessURL" /></ctl:message>
                     
                     <!--Execute DescribeTasking tests-->
                     <xsl:if test="string-length(normalize-space($describeTaskingURL))>0">
@@ -569,7 +573,7 @@
                 <xsl:variable name="isCorrect" select="$isCorrect1 or $isCorrect2" />
                 <ctl:message>The validity check returned:  <xsl:value-of select="$isCorrect" /></ctl:message>
                 <xsl:if test="not(xsd:boolean($isCorrect))">
-                    <ctl:message>FAILURE:  The response to a GetCapabilities request with an invalid request parameter (<xsl:value-of select="$invalidRequestParameterValue" />) does not match the expected response.</ctl:message>
+                    <ctl:message>FAILURE:  The response to a GetCapabilities request with an invalid request parameter (<xsl:value-of select="$invalidRequestParameterValue" />) does not match the expected response.  The response was expected to be an ExceptionReport with an exceptionCode of "InvalidParameterValue" or "OperationNotSupported".</ctl:message>
                     <ctl:fail />
                 </xsl:if>
             </xsl:otherwise>
@@ -969,16 +973,44 @@
                 -->
         <xsl:for-each select="$getCapabilitiesResponse//sps:Contents/sps:PhenomenonOfferingList/sps:PhenomenonOffering">
             <!--Check the Phenomenon element (ensure that each Phenomenon listed matches a Phenomenon listed in a SensorOffering element?)-->
-            <xsl:if test="string-length(normalize-space(sps:Phenomenon))=0"><!--Check to see if this Phenomenon is in a URN format?-->
-                <ctl:message>FAILURE:  The Phenomenon element value for a PhenomenonOffering is an empty string.</ctl:message>
-                <ctl:fail />
-            </xsl:if>
+            <xsl:variable name="phenomenon" select="normalize-space(sps:Phenomenon)" />
+            <ctl:message>Checking the following phenomenon for validity:  <xsl:value-of select="$phenomenon" /></ctl:message>
+            <xsl:choose>
+                <xsl:when test="string-length($phenomenon)=0 or not(xsd:boolean(spsFunctions:validateURN($phenomenon)))"><!--Check to see if this Phenomenon is in a URN format?-->
+                    <ctl:message>FAILURE:  The Phenomenon element value for a PhenomenonOffering is an empty string or is not a valid URN.</ctl:message>
+                    <ctl:fail />
+                </xsl:when>
+                <xsl:otherwise>
+                    <ctl:message>Checking for the existence of a matching phenomenon element in the SensorOfferings...</ctl:message>
+                    <xsl:variable name="sensorDefPhenomenonElement" select="$getCapabilitiesResponse//sps:Contents/sps:SensorOfferingList/sps:SensorOffering/sps:Phenomenon[text()=$phenomenon]" />
+                    <xsl:variable name="phenomenonElementExists" select="string-length($sensorDefPhenomenonElement)>0" />
+                    <ctl:message>The check returned:  <xsl:value-of select="$phenomenonElementExists" /></ctl:message>
+                    <xsl:if test="not(xsd:boolean($phenomenonElementExists))">
+                        <ctl:message>FAILURE:  The Phenomenon element value "<xsl:value-of select="$phenomenon" />" is listed in a PhenomenonOffering, but this phenomenon is not listed in at least one SensorOffering for this service.</ctl:message>
+                        <ctl:fail />
+                    </xsl:if>
+                </xsl:otherwise>
+            </xsl:choose>
             <!--Check each SensorID element (ensure that each SensorID element listed matches a SensorID listed in the SensorOffering element?)-->
             <xsl:for-each select="sps:SensorID">
-                <xsl:if test="string-length(normalize-space(.))=0">
-                    <ctl:message>FAILURE:  The SensorID element value for a PhenomenonOffering is an empty string</ctl:message>
-                    <ctl:fail />
-                </xsl:if>
+                <xsl:variable name="sensorID" select="normalize-space(.)" />
+                <ctl:message>Checking the following sensorID for validity:  <xsl:value-of select="$sensorID" /></ctl:message>
+                <xsl:choose>
+                    <xsl:when test="string-length($sensorID)=0 or not(xsd:boolean(spsFunctions:validateGenericURN($sensorID)))">
+                        <ctl:message>FAILURE:  The SensorID element value for the "<xsl:value-of select="$phenomenon" />" PhenomenonOffering is an empty string or is not a valid URN.</ctl:message>
+                        <ctl:fail />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <ctl:message>Checking for the existence of a matching sensorID element in the SensorOfferings...</ctl:message>
+                        <xsl:variable name="sensorDefSensorIDElement" select="$getCapabilitiesResponse//sps:Contents/sps:SensorOfferingList/sps:SensorOffering/sps:SensorID[text()=$sensorID]" />
+                        <xsl:variable name="sensorIDElementExists" select="string-length($sensorDefSensorIDElement)>0" />
+                        <ctl:message>The check returned:  <xsl:value-of select="$sensorIDElementExists" /></ctl:message>
+                        <xsl:if test="not(xsd:boolean($sensorDefSensorIDElement))">
+                            <ctl:message>FAILURE:  The SensorID element value "<xsl:value-of select="$sensorID" />" from the "<xsl:value-of select="$phenomenon" />" PhenomenonOffering is not listed in at least one SensorOffering for this service.</ctl:message>
+                            <ctl:fail />
+                        </xsl:if>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:for-each>
         </xsl:for-each>
       </ctl:code>
@@ -1637,7 +1669,7 @@
                                     Please choose a time frame for this tasking.  The time frame should be a time that occurs in the future; otherwise, your tasking will most likely be rejected.
                                     The supplied value must be an ISO 8601 compliant date/time value (i.e. 2007-12-01T13:21:55.555Z) or duration (i.e. PT5M).  
                                     <i>
-                                    NOTE:  The default value that appears below is one hour past the current time.
+                                    NOTE:  The default value that appears below is one hour past the current time, so this value may be used without modification.
                                     </i>
                                 </h2>
                             </p>
