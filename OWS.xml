@@ -1328,7 +1328,7 @@
             <xsl:variable name="locatorValue" select="$exceptionElement/@locator" />
             <xsl:choose>
                 <xsl:when test="$locatorToCheck='*'">
-                    <xsl:value-of select="$exceptionElement and ($exceptionCodeToCheck=$exceptionCodeValue) and (string-length(normalize-space($locatorValue))>0)" />
+                    <xsl:value-of select="$exceptionElement and ($exceptionCodeToCheck=$exceptionCodeValue) and (string-length(normalize-space($locatorValue))>=0)" />
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="$exceptionElement and ($exceptionCodeToCheck=$exceptionCodeValue) and (lower-case($locatorToCheck)=lower-case($locatorValue))" />
