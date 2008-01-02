@@ -945,8 +945,9 @@
                         </xsl:when>
                         <xsl:when test="$sensorDefinitionResponse//tml:tml">
                             <ctl:message>A TML document was returned.  Checking for the existence of a sensorID and verifying that an existing sensorID is valid.</ctl:message>
+                            <!--TODO:  This needs to be verified with an actual example-->
                             <xsl:variable name="responseSensorID"> 
-                                <xsl:value-of select="$sensorDefinitionResponse//tml:tml/@uid" />
+                                <xsl:value-of select="$sensorDefinitionResponse//tml:identification/tml:uid" />
                             </xsl:variable>
                             <xsl:if test="string-length(normalize-space($responseSensorID))=0">
                                 <ctl:message>FAILURE:  There was no sensorID specified in the returned TML document.</ctl:message>
