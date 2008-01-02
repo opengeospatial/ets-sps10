@@ -364,7 +364,9 @@
                             <ctl:fail />
                         </xsl:when>
                         <xsl:otherwise>
+                            <ctl:message>Checking the content type of the response.</ctl:message>
         					<xsl:variable name="content-type" select="$request1/response/headers/header[@name='Content-Type']"/>
+                            <ctl:message>The response content type is:  <xsl:value-of select="$content-type" />.  Ensuring that this content type is a valid MIME type and that the returned content type matches the expected content type.</ctl:message>
                             <xsl:variable name="isValidMIMEType">
                                 <ctl:call-function name="owsFunctions:isValidMIMETypeFormat">
                                     <ctl:with-param name="responseFormat" select="$content-type" />
@@ -579,6 +581,7 @@
                         <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
+                    <ctl:message>Checking the version attribute (<xsl:value-of select="$version" />)of the root element of the response.</ctl:message>
                     <xsl:if test="not($version=$serviceVersion)">
                         <ctl:message>FAILURE:  The returned value in the version attribute "<xsl:value-of select="$version" />" does not match the expected version of "<xsl:value-of select="$serviceVersion" />"</ctl:message>
                         <ctl:fail />
@@ -636,6 +639,7 @@
                         <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
+                    <ctl:message>Checking the version attribute (<xsl:value-of select="$version" />) of the root element of the response.</ctl:message>
                     <xsl:if test="not($version=$serviceVersion)">
                         <ctl:message>FAILURE:  The returned value in the version attribute "<xsl:value-of select="$version" />" does not match the expected version of "<xsl:value-of select="$serviceVersion" />"</ctl:message>
                         <ctl:fail />
@@ -695,6 +699,7 @@
                         <ctl:message>FAILURE:  The root element from the response to a GetCapabilities request does not match the expected root element of "<xsl:value-of select="$rootElementName" />"</ctl:message>
                         <ctl:fail />
                     </xsl:if>
+                    <ctl:message>Checking the version attribute (<xsl:value-of select="$version" />) of the root element of the response.</ctl:message>
                     <xsl:if test="not($version=$serviceVersion)">
                         <ctl:message>FAILURE:  The returned value in the version attribute "<xsl:value-of select="$version" />" does not match the expected version of "<xsl:value-of select="$serviceVersion" />"</ctl:message>
                         <ctl:fail />
@@ -744,6 +749,7 @@
 					<ctl:fail/>
 			    </xsl:when>
 			    <xsl:otherwise>
+                    <ctl:message>The response was a valid ExceptionReport.  Checking the response elements for validity...</ctl:message>
 					<xsl:variable name="isValid">
                         <ctl:call-function name="owsFunctions:checkExceptionReport">
                             <ctl:with-param name="exceptionReport" select="$request1" />
@@ -751,6 +757,7 @@
                             <ctl:with-param name="locatorToCheck" select="string('*')" />
                         </ctl:call-function>
                     </xsl:variable>
+                    <ctl:message>The validity check returned:  <xsl:value-of select="$isValid" /></ctl:message>
                     <xsl:if test="not(xsd:boolean($isValid))">
                         <ctl:message>FAILURE: The returned exception report was expected to contain an exceptionCode of "VersionNegotiationFailed".</ctl:message>
                         <ctl:fail/>
@@ -798,6 +805,7 @@
 					<ctl:fail/>
 			    </xsl:when>
 			    <xsl:otherwise>
+                    <ctl:message>The response was a valid ExceptionReport.  Checking the response elements for validity...</ctl:message>
                     <xsl:variable name="isValid">
                         <ctl:call-function name="owsFunctions:checkExceptionReport">
                             <ctl:with-param name="exceptionReport" select="$response" />
@@ -805,6 +813,7 @@
                             <ctl:with-param name="locatorToCheck" select="string('service')" />
                         </ctl:call-function>
                     </xsl:variable>
+                    <ctl:message>The validity check returned:  <xsl:value-of select="$isValid" /></ctl:message>
                     <xsl:if test="not(xsd:boolean($isValid))">
                         <ctl:message>FAILURE: The returned exception report was expected to contain an exceptionCode of "MissingParameterValue" and a locator value of "service".</ctl:message>
                         <ctl:fail/>
@@ -853,6 +862,7 @@
 					<ctl:fail/>
 			    </xsl:when>
 			    <xsl:otherwise>
+                    <ctl:message>The response was a valid ExceptionReport.  Checking the response elements for validity...</ctl:message>
 					<xsl:variable name="isValid">
                         <ctl:call-function name="owsFunctions:checkExceptionReport">
                             <ctl:with-param name="exceptionReport" select="$response" />
@@ -860,6 +870,7 @@
                             <ctl:with-param name="locatorToCheck" select="string('service')" />
                         </ctl:call-function>
                     </xsl:variable>
+                    <ctl:message>The validity check returned:  <xsl:value-of select="$isValid" /></ctl:message>
                     <xsl:if test="not(xsd:boolean($isValid))">
                         <ctl:message>FAILURE: The returned exception report was expected to contain an exceptionCode of "InvalidParameterValue" and a locator value of "service".</ctl:message>
                         <ctl:fail/>
@@ -908,6 +919,7 @@
 					<ctl:fail/>
 			    </xsl:when>
 			    <xsl:otherwise>
+                    <ctl:message>The response was a valid ExceptionReport.  Checking the response elements for validity...</ctl:message>
 					<xsl:variable name="isValid">
                         <ctl:call-function name="owsFunctions:checkExceptionReport">
                             <ctl:with-param name="exceptionReport" select="$request1" />
@@ -915,6 +927,7 @@
                             <ctl:with-param name="locatorToCheck" select="string('*')" />
                         </ctl:call-function>
                     </xsl:variable>
+                    <ctl:message>The validity check returned:  <xsl:value-of select="$isValid" /></ctl:message>
                     <xsl:if test="not(xsd:boolean($isValid))">
                         <ctl:message>FAILURE: The returned exception report was expected to contain an exceptionCode of "VersionNegotiationFailed".</ctl:message>
                         <ctl:fail/>
@@ -965,6 +978,7 @@
 					<ctl:fail/>
 			    </xsl:when>
 			    <xsl:otherwise>
+                    <ctl:message>The response was a valid ExceptionReport.  Checking the response elements for validity...</ctl:message>
 					<xsl:variable name="isValid">
                         <ctl:call-function name="owsFunctions:checkExceptionReport">
                             <ctl:with-param name="exceptionReport" select="$request1" />
@@ -972,6 +986,7 @@
                             <ctl:with-param name="locatorToCheck" select="string('*')" />
                         </ctl:call-function>
                     </xsl:variable>
+                    <ctl:message>The validity check returned:  <xsl:value-of select="$isValid" /></ctl:message>
                     <xsl:if test="not(xsd:boolean($isValid))">
                         <ctl:message>FAILURE: The returned exception report was expected to contain an exceptionCode of "InvalidUpdateSequence".</ctl:message>
                         <ctl:fail/>
@@ -1033,7 +1048,9 @@
                             <ctl:with-param name="locatorToCheck" select="string('request')" />
                         </ctl:call-function>
                     </xsl:variable>
-                    <xsl:if test="not(xsd:boolean($isValid1) or xsd:boolean($isValid2))">
+                    <xsl:variable name="isValid" select="xsd:boolean($isValid1) or xsd:boolean($isValid2)" />
+                    <ctl:message>The validity check returned:  <xsl:value-of select="$isValid" /></ctl:message>
+                    <xsl:if test="not(xsd:boolean($isValid))">
                         <ctl:message>FAILURE: The returned exception report was expected to contain an exceptionCode of "MissingParameterValue" and a locator value of "service" or "request".</ctl:message>
                         <ctl:fail/>
                     </xsl:if>							
@@ -1087,6 +1104,7 @@
                   <ctl:fail/>
               </xsl:when>
               <xsl:otherwise>
+                <ctl:message>Getting the sections of the Capabilities document...</ctl:message>
                 <xsl:for-each select="$response/*/*">
                     <xsl:variable name="sectionName" select="local-name-from-QName(node-name(.))" />
                     <ctl:message>Testing the "<xsl:value-of select="$sectionName" />" section...</ctl:message>
@@ -1146,14 +1164,17 @@
                   <ctl:fail/>
               </xsl:when>
               <xsl:otherwise>
+                <ctl:message>Checking that the OperationsMetadata section is included.</ctl:message>
                 <xsl:if test="not($response//ows:OperationsMetadata)">
                     <ctl:message>FAILURE:  The ows:OperationsMetadata element is missing</ctl:message>
                     <ctl:fail/>
                 </xsl:if>
+                <ctl:message>Checking that the ServiceIdentification section is included.</ctl:message>
                 <xsl:if test="not($response//ows:ServiceIdentification)">
                     <ctl:message>FAILURE:  The ows:ServiceIdentification element is missing</ctl:message>
                     <ctl:fail/>
                 </xsl:if>
+                <ctl:message>Checking that the ServiceProvider section is not included.</ctl:message>
                 <xsl:if test="$response//ows:ServiceProvider">
                     <ctl:message>FAILURE:  The ows:ServiceProvider element is included</ctl:message>
                     <ctl:fail/>
@@ -1189,8 +1210,10 @@
 					<parsers:HTTPParser />
 				</ctl:request>
 			</xsl:variable>
+            <ctl:message>Checking the content type of the response...</ctl:message>
             <xsl:variable name="content-type" select="$response//headers/header[@name='Content-Type']"/>
-			<xsl:if test="not(starts-with($content-type, $format))">
+			<ctl:message>The response content type is:  <xsl:value-of select="$content-type" />.  Comparing this value with the requested format:  <xsl:value-of select="$format" /></ctl:message>
+            <xsl:if test="not(starts-with($content-type, $format))">
 				<ctl:message>FAILURE: Unexpected content type for response entity (Request: <xsl:value-of select="$format"/>, Response: <xsl:value-of select="$content-type"/>).</ctl:message>
 				<ctl:fail/>
 			</xsl:if>
@@ -1202,6 +1225,7 @@
 	<!-- PARSERS/FUNCTIONS -->
 	<!--=========-->
     
+    <!---->
 	<ctl:test name="ctl:SchematronValidatingParser">
 			<ctl:param name="doc"/>
 			<ctl:param name="schema"/>
@@ -1223,6 +1247,7 @@
 			</ctl:code>
 	</ctl:test>
     
+    <!---->
 	<ctl:function name="ctl:CallSchematronValidatingParser">
 		<ctl:param name="doc"/>
 		<ctl:param name="schema"/>
@@ -1255,6 +1280,7 @@
         </ctl:code>
     </ctl:function>	
     
+    <!--Checks for a valid MIME type format-->
     <ctl:function name="owsFunctions:isValidMIMETypeFormat">
 		<ctl:param name="responseFormat">The respsonseFormat to validate</ctl:param>
 		<ctl:return>True/False depending on whether the input is a valid MIME type based on ows:owsCommon.xsd</ctl:return>

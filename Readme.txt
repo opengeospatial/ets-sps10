@@ -23,7 +23,7 @@ What IS Tested/Handled:
 - The sensorID in the SensorML or TML document describing a taskable sensor matches the sensorID in the SensorOffering for that sensor 
 
 - All InputDescriptor definition types are handled:
-	1)  The most common commonData sub-types (including Position with location) are handled directly by allowing a user to enter in values for these elements directly in a user input form
+	1)  The most common commonData sub-types (including Position with location) are handled by allowing a user to enter in values for these elements directly in a user input form
 	2)  More complex definition types are handled by allowing a user to enter the InputParameter XML elements directly in a user input form.
 
 ***************************
