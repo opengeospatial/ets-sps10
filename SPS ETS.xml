@@ -1073,7 +1073,7 @@
                     3.)  If response validates, then check that the exceptionCode parameter is "UnknownSensorID" and that the requested sensorID is listed in the locator parameter.
                     4.)  Repeat 1 - 3 with a set of random sensor IDs to test how the server handles multiple sensorIDs
                 -->
-        <xsl:variable name="sensorIDs" select="string('blah,adsjflkasjdflkdsajf,ewioruowireuoierwu,1384982348924988923893298438294')" />
+        <xsl:variable name="sensorIDs" select="string('This is an invalid sensorID 1...,This is an invalid sensorID 2...,This is an invalid sensorID 3...,This is an invalid sensorID 4...')" />
         <ctl:message>Sending a DescribeTasking request with the following sensorID elements:  <xsl:value-of select="$sensorIDs" /></ctl:message>
         <xsl:variable name="describeTaskingResponse">
             <ctl:request>
@@ -1733,9 +1733,10 @@
                 </xsl:variable>
                 <ctl:message>Submit request constructed with an invalid notificationTarget element:  <xsl:copy-of select="$submitRequestInvalidNotificationTarget/*" /></ctl:message>
                 <!--Construct a Submit request with an invalid sensorID element-->
+                <xsl:variable name="invalidSensorID" select="string('This is an invalid sensorID...')" />
                 <xsl:variable name="submitRequestInvalidSensorID">
                     <ctl:call-function name="spsFunctions:buildSubmitRequest">
-                        <ctl:with-param name="sensorID" select="string('This is a test...')" />
+                        <ctl:with-param name="sensorID" select="$invalidSensorID" />
                         <ctl:with-param name="describeTaskingResponse" select="$describeTaskingResponse" />
                         <ctl:with-param name="enterTaskingOptionsForm" select="$enterTaskingOptionsForm" />
                         <ctl:with-param name="invalidNotificationTarget" select="false()" />
@@ -1799,6 +1800,7 @@
                 <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidSensorID.1">
                   <ctl:with-param name="submitURL" select="$submitURL" />
                   <ctl:with-param name="submitRequest" select="$submitRequestInvalidSensorID" />
+                  <ctl:with-param name="invalidSensorID" select="$invalidSensorID" />
                 </ctl:call-test>
                 <ctl:message>**********************************************************************</ctl:message>
                 <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamInvalidParameters.1">
@@ -1913,6 +1915,7 @@
     <ctl:test name="sps:core-SPS.Submit-RequestSensorParamInvalidSensorID.1">
       <ctl:param name="submitURL" />
       <ctl:param name="submitRequest" />
+      <ctl:param name="invalidSensorID" />
       <ctl:assertion>The server returns a valid exception message with a value of UnknownSensorID for the exceptionCode and the unknown sensorID for the locator. </ctl:assertion>
       <ctl:comment>Pass if a returned exception message is a valid exception report and has an exceptionCode value of UnknownSensorID and a locator value listing the unknown sensorID; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that the server returns a valid exception message when an invalid sensorID is provided in the request.">ATS_URL#SPS.Submit-RequestSensorParamInvalidSensorID</ctl:link>
@@ -1944,7 +1947,7 @@
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
                         <ctl:with-param name="exceptionReportToCheck" select="$submitResponse" />
                         <ctl:with-param name="exceptionCodeToCheck" select="string('UnknownSensorID')" />
-                        <ctl:with-param name="locatorToCheck" select="string('This is a test...')" />
+                        <ctl:with-param name="locatorToCheck" select="$invalidSensorID" />
                     </ctl:call-function>
                 </xsl:variable>
                 <ctl:message>The validity check returned:  <xsl:value-of select="$isCorrect" /></ctl:message>
@@ -2490,7 +2493,7 @@
       <ctl:comment>Pass if the response is a valid exception message with an exceptionCode value of UnknownSensorID and the unknown sensorID listed in the locator field; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that an invalid sensorID in the request produces a valid exception message of UnknownSensorID.">ATS_URL#SPS.DescribeResultAccess-RequestInvalidSensorID</ctl:link>
       <ctl:code>
-        <xsl:variable name="sensorID" select="string('lksadjflkadsjfkljdsafkweuoiuoiweruoiweklsajflksdajflkdsafjlksdajflksadfjlkdsfajkladfsjlkdasfjlkasdfj')" />
+        <xsl:variable name="sensorID" select="string('This is an invalid sensorID...')" />
         <xsl:variable name="describeResultAccessRequestResponse">
             <ctl:request>
                     <ctl:url>
@@ -2581,7 +2584,7 @@
       <ctl:comment>Pass if the response is a valid exception message with an exceptionCode value TaskIDExpired; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that an invalid taskID in the request produces a valid exception message of TaskIDExpired.">ATS_URL#SPS.DescribeResultAccess-RequestInvalidTaskID</ctl:link>
       <ctl:code>
-        <xsl:variable name="taskID" select="string('kaskjdfkltiowutoiwut098239825uuewioejriowerioweuqroiuwerqiouwerqiouerqiowwqoieriowqeriouioqweroiurewq')" />
+        <xsl:variable name="taskID" select="string('This is an invalid taskID...')" />
         <xsl:variable name="describeResultAccessRequestResponse">
             <ctl:request>
                     <ctl:url>
