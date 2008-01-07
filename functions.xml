@@ -193,7 +193,8 @@
             <xsl:variable name="exceptionElement" select="$exceptionReport//ows:ExceptionReport/ows:Exception" />
             <xsl:variable name="exceptionCodeValue" select="$exceptionElement/@exceptionCode" />
             <xsl:variable name="locatorValue" select="$exceptionElement/@locator" />
-            <xsl:value-of select="concat('Exception Report (exceptionCode, locator):  ',$exceptionCodeValue,',',$locatorValue)" />
+            <xsl:variable name="exceptionText" select="$exceptionElement/text()" />
+            <xsl:value-of select="concat('Exception Report (exceptionCode, locator):  ',$exceptionCodeValue,',',$locatorValue,' - ',$exceptionText)" />
         </ctl:code>
     </ctl:function>
     
