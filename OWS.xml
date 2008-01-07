@@ -93,6 +93,7 @@
                             <ctl:fail />
                         </xsl:when>
                         <xsl:otherwise>
+                            <ctl:message>A valid GetCapabilities response was returned.  This response will be used as appropriate in the remaining OWS Common tests.  Executing the remaining OWS Common tests...</ctl:message>
                             <xsl:variable name="capabilitiesDocument">
                                 <xsl:copy-of select="$request1" />
                             </xsl:variable>
@@ -664,7 +665,7 @@
       <link>OGC 05-008c1, 7.3.2, p.16</link>
 		<code>
 		
-            <ctl:message>Issuing a GetCapabilities request with an AcceptVersions parameter...</ctl:message>
+            <ctl:message>Issuing a GetCapabilities request with an AcceptVersions parameter of <xsl:value-of select="$acceptVersions"/>...</ctl:message>
 			<xsl:variable name="request1">
 				<request>
 					<url>

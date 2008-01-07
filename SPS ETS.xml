@@ -410,6 +410,7 @@
         </xsl:variable>
         <!--Check the responses to each of the above requests to ensure that they are valid-->
         <ctl:message>The server returned the following response:  <xsl:value-of select="$requestNoRequest/*" /></ctl:message>
+        <ctl:message><xsl:text disable-output-escaping="yes">{$requestNoRequest}</xsl:text></ctl:message>
         <xsl:choose>
             <xsl:when test="not($requestNoServiceNoRequest/*) or not($requestNoService/*) or not($requestNoRequest/*)">
                 <ctl:message>FAILURE:  The server did not return responses to the GetCapabilities requests in this test, or the responses to these requests were not valid exceptions.</ctl:message>
