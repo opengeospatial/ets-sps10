@@ -1817,6 +1817,7 @@
                   <ctl:with-param name="submitURL" select="$submitURL" />
                   <ctl:with-param name="submitRequest" select="$submitRequestInvalidTimeFrame" />
                 </ctl:call-test>
+                <ctl:message>Issuing a valid Submit request...</ctl:message>
                 <!--Execute the valid Submit request-->
                 <xsl:variable name="submitResponse">
                     <ctl:request>
@@ -2448,6 +2449,7 @@
                     2.)  Validate the response against the ExceptionReport schema
                     3.)  Check the values in the response
                 -->
+        <ctl:message>Issuing a DescribeResultAccess request with a null sensorID...</ctl:message>
         <xsl:variable name="describeResultAccessRequestResponse">
             <ctl:request>
                     <ctl:url>
@@ -2494,6 +2496,7 @@
       <ctl:link title="Verify that an invalid sensorID in the request produces a valid exception message of UnknownSensorID.">ATS_URL#SPS.DescribeResultAccess-RequestInvalidSensorID</ctl:link>
       <ctl:code>
         <xsl:variable name="sensorID" select="string('This is an invalid sensorID...')" />
+        <ctl:message>Issuing a DescribeResultAccess request with the following sensorID:  "<xsl:value-of select="$sensorID" />"...</ctl:message>
         <xsl:variable name="describeResultAccessRequestResponse">
             <ctl:request>
                     <ctl:url>
@@ -2539,6 +2542,7 @@
       <ctl:comment>Pass if the response is a valid exception message with an exceptionCode value of InvalidParameterValue and taskID listed in the locator field; fail otherwise.</ctl:comment>
       <ctl:link title="Verify that a null taskID in the request produces a valid exception message of InvalidParameterValue.">ATS_URL#SPS.DescribeResultAccess-RequestNullTaskID</ctl:link>
       <ctl:code>
+        <ctl:message>Issuing a DescribeResultAccess request with a null taskID...</ctl:message>
         <xsl:variable name="describeResultAccessRequestResponse">
             <ctl:request>
                     <ctl:url>
@@ -2585,6 +2589,7 @@
       <ctl:link title="Verify that an invalid taskID in the request produces a valid exception message of TaskIDExpired.">ATS_URL#SPS.DescribeResultAccess-RequestInvalidTaskID</ctl:link>
       <ctl:code>
         <xsl:variable name="taskID" select="string('This is an invalid taskID...')" />
+        <ctl:message>Issuing a DescribeResultAccess request with the following taskID:  "<xsl:value-of select="$sensorID" />"...</ctl:message>
         <xsl:variable name="describeResultAccessRequestResponse">
             <ctl:request>
                     <ctl:url>
@@ -2635,7 +2640,7 @@
         <!--Call each of the DescribeResultAccess sub-tests using SensorID values from the Capabilities document-->
         <xsl:for-each select="$getCapabilitiesResponse/sps:Contents//sps:SensorOffering/sps:SensorID">
             <xsl:variable name="sensorID" select="." />
-            <ctl:message>Executing DescribeResultAccess request for:  <xsl:value-of select="$sensorID" /></ctl:message>
+            <ctl:message>Executing a DescribeResultAccess request for the following sensorID:  "<xsl:value-of select="$sensorID" />"...</ctl:message>
             <xsl:variable name="describeResultAccessRequestResponse">
                 <ctl:request>
                     <ctl:url>
@@ -2703,7 +2708,7 @@
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--Call each of the DescribeResultAccess sub-tests using SensorID values from the Capabilities document-->
-            <ctl:message>Executing DescribeResultAccess request for taskID:  <xsl:value-of select="$validTaskID" /></ctl:message>
+            <ctl:message>Executing a DescribeResultAccess request for taskID:  "<xsl:value-of select="$validTaskID" />"...</ctl:message>
             <xsl:variable name="describeResultAccessRequestResponse">
                 <ctl:request>
                     <ctl:url>
@@ -2802,6 +2807,7 @@
       <ctl:code>
         <!--Check to see if the ServiceType element contains a value-->
         <xsl:variable name="serviceType" select="$describeResultAccessResponse//sps:ServiceType" />
+        <ctl:message>Checking the ServiceType of the response: "<xsl:value-of select="$serviceType" />"...</ctl:message>
         <xsl:if test="string-length(normalize-space($serviceType))=0">
             <ctl:message>FAILURE:  The ServiceType value in a DescribeResultAccess response for <xsl:value-of select="concat($requestedType,' ')" /> <xsl:value-of select="$requestedID" /> is null.</ctl:message>
             <ctl:fail />
@@ -2818,11 +2824,14 @@
       <ctl:code>
         <!--Check to see if the ServiceURL is valid-->
         <xsl:variable name="serviceURL" select="$describeResultAccessResponse//sps:ServiceURL" />
+        <ctl:message>Checking the ServiceURL of the response:  "<xsl:value-of select="$serviceURL" />"...</ctl:message>
+        <ctl:message>Determining if the ServiceURL has a valid URL format...</ctl:message>
         <xsl:variable name="isValidURL">
             <ctl:call-function name="spsFunctions:validateURL">
                 <ctl:with-param name="urlString" select="$serviceURL" />
             </ctl:call-function>
         </xsl:variable>
+        <ctl:message>The validity check returned:  <xsl:value-of select="$isValidURL" /></ctl:message>
         <xsl:choose>
             <xsl:when test="not(xsd:boolean($isValidURL))">
                 <ctl:message>FAILURE:  The ServiceURL value in a DescribeResultAccess response for <xsl:value-of select="concat($requestedType,' ')" /> <xsl:value-of select="$requestedID" /> is either null or does not have the proper syntax for a URL.</ctl:message>
@@ -2830,6 +2839,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <!--Ensure that the service identified through the ServiceURL element is up and running-->
+                <ctl:message>Checking that the ServiceURL is reachable...</ctl:message>
                 <xsl:variable name="serviceURLResponse">
                     <ctl:request>
                         <ctl:url><xsl:value-of select="$serviceURL" /></ctl:url>
