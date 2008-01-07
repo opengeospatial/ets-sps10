@@ -2589,7 +2589,7 @@
       <ctl:link title="Verify that an invalid taskID in the request produces a valid exception message of TaskIDExpired.">ATS_URL#SPS.DescribeResultAccess-RequestInvalidTaskID</ctl:link>
       <ctl:code>
         <xsl:variable name="taskID" select="string('This is an invalid taskID...')" />
-        <ctl:message>Issuing a DescribeResultAccess request with the following taskID:  "<xsl:value-of select="$sensorID" />"...</ctl:message>
+        <ctl:message>Issuing a DescribeResultAccess request with the following taskID:  "<xsl:value-of select="$taskID" />"...</ctl:message>
         <xsl:variable name="describeResultAccessRequestResponse">
             <ctl:request>
                     <ctl:url>
