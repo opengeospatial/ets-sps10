@@ -835,7 +835,7 @@
       <link>OGC 05-008c1, 7.4.1, p.19</link>
 		<code>
 		
-            <ctl:message>Issuing a GetCapabilities request an invalid Service parameter value of ASDF...</ctl:message>
+            <ctl:message>Issuing a GetCapabilities request with an invalid Service parameter value of ASDF...</ctl:message>
 			<xsl:variable name="response">
 				<request>
 					<url>

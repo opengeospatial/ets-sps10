@@ -174,7 +174,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($invalidRequestResponse)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($invalidRequestResponse)" /></ctl:message>
                 <ctl:message>Checking the validity of the response to an invalid request.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -417,7 +417,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:if test="$requestNoServiceNoRequest/*">
-                    <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($requestNoServiceNoRequest)" /></ctl:message>
+                    <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($requestNoServiceNoRequest)" /></ctl:message>
                     <ctl:message>Checking the validity of the response to a GetCapabilities request with no service and no request parameters.</ctl:message>
                     <xsl:variable name="isCorrect1">
                         <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -441,7 +441,7 @@
                     </xsl:if>
                 </xsl:if>
                 <xsl:if test="$requestNoService/*">
-                    <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($requestNoService)" /></ctl:message>
+                    <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($requestNoService)" /></ctl:message>
                     <ctl:message>Checking the validity of the response to a GetCapabilities request with no service parameter.</ctl:message>
                     <xsl:variable name="isCorrect">
                         <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -457,7 +457,7 @@
                     </xsl:if>
                 </xsl:if>
                 <xsl:if test="$requestNoRequest/*">
-                    <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($requestNoRequest)" /></ctl:message>
+                    <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($requestNoRequest)" /></ctl:message>
                     <ctl:message>Checking the validity of the response to a GetCapabilities request with no request parameter.</ctl:message>
                     <xsl:variable name="isCorrect">
                         <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -507,7 +507,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($requestInvalidServiceKeyValue)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($requestInvalidServiceKeyValue)" /></ctl:message>
                 <ctl:message>Checking the validity of the response to a GetCapabilities request with an invalid service value.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -556,7 +556,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($requestInvalidRequestKeyValue)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($requestInvalidRequestKeyValue)" /></ctl:message>
                 <ctl:message>Checking the validity of the response to a GetCapabilities request with an invalid request value.</ctl:message>
                 <xsl:variable name="isCorrect1">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -1098,7 +1098,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($describeTaskingResponse)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($describeTaskingResponse)" /></ctl:message>
                 <ctl:message>Checking this response for validity...</ctl:message>
                 <xsl:for-each select="$describeTaskingResponse//ows:ExceptionReport/ows:Exception">
                     <xsl:variable name="locatorValue">
@@ -1160,7 +1160,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($describeTaskingResponse)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($describeTaskingResponse)" /></ctl:message>
                 <ctl:message>Checking the response for validity...</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -1888,7 +1888,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($submitResponse)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($submitResponse)" /></ctl:message>
                 <ctl:message>Checking the validity of the response to a Submit request with an invalid notificationTarget element.</ctl:message>
                 <xsl:variable name="isCorrect1">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -1942,7 +1942,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($submitResponse)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($submitResponse)" /></ctl:message>
                 <ctl:message>Checking the validity of the response to a Submit request with an invalid sensorID element.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -2471,7 +2471,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($describeResultAccessRequestResponse)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($describeResultAccessRequestResponse)" /></ctl:message>
                 <ctl:message>Checking the validity of the response to a DescribeResultAccess request with a null sensorID parameter.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -2518,7 +2518,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($describeResultAccessRequestResponse)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($describeResultAccessRequestResponse)" /></ctl:message>
                 <ctl:message>Checking the validity of the response to a DescribeResultAccess request with an unknown sensorID parameter.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -2564,7 +2564,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($describeResultAccessRequestResponse)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($describeResultAccessRequestResponse)" /></ctl:message>
                 <ctl:message>Checking the validity of the response to a DescribeResultAccess request with a null taskID parameter.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
@@ -2611,7 +2611,7 @@
                 <ctl:fail />
             </xsl:when>
             <xsl:otherwise>
-                <ctl:message>The response was <xsl:value-of select="spsFunctions:getExceptionInfo($describeResultAccessRequestResponse)" /></ctl:message>
+                <ctl:message>The response was:  <xsl:value-of select="spsFunctions:getExceptionInfo($describeResultAccessRequestResponse)" /></ctl:message>
                 <ctl:message>Checking the validity of the response to a DescribeResultAccess request with an unknown taskID parameter.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
