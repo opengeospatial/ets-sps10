@@ -24,7 +24,7 @@
 >
   
   <ctl:suite name="sps:suite">
-    <!--NOTE: Don't forget to update the TARGET_NAMESPACE_URI and ATS_URL placeholder values-->
+    <!--NOTE: Don't forget to update the TARGET_NAMESPACE_URI and ../ATS/SPS%201.0%20ATS.html placeholder values-->
     <ctl:title>Annex A - Abstract Test Suite for SPS 1.0</ctl:title>
     <ctl:starting-test>sps:Main</ctl:starting-test>
   </ctl:suite>
@@ -94,7 +94,7 @@
       <ctl:param name="serviceURL" />
       <ctl:assertion>All assertions for "ows" conformance are satisfied.</ctl:assertion>
       <ctl:comment>Test driver for the ows module.</ctl:comment>
-      <ctl:link title="1. OWS">ATS_URL#ows</ctl:link>
+      <ctl:link title="1. OWS">../ATS/SPS%201.0%20ATS.html#ows</ctl:link>
       <ctl:code>
         <ctl:message>***************************</ctl:message>
         <ctl:message>Running OWS Common Tests...</ctl:message>
@@ -127,7 +127,7 @@
       <ctl:param name="serviceURL" />
       <ctl:assertion>All assertions for "general" conformance are satisfied.</ctl:assertion>
       <ctl:comment>Test driver for the general module.</ctl:comment>
-      <ctl:link title="2. General">ATS_URL#general</ctl:link>
+      <ctl:link title="2. General">../ATS/SPS%201.0%20ATS.html#general</ctl:link>
       <ctl:code>
         <ctl:message>****************************</ctl:message>
         <ctl:message>Running General SPS Tests...</ctl:message>
@@ -145,7 +145,7 @@
       <ctl:param name="serviceURL" />
       <ctl:assertion>Sending a request that is non-conformant to a schema associated with an SPS operation causes the server to return a valid error report message with an exceptionCode value of InvalidRequest.</ctl:assertion>
       <ctl:comment>Send several test documents that are invalid according to the schemas associated with some of the SPS operations (i.e. the mandatory operations). Pass if the service returns a valid exception message with an exceptionCode value of InvalidRequest; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that an invalid request produces an appropriate response from the server.">ATS_URL#SPS.General-InvalidRequest</ctl:link>
+      <ctl:link title="Verify that an invalid request produces an appropriate response from the server.">../ATS/SPS%201.0%20ATS.html#SPS.General-InvalidRequest</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -196,7 +196,7 @@
       <ctl:param name="responseDocument" />
       <ctl:assertion>A response is a valid response for the SPS.  This general assertion should be tested by all other tests.</ctl:assertion>
       <ctl:comment>Tested through other tests.</ctl:comment>
-      <ctl:link title="Verify that a response entity is schema-valid">ATS_URL#SPS.General-ValidResponse</ctl:link>
+      <ctl:link title="Verify that a response entity is schema-valid">../ATS/SPS%201.0%20ATS.html#SPS.General-ValidResponse</ctl:link>
       <ctl:code>
         <ctl:message>This general assertion is tested by all other tests, so there is nothing specific to test now.</ctl:message>
       </ctl:code>
@@ -207,7 +207,7 @@
       <ctl:param name="serviceURL" />
       <ctl:assertion>All assertions for "core" conformance are satisfied.</ctl:assertion>
       <ctl:comment>Test driver for the core module.</ctl:comment>
-      <ctl:link title="3. Core">ATS_URL#core</ctl:link>
+      <ctl:link title="3. Core">../ATS/SPS%201.0%20ATS.html#core</ctl:link>
       <ctl:code>
         <ctl:message>*********************************************</ctl:message>
         <ctl:message>Running SPS specific GetCapabilities tests...</ctl:message>
@@ -360,7 +360,7 @@
       <ctl:param name="serviceURL" />
       <ctl:assertion>The server returns a valid error report message with an exception code of MissingParameterValue when mandatory parameters are missing from the request.</ctl:assertion>
       <ctl:comment>Pass if the exception report is valid and the exceptionCode parameter contains MissingParameterValue; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server handles missing parameters correctly.">ATS_URL#SPS.GetCapabilities-KVPRequestParameterHandling</ctl:link>
+      <ctl:link title="Verify that the server handles missing parameters correctly.">../ATS/SPS%201.0%20ATS.html#SPS.GetCapabilities-KVPRequestParameterHandling</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -481,7 +481,7 @@
       <ctl:param name="serviceURL" />
       <ctl:assertion>The server returns a valid error report message with an exception code of InvalidParameterValue when the service key value is not SPS. </ctl:assertion>
       <ctl:comment>Pass if the exception report is valid and the exceptionCode parameter contains InvalidParameterValue; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server handles invalid service key values correctly.">ATS_URL#SPS.GetCapabilities-KVPRequestServiceParameterHandling</ctl:link>
+      <ctl:link title="Verify that the server handles invalid service key values correctly.">../ATS/SPS%201.0%20ATS.html#SPS.GetCapabilities-KVPRequestServiceParameterHandling</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -530,7 +530,7 @@
       <ctl:param name="serviceURL" />
       <ctl:assertion>The server returns a valid error report message with an exception code of InvalidParameterValue or OperationNotSupported when the request key value is not GetCapabilities. </ctl:assertion>
       <ctl:comment>Pass if the exception report is valid and the exceptionCode parameter contains InvalidParameterValue or OperationNotSupported; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server handles invalid request key values correctly.">ATS_URL#SPS.GetCapabilities-KVPRequestRequestParameterHandling</ctl:link>
+      <ctl:link title="Verify that the server handles invalid request key values correctly.">../ATS/SPS%201.0%20ATS.html#SPS.GetCapabilities-KVPRequestRequestParameterHandling</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -661,7 +661,7 @@
       <ctl:param name="getCapabilitiesResponse" />
       <ctl:assertion>The OperationsMetadata section lists the mandatory operations of the SPS.</ctl:assertion>
       <ctl:comment>Pass if the service lists the GetCapabilities, DescribeTasking, Submit, and DescribeResultAccess operations with the proper bindings in the OperationsMetadata section; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the OperationsMetadata section advertises the mandatory operations of the SPS.">ATS_URL#SPS.GetCapabilities-ResponseOperationMetadataMandatoryOperations</ctl:link>
+      <ctl:link title="Verify that the OperationsMetadata section advertises the mandatory operations of the SPS.">../ATS/SPS%201.0%20ATS.html#SPS.GetCapabilities-ResponseOperationMetadataMandatoryOperations</ctl:link>
       <ctl:code>
                 <xsl:variable name="getCapabilitiesElement" select="$getCapabilitiesResponse//ows:OperationsMetadata/ows:Operation[@name='GetCapabilities']" />
                 <xsl:variable name="getCapabilitiesGetHref">
@@ -725,7 +725,7 @@
       <ctl:param name="getCapabilitiesResponse" />
       <ctl:assertion>Any non-mandatory operations advertised in the OperationsMetadata section have valid SPS method names.</ctl:assertion>
       <ctl:comment>Pass if the service lists operations in addition to the mandatory operations, and each of the advertised operations has a valid SPS operation name; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that any non-mandatory operations listed in the OperationsMetadata section are valid SPS operation names.  This is still up for debate and will probably not be part of the final tests.">ATS_URL#SPS.GetCapabilities-ResponseOperationMetadataOptionalOperations</ctl:link>
+      <ctl:link title="Verify that any non-mandatory operations listed in the OperationsMetadata section are valid SPS operation names.  This is still up for debate and will probably not be part of the final tests.">../ATS/SPS%201.0%20ATS.html#SPS.GetCapabilities-ResponseOperationMetadataOptionalOperations</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -763,7 +763,7 @@
       <ctl:param name="getCapabilitiesResponse" />
       <ctl:assertion>Each SensorOffering sub-element (AreaOfService, Phenomenon, SensorDefinition, and SensorID) has a value.</ctl:assertion>
       <ctl:comment>Pass if each sub-element of a SensorOffering element has a value; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that each SensorOffering has appropriate values for its sub-elements.">ATS_URL#SPS.GetCapabilities-ResponseContentsSensorOfferings</ctl:link>
+      <ctl:link title="Verify that each SensorOffering has appropriate values for its sub-elements.">../ATS/SPS%201.0%20ATS.html#SPS.GetCapabilities-ResponseContentsSensorOfferings</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -891,7 +891,7 @@
       <ctl:param name="getCapabilitiesResponse" />
       <ctl:assertion>The SensorDefinition element of each SensorOffering element links to a valid SensorML or TML document.</ctl:assertion>
       <ctl:comment>Pass if the SensorDefinition element of each SensorOffering element links to a valid SensorML or TML document; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the value provided in the SensorDefinition field of each SensorOffering links to a valid SensorML or TML document.">ATS_URL#SPS.GetCapabilities-ResponseContentsSensorOfferingsValidSensorDefinition</ctl:link>
+      <ctl:link title="Verify that the value provided in the SensorDefinition field of each SensorOffering links to a valid SensorML or TML document.">../ATS/SPS%201.0%20ATS.html#SPS.GetCapabilities-ResponseContentsSensorOfferingsValidSensorDefinition</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -973,7 +973,7 @@
       <ctl:param name="getCapabilitiesResponse" />
       <ctl:assertion>Each PhenomenonOffering sub-element (Phenomenon and SensorID) has a value.</ctl:assertion>
       <ctl:comment>Pass if each PhenomenonOffering sub-element has a value; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that each PhenomenonOffering has appropriate values for its sub-elements.">ATS_URL#SPS.GetCapabilities-ResponseContentsPhenomenonOfferings</ctl:link>
+      <ctl:link title="Verify that each PhenomenonOffering has appropriate values for its sub-elements.">../ATS/SPS%201.0%20ATS.html#SPS.GetCapabilities-ResponseContentsPhenomenonOfferings</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -1032,7 +1032,7 @@
       <ctl:param name="getCapabilitiesDocument" />
       <ctl:assertion>An exception message returned by the server is a valid exception message for the GetCapabilities operation.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid exception message for the GetCapabilities operation; fail otherwise</ctl:comment>
-      <ctl:link title="Verify that any exception message returned by the server is a valid exception message for the GetCapabilities operation.">ATS_URL#SPS.GetCapabilities-ValidException</ctl:link>
+      <ctl:link title="Verify that any exception message returned by the server is a valid exception message for the GetCapabilities operation.">../ATS/SPS%201.0%20ATS.html#SPS.GetCapabilities-ValidException</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <xsl:variable name="validExceptionCodes">
@@ -1065,7 +1065,7 @@
       <ctl:param name="describeTaskingURL" />
       <ctl:assertion>The server returns a valid error report message with a value of UnknownSensorID for the exceptionCode parameter and a list of the unknown sensor IDs in the locator parameter when one or more invalid sensor ID(s) are supplied in the request.</ctl:assertion>
       <ctl:comment>Pass if the server returns a valid error report message with an exceptionCode parameter of UnknownSensorID and a list of the unknown sensor IDs in the locator parameter; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server handles invalid sensor ID(s) correctly.">ATS_URL#SPS.DescribeTasking-RequestInvalidSensorIDs</ctl:link>
+      <ctl:link title="Verify that the server handles invalid sensor ID(s) correctly.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeTasking-RequestInvalidSensorIDs</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -1132,7 +1132,7 @@
       <ctl:param name="describeTaskingURL" />
       <ctl:assertion>The server returns a valid error report message with a value of InvalidParameterValue for the exceptionCode parameter when no SensorID value is supplied in the request.</ctl:assertion>
       <ctl:comment>Pass if the server returns a valid error report message with an exceptionCode parameter of InvalidParameterValue; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server handles a request with a null SensorID correctly.">ATS_URL#SPS.DescribeTasking-RequestNullSensorID</ctl:link>
+      <ctl:link title="Verify that the server handles a request with a null SensorID correctly.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeTasking-RequestNullSensorID</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -1255,7 +1255,7 @@
       <ctl:param name="describeTaskingResponse" />
       <ctl:assertion>The sensorID field of each TaskingDescriptor element is one of the SensorID values provided in the request.</ctl:assertion>
       <ctl:comment>Pass if the SensorID value in each TaskingDescriptor element is one of the SensorID values supplied in the DescribeTasking request; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the sensorID field of each TaskingDescriptor element is one of the SensorID values provided in the request.">ATS_URL#SPS.DescribeTasking-ResponseMatchingSensorIDs</ctl:link>
+      <ctl:link title="Verify that the sensorID field of each TaskingDescriptor element is one of the SensorID values provided in the request.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeTasking-ResponseMatchingSensorIDs</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--
@@ -1276,7 +1276,7 @@
       <ctl:param name="describeTaskingResponse" />
       <ctl:assertion>Each InputDescriptor element contains appropriate values for its sub-elements.</ctl:assertion>
       <ctl:comment>Pass if each InputDescriptor element contains values for each of its sub-elements and these sub-element values appear to be valid; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that each InputDescriptor element contains appropriate values for its sub-elements.  This is probably tested through schema validation, so this test may be unnecessary.">ATS_URL#SPS.DescribeTasking-ResponseValidInputDescriptor</ctl:link>
+      <ctl:link title="Verify that each InputDescriptor element contains appropriate values for its sub-elements.  This is probably tested through schema validation, so this test may be unnecessary.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeTasking-ResponseValidInputDescriptor</ctl:link>
       <ctl:code>
         <!--Each attribute, if specified should have a value-->
         <ctl:message>Checking all attributes of the DescribeTasking response for validity...</ctl:message>
@@ -1333,7 +1333,7 @@
       <ctl:param name="describeTaskingResponse" />
       <ctl:assertion>The parameterID of each InputDescriptor element contains a value.</ctl:assertion>
       <ctl:comment>Pass if the parameterID element of each InputDescriptor element contains a value and each parameterID element has a unique value; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the parameterID of each InputDescriptor element contains a value.">ATS_URL#SPS.DescribeTasking-ResponseValidInputDescriptorParameterID</ctl:link>
+      <ctl:link title="Verify that the parameterID of each InputDescriptor element contains a value.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeTasking-ResponseValidInputDescriptorParameterID</ctl:link>
       <ctl:code>
         <!--
                     1.)  Store the parameterID values in a variable
@@ -1363,7 +1363,7 @@
       <ctl:param name="describeTaskingResponse" />
       <ctl:assertion>An exception message returned by the server is a valid exception message for the DescribeTasking operation.</ctl:assertion>
       <ctl:comment>Pass if a returned exception message is a valid exception report and has an exceptionCode value that is valid for the DescribeTasking operation; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that any exception message returned by the server is a valid exception message for the DescribeTasking operation">ATS_URL#SPS.DescribeTasking-ValidException</ctl:link>
+      <ctl:link title="Verify that any exception message returned by the server is a valid exception message for the DescribeTasking operation">../ATS/SPS%201.0%20ATS.html#SPS.DescribeTasking-ValidException</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <xsl:variable name="validExceptionCodes">
@@ -1864,7 +1864,7 @@
       <ctl:param name="submitRequest" />
       <ctl:assertion>Invalid data in the notificationTarget element of a Submit request produces a valid exception message.</ctl:assertion>
       <ctl:comment>Pass if a returned exception message is a valid exception report and has an exceptionCode value that is valid for the Submit operation; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server handles invalid notification target information correctly.  This includes notificationID being null and notificationURL being unresolvable to a valid WNS.">ATS_URL#SPS.Submit-RequestInvalidNotificationTarget</ctl:link>
+      <ctl:link title="Verify that the server handles invalid notification target information correctly.  This includes notificationID being null and notificationURL being unresolvable to a valid WNS.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-RequestInvalidNotificationTarget</ctl:link>
       <ctl:code>
         <!--Replace the notificationID in a valid request with an invalid notificationID-->
         <!--Replace the notificationURL in a valid request with an invalid notificationURL-->
@@ -1920,7 +1920,7 @@
       <ctl:param name="invalidSensorID" />
       <ctl:assertion>The server returns a valid exception message with a value of UnknownSensorID for the exceptionCode and the unknown sensorID for the locator. </ctl:assertion>
       <ctl:comment>Pass if a returned exception message is a valid exception report and has an exceptionCode value of UnknownSensorID and a locator value listing the unknown sensorID; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server returns a valid exception message when an invalid sensorID is provided in the request.">ATS_URL#SPS.Submit-RequestSensorParamInvalidSensorID</ctl:link>
+      <ctl:link title="Verify that the server returns a valid exception message when an invalid sensorID is provided in the request.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-RequestSensorParamInvalidSensorID</ctl:link>
       <ctl:code>
         <!--Replace the sensorID in a valid request with an invalid value-->
         <ctl:message>Sending a Submit request with an invalid sensorID element...</ctl:message>
@@ -1966,7 +1966,7 @@
       <ctl:param name="submitRequest" />
       <ctl:assertion>The server returns a valid Submit response with a status element value of rejected when invalid parameter values are supplied in the request. </ctl:assertion>
       <ctl:comment>Pass if a returned Submit response is valid and the status element has a value of rejected; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server returns a Submit response of rejected when invalid parameter values are supplied in the request.">ATS_URL#SPS.Submit-RequestSensorParamInvalidParameters</ctl:link>
+      <ctl:link title="Verify that the server returns a Submit response of rejected when invalid parameter values are supplied in the request.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-RequestSensorParamInvalidParameters</ctl:link>
       <ctl:code>
         <!--Replace the parameterID value(s) in a valid Submit request with invalid values-->
         <ctl:message>Sending a Submit request with an invalid parameters...</ctl:message>
@@ -2015,7 +2015,7 @@
       <ctl:param name="submitRequest" />
       <ctl:assertion>The server returns a valid Submit response with a status element value of incomplete request when required parameters are missing from the request.</ctl:assertion>
       <ctl:comment>Pass if a returned Submit response is valid and the status element has a value of incomplete request; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server returns a Submit response of incomplete request when required parameters are missing from the request.">ATS_URL#SPS.Submit-RequestSensorParamParametersMissingRequiredParameters</ctl:link>
+      <ctl:link title="Verify that the server returns a Submit response of incomplete request when required parameters are missing from the request.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-RequestSensorParamParametersMissingRequiredParameters</ctl:link>
       <ctl:code>
         <!--Eliminate one or more required parameters from a valid Submit request-->
         <ctl:message>Sending a Submit request with missing required parameters...</ctl:message>
@@ -2065,7 +2065,7 @@
       <ctl:param name="submitResponse" />
       <ctl:assertion>The server returns a valid Submit response with expected values given the parameter values supplied in the request.</ctl:assertion>
       <ctl:comment>Pass if a returned Submit response is valid and the values for the parameters are expected based on the request; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server returns an expected Submit response given the parameter values in the request.  Test various parameter combinations.">ATS_URL#SPS.Submit-RequestSensorParamParametersExpectedResponse</ctl:link>
+      <ctl:link title="Verify that the server returns an expected Submit response given the parameter values in the request.  Test various parameter combinations.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-RequestSensorParamParametersExpectedResponse</ctl:link>
       <ctl:code>
         <xsl:choose>
             <xsl:when test="not($submitResponse/*)">
@@ -2188,7 +2188,7 @@
       <ctl:param name="submitRequest" />
       <ctl:assertion>The server returns a valid Submit response with a status element value of rejected when an invalid time value (before the current time, etc.) is supplied in the timeFrame parameter.</ctl:assertion>
       <ctl:comment>Pass if a returned Submit response is valid and the status element has a value of "rejected"; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the server returns a Submit response of rejected when an invalid time value is supplied in the timeFrame parameter.">ATS_URL#SPS.Submit-RequestValidTimeFrame</ctl:link>
+      <ctl:link title="Verify that the server returns a Submit response of rejected when an invalid time value is supplied in the timeFrame parameter.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-RequestValidTimeFrame</ctl:link>
       <ctl:code>
         <!--Modify the timeFrame value to occur in the past-->
         <ctl:message>Sending a Submit request with an invalid timeFrame element...</ctl:message>
@@ -2241,7 +2241,7 @@
       <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>The response to a valid Submit request contains valid values for its sub-elements</ctl:assertion>
       <ctl:comment>Pass if the response is a valid SubmitRequestResponse document and the values of the sub-elements are valid</ctl:comment>
-      <ctl:link title="">ATS_URL#SPS.Submit-ResponseMain</ctl:link>
+      <ctl:link title="">../ATS/SPS%201.0%20ATS.html#SPS.Submit-ResponseMain</ctl:link>
       <ctl:code>
         <xsl:choose>
             <xsl:when test="not($submitResponse/*)">
@@ -2300,7 +2300,7 @@
       <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>The taskID parameter of a Submit response contains a value.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid Submit response and the taskID parameter of the response contains a value; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the taskID parameter of a Submit response contains a value.">ATS_URL#SPS.Submit-ResponseValidTaskID</ctl:link>
+      <ctl:link title="Verify that the taskID parameter of a Submit response contains a value.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-ResponseValidTaskID</ctl:link>
       <ctl:code>
         <xsl:variable name="taskID" select="$submitResponse//sps:taskID" />
         <ctl:message>Checking for a value in the taskID element.  The following value was returned "<xsl:value-of select="$taskID" />".</ctl:message>
@@ -2325,7 +2325,7 @@
       <ctl:param name="submitTime" />
       <ctl:assertion>If the estimatedToC element appears in the response, then this element contains a value that is a valid time value that occurs after the time the request was submitted.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid Submit response and the estimatedToC parameter of the response contains a value that is a valid time value and occurs after the time the request was submitted; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the estimatedToC parameter of a Submit response occurs after the time the request was submitted.">ATS_URL#SPS.Submit-ResponseValidEstimatedToC</ctl:link>
+      <ctl:link title="Verify that the estimatedToC parameter of a Submit response occurs after the time the request was submitted.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-ResponseValidEstimatedToC</ctl:link>
       <ctl:code>
         <xsl:choose>
             <xsl:when test="$submitResponse//sps:estimatedToC">
@@ -2361,7 +2361,7 @@
       <ctl:param name="submitResponse" />
       <ctl:assertion>If the status value is rejected, alternatives available, then a valid value is provided for the alternative parameter.  If a value is provided for the alternative parameter, then the status value is rejected, alternatives available.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid Submit response with a status of "rejected, alternatives available" and the alternative parameter is provided and has a value; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the alternative parameter of a Submit response is used only when the status is rejected, alternatives available.">ATS_URL#SPS.Submit-ResponseCorrectUseOfAlternative</ctl:link>
+      <ctl:link title="Verify that the alternative parameter of a Submit response is used only when the status is rejected, alternatives available.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-ResponseCorrectUseOfAlternative</ctl:link>
       <ctl:code>
         <xsl:variable name="status">
             <xsl:value-of select="$submitResponse//sps:status" />
@@ -2379,7 +2379,7 @@
       <ctl:param name="submitTime" />
       <ctl:assertion>The LatestResponseTime value of the Submit response is a valid time value that occurs after the time the request was submitted.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid Submit response with a LatestResponseTime parameter value time occuring after the time the request was submitted; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that the LatestResponseTime parameter of a Submit response occurs after the time the request was submitted.">ATS_URL#SPS.Submit-ResponseValidLatestResponseTime</ctl:link>
+      <ctl:link title="Verify that the LatestResponseTime parameter of a Submit response occurs after the time the request was submitted.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-ResponseValidLatestResponseTime</ctl:link>
       <ctl:code>
         <xsl:variable name="latestResponseTime">
             <xsl:value-of select="$submitResponse//sps:LatestResponseTime/gml:TimeInstant/*" />
@@ -2410,7 +2410,7 @@
       <ctl:param name="submitResponse" />
       <ctl:assertion>An exception message returned by the server is a valid exception message for the Submit operation.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid exception message for the Submit operation; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that any exception message returned by the server is a valid exception message for the Submit operation.">ATS_URL#SPS.Submit-ValidException</ctl:link>
+      <ctl:link title="Verify that any exception message returned by the server is a valid exception message for the Submit operation.">../ATS/SPS%201.0%20ATS.html#SPS.Submit-ValidException</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <xsl:variable name="validExceptionCodes">
@@ -2443,7 +2443,7 @@
       <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>A null sensorID in the request produces a valid exception message of InvalidParameterValue with sensorID listed in the locator field.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid exception message with an exceptionCode value of InvalidParameterValue and sensorID listed in the locator field; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that a null sensorID in the request produces a valid exception message of InvalidParameterValue.">ATS_URL#SPS.DescribeResultAccess-RequestNullSensorID</ctl:link>
+      <ctl:link title="Verify that a null sensorID in the request produces a valid exception message of InvalidParameterValue.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-RequestNullSensorID</ctl:link>
       <ctl:code>
         <!--
                     1.)  Issue a DescribeResultAccess request
@@ -2494,7 +2494,7 @@
       <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>An invalid sensorID in the request produces a valid exception message of UnknownSensorID.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid exception message with an exceptionCode value of UnknownSensorID and the unknown sensorID listed in the locator field; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that an invalid sensorID in the request produces a valid exception message of UnknownSensorID.">ATS_URL#SPS.DescribeResultAccess-RequestInvalidSensorID</ctl:link>
+      <ctl:link title="Verify that an invalid sensorID in the request produces a valid exception message of UnknownSensorID.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-RequestInvalidSensorID</ctl:link>
       <ctl:code>
         <xsl:variable name="sensorID" select="string('This is an invalid sensorID...')" />
         <ctl:message>Issuing a DescribeResultAccess request with the following sensorID:  "<xsl:value-of select="$sensorID" />"...</ctl:message>
@@ -2541,7 +2541,7 @@
       <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>A null taskID in the request produces a valid exception message of InvalidParameterValue.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid exception message with an exceptionCode value of InvalidParameterValue and taskID listed in the locator field; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that a null taskID in the request produces a valid exception message of InvalidParameterValue.">ATS_URL#SPS.DescribeResultAccess-RequestNullTaskID</ctl:link>
+      <ctl:link title="Verify that a null taskID in the request produces a valid exception message of InvalidParameterValue.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-RequestNullTaskID</ctl:link>
       <ctl:code>
         <ctl:message>Issuing a DescribeResultAccess request with a null taskID...</ctl:message>
         <xsl:variable name="describeResultAccessRequestResponse">
@@ -2587,7 +2587,7 @@
       <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>An invalid taskID in the request produces a valid exception message of TaskIDExpired.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid exception message with an exceptionCode value TaskIDExpired; fail otherwise.</ctl:comment>
-      <ctl:link title="Verify that an invalid taskID in the request produces a valid exception message of TaskIDExpired.">ATS_URL#SPS.DescribeResultAccess-RequestInvalidTaskID</ctl:link>
+      <ctl:link title="Verify that an invalid taskID in the request produces a valid exception message of TaskIDExpired.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-RequestInvalidTaskID</ctl:link>
       <ctl:code>
         <xsl:variable name="taskID" select="string('This is an invalid taskID...')" />
         <ctl:message>Issuing a DescribeResultAccess request with the following taskID:  "<xsl:value-of select="$taskID" />"...</ctl:message>
@@ -2635,7 +2635,7 @@
       <ctl:param name="describeResultAccessURL" />
       <ctl:assertion>All assertions applicable to a DescribeResultAccess response are satisfied.</ctl:assertion>
       <ctl:comment>Fail if any of the DescribeResultAccess response assertions fail; pass otherwise.</ctl:comment>
-      <ctl:link title="Verify that a valid request containing a sensorID parameter produces a valid response other than DataNotAvailable.">ATS_URL#SPS.DescribeResultAccess-ResponseSensorIDValidResponse</ctl:link>
+      <ctl:link title="Verify that a valid request containing a sensorID parameter produces a valid response other than DataNotAvailable.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-ResponseSensorIDValidResponse</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--Call each of the DescribeResultAccess sub-tests using SensorID values from the Capabilities document-->
@@ -2705,7 +2705,7 @@
       <ctl:param name="validTaskID" />
       <ctl:assertion>All assertions applicable to a DescribeResultAccess response are satisfied using a DescribeResultAccess request with a taskID parameter.</ctl:assertion>
       <ctl:comment>Fail if any of the DescribeResultAccess response assertions fail; pass otherwise.</ctl:comment>
-      <ctl:link title="Verify that a valid request containing a sensorID parameter produces a valid response other than DataNotAvailable.">ATS_URL#SPS.DescribeResultAccess-ResponseSensorIDValidResponse</ctl:link>
+      <ctl:link title="Verify that a valid request containing a sensorID parameter produces a valid response other than DataNotAvailable.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-ResponseSensorIDValidResponse</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <!--Call each of the DescribeResultAccess sub-tests using SensorID values from the Capabilities document-->
@@ -2789,7 +2789,7 @@
       <ctl:param name="describeResultAccessResponse" />
       <ctl:assertion>A valid sensorID in the request does not produce a DataNotAvailable response.</ctl:assertion>
       <ctl:comment>Fail if the response is a DataNotAvailable response when the request contained a valid sensorID; pass otherwise.</ctl:comment>
-      <ctl:link title="Verify that a valid request containing a sensorID parameter produces a valid response other than DataNotAvailable.">ATS_URL#SPS.DescribeResultAccess-ResponseSensorIDValidResponse</ctl:link>
+      <ctl:link title="Verify that a valid request containing a sensorID parameter produces a valid response other than DataNotAvailable.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-ResponseSensorIDValidResponse</ctl:link>
       <ctl:code>
         <!--Check for a DataNotAvailable response-->
         <xsl:if test="$describeResultAccessResponse//sps:DataNotAvailable">
@@ -2804,7 +2804,7 @@
       <ctl:param name="describeResultAccessResponse" />
       <ctl:assertion>The ServiceType value in the response contains a value.</ctl:assertion>
       <ctl:comment>Pass if the ServiceType in the response contains a value; fail otherwise</ctl:comment>
-      <ctl:link title="Verify that the ServiceType in the response contains a value.">ATS_URL#SPS.DescribeResultAccess-ResponseValidServiceType</ctl:link>
+      <ctl:link title="Verify that the ServiceType in the response contains a value.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-ResponseValidServiceType</ctl:link>
       <ctl:code>
         <!--Check to see if the ServiceType element contains a value-->
         <xsl:variable name="serviceType" select="$describeResultAccessResponse//sps:ServiceType" />
@@ -2821,7 +2821,7 @@
       <ctl:param name="describeResultAccessResponse" />
       <ctl:assertion>The ServiceURL value in the response contains a value and is resolvable.</ctl:assertion>
       <ctl:comment>Pass if the ServiceType in the response contains a value and is resolvable; fail otherwise</ctl:comment>
-      <ctl:link title="Verify that the ServiceURL in the response contains a value and that value is resolvable.">ATS_URL#SPS.DescribeResultAccess-ResponseValidServiceURL</ctl:link>
+      <ctl:link title="Verify that the ServiceURL in the response contains a value and that value is resolvable.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-ResponseValidServiceURL</ctl:link>
       <ctl:code>
         <!--Check to see if the ServiceURL is valid-->
         <xsl:variable name="serviceURL" select="$describeResultAccessResponse//sps:ServiceURL" />
@@ -2870,7 +2870,7 @@
       <ctl:param name="describeResultAccessResponse" />
       <ctl:assertion>A DataNotAvailable response is valid and contains values for each of the parameters.</ctl:assertion>
       <ctl:comment>Pass if the DataNotAvailable response is valid and contains a value for each of the parameters; fail otherwise</ctl:comment>
-      <ctl:link title="Verify that a DataNotAvailable response is valid and contains values for each of the parameters.">ATS_URL#SPS.DescribeResultAccess-ResponseValidDataNotAvailable</ctl:link>
+      <ctl:link title="Verify that a DataNotAvailable response is valid and contains values for each of the parameters.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-ResponseValidDataNotAvailable</ctl:link>
       <ctl:code>
         <xsl:variable name="dataNotAvailableElement" select="$describeResultAccessResponse/sps:DataNotAvailable" />
         <xsl:variable name="reason" select="normalize-space($dataNotAvailableElement/sps:reason)" />
@@ -2884,7 +2884,7 @@
       <ctl:param name="describeResultAccessDocument" />
       <ctl:assertion>An exception message returned by the server is a valid exception message for the DescribeResultAccess operation.</ctl:assertion>
       <ctl:comment>Pass if the response is a valid exception message for the DescribeResultAccess operation; fail otherwise</ctl:comment>
-      <ctl:link title="Verify that any exception message returned by the server is a valid exception message for the DescribeResultAccess operation.">ATS_URL#SPS.DescribeResultAccess-ValidException</ctl:link>
+      <ctl:link title="Verify that any exception message returned by the server is a valid exception message for the DescribeResultAccess operation.">../ATS/SPS%201.0%20ATS.html#SPS.DescribeResultAccess-ValidException</ctl:link>
       <ctl:code>
         <!--PUT TEST CODE HERE-->
         <xsl:variable name="validExceptionCodes">
