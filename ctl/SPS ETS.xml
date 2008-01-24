@@ -25,7 +25,8 @@
   
   <ctl:suite name="sps:suite">
     <!--NOTE: Don't forget to update the TARGET_NAMESPACE_URI and ../../docs/SPS%201.0%20ATS.html placeholder values-->
-    <ctl:title>Annex A - Abstract Test Suite for SPS 1.0</ctl:title>
+    <ctl:title>SPS 1.0 Compliance Test Suite</ctl:title>
+    <ctl:link>docs/sps/1.0/</ctl:link>
     <ctl:starting-test>sps:Main</ctl:starting-test>
   </ctl:suite>
   <ctl:test name="sps:Main">
