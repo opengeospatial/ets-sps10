@@ -26,6 +26,7 @@
   <ctl:suite name="sps:suite">
     <!--NOTE: Don't forget to update the TARGET_NAMESPACE_URI and ../../docs/SPS%201.0%20ATS.html placeholder values-->
     <ctl:title>SPS 1.0 Compliance Test Suite</ctl:title>
+    <ctl:description>Verifies that an SPS 1.0 implementation complies with the SPS 1.0 specification.</ctl:description>
     <ctl:link>docs/sps/1.0/</ctl:link>
     <ctl:starting-test>sps:Main</ctl:starting-test>
   </ctl:suite>
@@ -932,9 +933,7 @@
                     <xsl:choose>
                         <xsl:when test="$sensorDefinitionResponse//sml:SensorML">
                             <ctl:message>A SensorML document was returned.  Checking for the existence of a sensorID and verifying that an existing sensorID is valid.</ctl:message>
-                            <xsl:variable name="responseSensorID" select="$sensorDefinitionResponse//sml:identifier/sml:Term[ends-with(lower-case(@definition),':uniqueid')]/text() | 
-                                                                          $sensorDefinitionResponse//sml:identifier/sml:Term[ends-with(lower-case(@definition),':uid')]/text() |
-                                                                          $sensorDefinitionResponse//sml:identifier/sml:Term[ends-with(lower-case(@definition),':id')]/text()" />
+                            <xsl:variable name="responseSensorID" select="$sensorDefinitionResponse//sml:identifier/sml:Term[ends-with(lower-case(@definition),':uniqueid')]/text()" />
                             <ctl:message>The test discovered the following sensorID:  <xsl:value-of select="$responseSensorID" /></ctl:message>
                             <xsl:if test="string-length(normalize-space($responseSensorID))=0">
                                 <ctl:message>FAILURE:  There was no sensorID specified in the returned SensorML document.</ctl:message>
@@ -1019,7 +1018,7 @@
                         <xsl:variable name="sensorDefSensorIDElement" select="$getCapabilitiesResponse//sps:Contents/sps:SensorOfferingList/sps:SensorOffering/sps:SensorID[text()=$sensorID]" />
                         <xsl:variable name="sensorIDElementExists" select="string-length($sensorDefSensorIDElement)>0" />
                         <ctl:message>The check returned:  <xsl:value-of select="$sensorIDElementExists" /></ctl:message>
-                        <xsl:if test="not(xsd:boolean($sensorDefSensorIDElement))">
+                        <xsl:if test="not(xsd:boolean($sensorIDElementExists))">
                             <ctl:message>FAILURE:  The SensorID element value "<xsl:value-of select="$sensorID" />" from the "<xsl:value-of select="$phenomenon" />" PhenomenonOffering is not listed in at least one SensorOffering for this service.</ctl:message>
                             <ctl:fail />
                         </xsl:if>
