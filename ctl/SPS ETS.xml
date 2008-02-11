@@ -1463,6 +1463,10 @@
             </xsl:when>
             <xsl:otherwise>
                 <ctl:message>A valid DescribeTasking response was returned.  Generating a user input form based on the taskable parameters for <xsl:value-of select="$selectedSensorID" />...</ctl:message>
+                <!--Check to see if the MissingRequiredParameters test should be run.  The DescribeTasking response must have at least one required parameter and one optional parameter in order for the MissingRequiredParameters test to be run.-->
+                <xsl:variable name="requiredParametersCount" select="count($describeTaskingResponse//sps:InputDescriptor[@use='optional'])" />
+                <xsl:variable name="optionalParametersCount" select="count($describeTaskingResponse//sps:InputDescriptor[@use='required'])" />
+                <xsl:variable name="runMissingRequiredParametersTest" select="($requiredParametersCount + $optionalParametersCount)>=2" />
                 <xsl:variable name="complexInputParameters" select="$describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:ConditionalData | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:ConditionalValue | 
                                                                     $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:DataRecord | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:Envelope | 
                                                                     $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:GeoLocationArea | $describeTaskingResponse//sps:InputDescriptor/sps:definition/swe:NormalizedCurve |
@@ -1481,7 +1485,7 @@
                        <body>
                           <h2>
                           This form allows you to provide values for the parameters of the Submit request that will be sent to <i><xsl:value-of select="$selectedSensorID" /></i>.
-                          Please provide valid values for all required fields (and optional fields as appropriate).  
+                          Please provide valid values for all required fields (and optional fields as appropriate).  In addition, please provide a value for one or more optional fields if optional fields are available.  
                           If valid values are not provided, then the service being tested may fail subsequent Submit tests.
                           </h2>
                           <p>
@@ -1808,11 +1812,14 @@
                   <ctl:with-param name="submitURL" select="$submitURL" />
                   <ctl:with-param name="submitRequest" select="$submitRequestInvalidParameters" />
                 </ctl:call-test>
-                <ctl:message>**********************************************************************</ctl:message>
-                <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersMissingRequiredParameters.1">
-                  <ctl:with-param name="submitURL" select="$submitURL" />
-                  <ctl:with-param name="submitRequest" select="$submitRequestMissingRequiredParameters" />
-                </ctl:call-test>
+                <!--Only execute the MissingRequiredParameters test if the service advertises required parameters-->
+                <xsl:if test="xsd:boolean($runMissingRequiredParametersTest)">
+                    <ctl:message>**********************************************************************</ctl:message>
+                    <ctl:call-test name="sps:core-SPS.Submit-RequestSensorParamParametersMissingRequiredParameters.1">
+                      <ctl:with-param name="submitURL" select="$submitURL" />
+                      <ctl:with-param name="submitRequest" select="$submitRequestMissingRequiredParameters" />
+                    </ctl:call-test>
+                </xsl:if>
                 <ctl:message>**********************************************************************</ctl:message>
                 <ctl:call-test name="sps:core-SPS.Submit-RequestValidTimeFrame.1">
                   <ctl:with-param name="submitURL" select="$submitURL" />
