@@ -9,7 +9,7 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:sps="http://www.opengis.net/sps/1.0" 
     xmlns:ows="http://www.opengis.net/ows"
-    xmlns:sml="http://www.opengis.net/sensorML" 
+    xmlns:sml="http://www.opengis.net/sensorML/1.0" 
     xmlns:tml="http://www.opengis.net/tml" 
     xmlns:gml="http://www.opengis.net/gml" 
     xmlns="http://www.w3.org/1999/xhtml" 
