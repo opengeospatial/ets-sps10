@@ -933,7 +933,7 @@
                     <xsl:choose>
                         <xsl:when test="$sensorDefinitionResponse//sml:SensorML">
                             <ctl:message>A SensorML document was returned.  Checking for the existence of a sensorID and verifying that an existing sensorID is valid.</ctl:message>
-                            <xsl:variable name="responseSensorID" select="$sensorDefinitionResponse//sml:identifier/sml:Term[ends-with(lower-case(@definition),':uniqueid')]/text()" />
+                            <xsl:variable name="responseSensorID" select="$sensorDefinitionResponse//sml:identifier/sml:Term[ends-with(lower-case(@definition),':uniqueid')]/sml:value" />
                             <ctl:message>The test discovered the following sensorID:  <xsl:value-of select="$responseSensorID" /></ctl:message>
                             <xsl:if test="string-length(normalize-space($responseSensorID))=0">
                                 <ctl:message>FAILURE:  There was no sensorID specified in the returned SensorML document.</ctl:message>
