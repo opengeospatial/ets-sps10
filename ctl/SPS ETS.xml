@@ -164,7 +164,7 @@
                     </ctl:url>
                     <ctl:method>post</ctl:method>
                     <ctl:body>
-                        <test/>
+                        <Submit xmlns="http://www.opengis.net/sps/1.0"/>
                     </ctl:body>
                     <ctl:call-function name="spsFunctions:validateExceptionReport" />
                 </ctl:request>
