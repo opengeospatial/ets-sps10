@@ -349,7 +349,7 @@
         <ctl:return>True/False depending on whether or not the URN is valid</ctl:return>
         <ctl:description>Determines if a definition URN is valid according to the OGC Definition URN scheme [OGC 07-092r1].  Since this is a def urn, it must have 7 "pieces".  NOTE:  this check allows for both ogc and x-ogc as the namespace authority.</ctl:description>
         <ctl:code>
-			<xsl:variable name="urnRegex" select="'^urn:(x-)?ogc:def(:(\w|\(|\)|\+|,|-|\.|=|\$|_|!|\*|'';)+){4}$'"/>
+			<xsl:variable name="urnRegex" select="'^urn:(x-)?ogc:def(:(\w|\(|\)|\+|,|-|\.|=|\$|_|!|\*|'';)+)+$'"/>
 			<xsl:value-of select="(matches($urnString, $urnRegex,'i'))"/>							
         </ctl:code>
     </ctl:function>
