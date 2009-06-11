@@ -425,7 +425,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:variable name="isValidDate" select="spsFunctions:isValidDate($timeToCheck)" />
-                    <xsl:value-of select="xs:boolean($isValidDate) and (xs:dateTime($timeToCheck)>=xs:dateTime($compareTime))" />
+                    <xsl:value-of select="xs:boolean($isValidDate) and (xs:dateTime($timeToCheck) ge xs:dateTime($compareTime))" />
                 </xsl:otherwise>
             </xsl:choose>
         </ctl:code>
