@@ -1166,7 +1166,7 @@
                 <ctl:message>Checking the response for validity...</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
-                        <ctl:with-param name="exceptionReportToCheck" select="$describeTaskingResponse" />
+                        <ctl:with-param name="exceptionReport" select="$describeTaskingResponse" />
                         <ctl:with-param name="exceptionCodeToCheck" select="string('InvalidParameterValue')" />
                         <ctl:with-param name="locatorToCheck" select="string('sensorID')" />
                     </ctl:call-function>
@@ -1901,14 +1901,14 @@
                 <ctl:message>Checking the validity of the response to a Submit request with an invalid notificationTarget element.</ctl:message>
                 <xsl:variable name="isCorrect1">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
-                        <ctl:with-param name="exceptionReportToCheck" select="$submitResponse" />
+                        <ctl:with-param name="exceptionReport" select="$submitResponse" />
                         <ctl:with-param name="exceptionCodeToCheck" select="string('InvalidParameterValue')" />
                         <ctl:with-param name="locatorToCheck" select="string('notificationID')" />
                     </ctl:call-function>
                 </xsl:variable>
                 <xsl:variable name="isCorrect2">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
-                        <ctl:with-param name="exceptionReportToCheck" select="$submitResponse" />
+                        <ctl:with-param name="exceptionReport" select="$submitResponse" />
                         <ctl:with-param name="exceptionCodeToCheck" select="string('InvalidParameterValue')" />
                         <ctl:with-param name="locatorToCheck" select="string('notificationURL')" />
                     </ctl:call-function>
@@ -1955,7 +1955,7 @@
                 <ctl:message>Checking the validity of the response to a Submit request with an invalid sensorID element.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
-                        <ctl:with-param name="exceptionReportToCheck" select="$submitResponse" />
+                        <ctl:with-param name="exceptionReport" select="$submitResponse" />
                         <ctl:with-param name="exceptionCodeToCheck" select="string('UnknownSensorID')" />
                         <ctl:with-param name="locatorToCheck" select="$invalidSensorID" />
                     </ctl:call-function>
@@ -2484,7 +2484,7 @@
                 <ctl:message>Checking the validity of the response to a DescribeResultAccess request with a null sensorID parameter.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
-                        <ctl:with-param name="exceptionReportToCheck" select="$describeResultAccessRequestResponse" />
+                        <ctl:with-param name="exceptionReport" select="$describeResultAccessRequestResponse" />
                         <ctl:with-param name="exceptionCodeToCheck" select="string('InvalidParameterValue')" />
                         <ctl:with-param name="locatorToCheck" select="string('sensorID')" />
                     </ctl:call-function>
@@ -2531,7 +2531,7 @@
                 <ctl:message>Checking the validity of the response to a DescribeResultAccess request with an unknown sensorID parameter.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
-                        <ctl:with-param name="exceptionReportToCheck" select="$describeResultAccessRequestResponse" />
+                        <ctl:with-param name="exceptionReport" select="$describeResultAccessRequestResponse" />
                         <ctl:with-param name="exceptionCodeToCheck" select="string('UnknownSensorID')" />
                         <ctl:with-param name="locatorToCheck" select="$sensorID" />
                     </ctl:call-function>
@@ -2577,7 +2577,7 @@
                 <ctl:message>Checking the validity of the response to a DescribeResultAccess request with a null taskID parameter.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
-                        <ctl:with-param name="exceptionReportToCheck" select="$describeResultAccessRequestResponse" />
+                        <ctl:with-param name="exceptionReport" select="$describeResultAccessRequestResponse" />
                         <ctl:with-param name="exceptionCodeToCheck" select="string('InvalidParameterValue')" />
                         <ctl:with-param name="locatorToCheck" select="string('taskID')" />
                     </ctl:call-function>
@@ -2624,7 +2624,7 @@
                 <ctl:message>Checking the validity of the response to a DescribeResultAccess request with an unknown taskID parameter.</ctl:message>
                 <xsl:variable name="isCorrect">
                     <ctl:call-function name="spsFunctions:checkExceptionReport">
-                        <ctl:with-param name="exceptionReportToCheck" select="$describeResultAccessRequestResponse" />
+                        <ctl:with-param name="exceptionReport" select="$describeResultAccessRequestResponse" />
                         <ctl:with-param name="exceptionCodeToCheck" select="string('TaskIDExpired')" />
                         <ctl:with-param name="locatorToCheck" select="string('*')" />
                     </ctl:call-function>
@@ -2747,7 +2747,7 @@
                             </ctl:call-test>
                             <xsl:variable name="isTaskIDExpiredResponse">
                                 <ctl:call-function name="spsFunctions:checkExceptionReport">
-                                    <ctl:with-param name="exceptionReportToCheck" select="$describeResultAccessRequestResponse" />
+                                    <ctl:with-param name="exceptionReport" select="$describeResultAccessRequestResponse" />
                                     <ctl:with-param name="exceptionCodeToCheck" select="string('TaskIDExpired')" />
                                     <ctl:with-param name="locatorToCheck" select="string('*')" />
                                 </ctl:call-function>
