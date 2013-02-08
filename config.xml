@@ -14,7 +14,7 @@
         <description>Checks SPS implementations for conformance to OGC 07-014r3.</description>
       </suite>
       <revision>
-        <name>r2</name>
+        <name>r3</name>
         <sources>
           <source>sps/1.0/ctl</source>
         </sources>

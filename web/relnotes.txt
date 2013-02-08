@@ -1,5 +1,10 @@
 SPS 1.0 Test Suite Release Notes
 
+
+Revision r3:
+- - Updated config file for TEAM-Engine v4.
+
+
 Revision r2 2012-07-20 (rocky)
 - Update test suite for new xlink policy
 
