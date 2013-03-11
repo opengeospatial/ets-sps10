@@ -5,7 +5,7 @@
   <standard>
     <name>Sensor Planning Service (SPS)</name>
     <version>
-      <name>1.0 (deprecated)</name>
+      <name>1.0</name>
       <suite>
         <namespace-uri>http://www.opengis.net/sps/1.0</namespace-uri>
         <prefix>sps</prefix>
