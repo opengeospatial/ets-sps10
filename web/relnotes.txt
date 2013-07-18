@@ -1,5 +1,6 @@
 SPS 1.0 Test Suite Release Notes
-
+Revision r4:
+- - Fixed bugs for TEAM-Engine v4. (test name: sps:core-SPS.GetCapabilities-ResponseContentsSensorOfferingsValidSensorDefinition.1)
 
 Revision r3:
 - - Updated config file for TEAM-Engine v4.
