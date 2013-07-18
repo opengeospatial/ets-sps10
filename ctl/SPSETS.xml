@@ -48,6 +48,12 @@
 				<ctl:form height="640" width="800">
 					<body>
 						<h2>Compliance Test Suite for Sensor Planning Service (SPS) 1.0</h2>
+						
+						<p>
+              Information about this test suite can be found <a href="../../../about/sps/1.0/web/" target="_blank">here</a>.
+              </p>
+           
+						
 						<!--<blockquote>
                   <h3>
                     NOTES:
@@ -58,8 +64,7 @@
                   </blockquote>-->
 						<p>
                   Please provide a URL from which a Capabilities document can 
-                  be retrieved. Modify the URL template below to specify the 
-                  location of an OGC SPS 1.0 implementation to be tested.
+                  be retrieved.
 						</p>
 						<blockquote>
 							<table border="1" padding="4" bgcolor="#99ccff">
