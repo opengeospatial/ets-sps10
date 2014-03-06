@@ -1,4 +1,7 @@
 SPS 1.0 Test Suite Release Notes
+Revision r5:
+-Depended on xlink schemas 1.1 (W3C XLink 1.1) . "http://schemas.opengis.net/xlink/1.0.0/xlinks.xsd" will be changed to "http://www.w3.org/1999/xlink.xsd" and
+		"xlink:simpleLink" will be changed to "xlink: simpleAttrs"
 Revision r4:
 - (rocky) Fixed bugs for TEAM-Engine v4. (test name: sps:core-SPS.GetCapabilities-ResponseContentsSensorOfferingsValidSensorDefinition.1)
 - (lbermudez) Cleaned documentation, linked documentation from ETS xml, removed not required readme file.
