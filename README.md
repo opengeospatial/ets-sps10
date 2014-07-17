@@ -2,6 +2,8 @@
 
 The OGC Sensor Planning Service 1.0 Test-Suite provides the Executable Test Script (ETS) to test implementations against the following specification(s):
 
+  * _Sensor Planning Service Implementation Specification_, version 1.0.0 [[OGC 07-014r3]](http://portal.opengeospatial.org/files/?artifact_id=23180)
+
 Detailed information about this test suite is available [here]( http://htmlpreview.github.com/?https://github.com/opengeospatial/ets-sps10/blob/master/src/main/web/index.html).
 
 ## License
