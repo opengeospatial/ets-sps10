@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ets-sps10</artifactId>
   <groupId>org.opengis.cite</groupId>
-  <version>1.6</version>
+  <version>r1.7-SNAPSHOT</version>
 
   <name>OGC Sensor Planning Service 1.0.0 - Executable Test Suite</name>
   <description>
@@ -106,7 +106,7 @@
           <dependency>
             <groupId>org.apache.maven.doxia</groupId>
             <artifactId>doxia-module-markdown</artifactId>
-            <version>1.6</version>
+            <version>r1.7-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>
