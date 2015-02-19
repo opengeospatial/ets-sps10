@@ -4,7 +4,7 @@ The OGC Sensor Planning Service 1.0 Test-Suite provides the Executable Test Scri
 
   * _Sensor Planning Service Implementation Specification_, version 1.0.0 [[OGC 07-014r3]](http://portal.opengeospatial.org/files/?artifact_id=23180)
 
-Detailed information about this test suite is available [here]( http://htmlpreview.github.com/?https://github.com/opengeospatial/ets-sps10/blob/master/src/main/web/index.html).
+Detailed information about this test suite is available [here](http://opengeospatial.github.io/ets-sps10).
 
 ## License
 
@@ -18,21 +18,9 @@ build the test suite run maven from the root directory:
 ```
 mvn install
 ```
-     
-## Testing an Implementation
 
-For UNIX/OS Users
+Follow the [TEAM ENGINE instructions](http://opengeospatial.github.io/teamengine/installation.html) to install and run the tests in TEAM ENGINE.
 
-Clone this repository:
-```     
-git clone https://github.com/opengeospatial/ets-sps10.git
-```
-Run:
-```   
-build.sh**
-```
-
-For Windows users and to get more information about running tests in TEAM Engine, check the instructions at the [CITE wiki](http://cite.opengeospatial.org/easytesting)
 
 ## Bugs
 

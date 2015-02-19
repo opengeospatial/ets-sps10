@@ -1,8 +1,6 @@
 # Overview
-
 This test suite is based on the following OGC specifications, best practices,
 and discussion papers:
-
   * _Sensor Planning Service Implementation Specification_, version 1.0.0 [OGC 07-014r3](http://portal.opengeospatial.org/files/?artifact_id=23180)
   * _OpenGIS Web Services Common Specification_, version 1.0.0 [OGC 05-008c1](https://portal.opengeospatial.org/files/?artifact_id=8798)
   * _A URN Namespace for the Open Geospatial Consortium (OGC)_, version 2 [OGC 06-166](https://portal.opengeospatial.org/files/?artifact_id=18747)
@@ -11,6 +9,7 @@ and discussion papers:
 ## What is tested
 
   * **Basic/Core conformance class (mandatory operations)**
+
     * GetCapabilities, GET method
     * DescribeTasking, POST method
     * Submit, POST method
@@ -35,7 +34,7 @@ and discussion papers:
 
 ## Test data
 
-N/A. There is no test data provided for this test suite as test data in the
+There is no test data provided for this test suite as test data in the
 case of an SPS would be a specific, virtual or real sensor system. Requiring
 implementers to implement a specific sensor system in order to run compliance
 tests is unnecessary; therefore, these compliance tests were designed to be
@@ -58,6 +57,4 @@ All schemas used in these tests are located in the OGC schema repository:
 <http://schemas.opengis.net>.
 
 ## Release Notes
-
-Release notes are available from the [relnotes.html](relnotes.html).
-
+Release notes are available from the [relnotes.hmlt](relnotes.html).

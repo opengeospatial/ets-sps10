@@ -14,12 +14,12 @@
         <description>Checks SPS implementations for conformance to OGC 07-014r3.</description>
       </suite>
       <revision>
-        <name>r6</name>
+        <name>${project.version}</name>
         <sources>
-          <source>sps/1.0/ctl</source>
+          <source>sps/${spec-version}/ctl</source>
         </sources>
-        <resources>sps/1.0/resources</resources>
-        <webdir>sps/1.0/web</webdir>
+        <resources>sps/${spec-version}/resources</resources>
+        <webdir>sps/${spec-version}/site</webdir>
       </revision>
     </version>
   </standard>
