@@ -1,5 +1,8 @@
 # SPS 1.0 Test Suite Release Notes
 
+## 1.7 (2015-07-30)
+- Update pom.xml to build with Maven 2 and minor edits
+
 ## 1.6 (2015-02-19)
 
 - [2](https://github.com/opengeospatial/ets-sps10/issues/2). Cleaned the structure of the test. The test scripts (ctl) have not changed. Starting this revision, the revision number will follow the convention documented [here](https://github.com/opengeospatial/cite/wiki/OGC-Compliance-Testing-Tools)
