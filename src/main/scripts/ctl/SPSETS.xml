@@ -102,7 +102,7 @@
 		</ctl:code>
 	</ctl:test>
 	<ctl:package>
-		<ctl:test name="sps:ows-main">
+		<ctl:test name="sps:ows-main" isConformanceClass="true" isBasic="true">
 			<ctl:param name="serviceURL" />
 			<ctl:assertion>All assertions for "ows" conformance are satisfied.</ctl:assertion>
 			<ctl:comment>Test driver for the ows module.</ctl:comment>
@@ -135,7 +135,7 @@
 
 	</ctl:package>
 	<ctl:package>
-		<ctl:test name="sps:general-main">
+		<ctl:test name="sps:general-main" isConformanceClass="true" isBasic="true">
 			<ctl:param name="serviceURL" />
 			<ctl:assertion>All assertions for "general" conformance are satisfied.</ctl:assertion>
 			<ctl:comment>Test driver for the general module.</ctl:comment>
@@ -218,7 +218,7 @@
 		</ctl:test>
 	</ctl:package>
 	<ctl:package>
-		<ctl:test name="sps:core-main">
+		<ctl:test name="sps:core-main" isConformanceClass="true" isBasic="true">
 			<ctl:param name="serviceURL" />
 			<ctl:assertion>All assertions for "core" conformance are satisfied.</ctl:assertion>
 			<ctl:comment>Test driver for the core module.</ctl:comment>
