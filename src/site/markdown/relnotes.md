@@ -1,5 +1,8 @@
 # SPS 1.0 Test Suite Release Notes
 
+## 1.8 (2018-12-21)
+ - [#3](https://github.com/opengeospatial/ets-sps10/issues/3) Update CTL with better information about conformance classes
+
 ## 1.7 (2015-07-30)
 - Update pom.xml to build with Maven 2 and minor edits
 
