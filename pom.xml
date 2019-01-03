@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ets-sps10</artifactId>
   <groupId>org.opengis.cite</groupId>
@@ -8,7 +8,7 @@
 
   <name>OGC Sensor Planning Service 1.0.0 - Executable Test Suite</name>
   <description>
-  Verifies conformance of implementations to OGC Sensor Planning Service 1.0.0.
+    Verifies conformance of implementations to OGC Sensor Planning Service 1.0.0.
   </description>
   <url>https://github.com/opengeospatial/ets-sps10</url>
   <licenses>
@@ -47,7 +47,7 @@
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.7</version>
-         <reportSets>
+        <reportSets>
           <reportSet>
             <reports>
               <report>license</report>
@@ -56,14 +56,13 @@
             </reports>
           </reportSet>
         </reportSets>
-      </plugin>  
+      </plugin>
     </plugins>
-  </reporting> 
-  
- <build>
-    <plugins>  
-    
-    <plugin>
+  </reporting>
+
+  <build>
+    <plugins>
+      <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
@@ -71,8 +70,8 @@
             <phase>never</phase>
           </execution>
         </executions>
-    </plugin>
-    <plugin>
+      </plugin>
+      <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <skipTests>true</skipTests>
@@ -85,7 +84,7 @@
             <descriptor>src/assembly/ctl.xml</descriptor>
           </descriptors>
         </configuration>
-         <executions>
+        <executions>
           <execution>
             <phase>package</phase>
             <goals>
@@ -94,12 +93,11 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>     
+      <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <version>3.4</version>
-
-         <configuration>
-            <relativizeDecorationLinks>false</relativizeDecorationLinks>      
+        <configuration>
+          <relativizeDecorationLinks>false</relativizeDecorationLinks>
         </configuration>
         <executions>
           <execution>
@@ -134,7 +132,7 @@
           <scmBranch>gh-pages</scmBranch>
         </configuration>
       </plugin>
-    </plugins>   
+    </plugins>
   </build>
 
   <profiles>
@@ -177,5 +175,4 @@
       <url>scm:git:git@github.com:opengeospatial/ets-sps10.git</url>
     </site>
   </distributionManagement>
-
 </project>
